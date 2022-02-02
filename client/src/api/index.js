@@ -15,6 +15,10 @@ export const createUsers = (newUser) => API.post('/users', newUser);
 export const updateUser = (id, updatedUser) => API.patch(`/users/${id}`, updatedUser);
 export const deleteUser = (id) => API.delete(`users/${id}`);
 
-export const signin = (formData) => API.post('/users/signin', formData);
-export const signup = (formData) => API.post('/users/signup', formData);
+// export const signin = (formData) => API.post('/users/signin', formData);
+// export const signup = (formData) => API.post('/users/signup', formData);
+
+export const signin = (formData) => API.post('/auth/login', formData);
+export const signup = (formData) => API.post('/auth/register', formData);
+
 

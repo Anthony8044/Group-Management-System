@@ -1,7 +1,7 @@
 import { FETCH_ALL_USERS, CREATE_USER, UPDATE, DELETE } from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
-// Action Creators
+//Action Creators
 export const getUsers = () => async (dispatch) => {
 
     try {
