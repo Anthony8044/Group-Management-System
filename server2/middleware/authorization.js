@@ -1,24 +1,24 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+import jwt from "jsonwebtoken";
 
-//this middleware will on continue on if the token is inside the local storage
-
-module.exports = function (req, res, next) {
+const authorization = async (req, res, next) => {
     try {
-        // Get token from header
-        const token = req.header("token");
+        console.log(req.headers);
+        const token = req.headers.authorization.split(" ")[1];
+        const isCustomAuth = token.length < 500;
 
-        // Check if not token
-        if (!token) {
-            return res.status(403).json({ msg: "authorization denied" });
+        let decodedData;
+
+        if (token && isCustomAuth) {
+            decodedData = jwt.verify(token, 'test');
+
+            req.userId = decodedData?.id;
         }
 
-        // Verify token
-        //it is going to give use the user id (user:{id: user.id})
-        const payload = jwt.verify(token, process.env.jwtSecret);
-        req.user = payload;
         next();
-    } catch (err) {
-        res.status(401).json({ msg: "Token is not valid" });
+
+    } catch (error) {
+        console.log(error);
     }
-};
+}
+
+export default authorization;
