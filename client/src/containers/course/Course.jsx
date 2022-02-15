@@ -7,7 +7,9 @@ import { updateStudent } from "../../actions/student";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStudent } from '../../actions/student';
-import { getAllCourseUsers } from '../../actions/course';
+import { getTeacher } from '../../actions/teacher';
+import { getAllStudentCourse } from '../../actions/course';
+import { getAllTeacherCourse } from '../../actions/course';
 import decode from 'jwt-decode';
 import { AccountCircle } from "@mui/icons-material";
 
@@ -29,17 +31,23 @@ const Course = () => {
     }, []);
 
     useEffect(() => {
-        if (userId?.role === "Student") {
-            dispatch(getStudent({ user_id: userId?.user_id }));
-            dispatch(getAllCourseUsers());
-        } else if (userId?.role === "Teacher") {
-            dispatch(getStudent({ user_id: userId?.user_id }));
-            dispatch(getAllCourseUsers());
+        if (userId) {
+            dispatch(getAllTeacherCourse());
+            dispatch(getAllStudentCourse());
         }
+        // if (userId?.role === "Student") {
+        //     dispatch(getStudent({ user_id: userId?.user_id }));
+        //     dispatch(getAllStudentCourse());
+        // } else if (userId?.role === "Teacher") {
+        //     dispatch(getTeacher({ user_id: userId?.user_id }));
+        //     dispatch(getAllTeacherCourse());
+        // }
     }, [userId]);
 
     const [user] = useSelector((state) => state.student);
-    const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));
+    //const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));
+    const AllStudentCourse = useSelector((state) => state.getAllStudentCourse.filter(({ course_id }) => course_id === id));
+    const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ course_id }) => course_id === id));
 
 
     return (
@@ -50,12 +58,36 @@ const Course = () => {
                 <Grid item xs={12} md={5} >
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
-                            <Typography variant="h5" align="center">Student List</Typography>
+                            <Typography variant="h5" align="center">Teacher</Typography>
+                            <List >
+                                {AllTeacherCourse.map((item) => (
+                                    <ListItemButton
+                                        key={item.user_id}
+                                        // selected={currentRoute.pathname === item.path ? true : false}
+                                        onClick={() => navigate(`/profile/${item.user_id}`)}
+                                        className={classes.menuItems}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <AccountCircle />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={item.given_name + ' ' + item.family_name}
+                                            secondary={item.student_id}
+                                        />
+                                    </ListItemButton>
+                                ))}
+                            </List>
+                            <Divider style={{ margin: theme.spacing(2) }} />
+
+                            <Typography variant="h5" align="center">Students</Typography>
+
                             <Divider style={{ margin: theme.spacing(2) }} />
                             <Grid container spacing={2}>
                                 <Grid item >
                                     <List >
-                                        {allCourseUsers.map((item) => (
+                                        {AllStudentCourse.map((item) => (
                                             <ListItemButton
                                                 key={item.user_id}
                                                 // selected={currentRoute.pathname === item.path ? true : false}
@@ -74,6 +106,7 @@ const Course = () => {
                                             </ListItemButton>
                                         ))}
                                     </List>
+
                                 </Grid>
 
                             </Grid>

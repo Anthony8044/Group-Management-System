@@ -55,6 +55,11 @@ select alluser.user_id, user_course.course_id, user_course.course_role, student.
 from alluser, student, user_course
 where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk;
 
+create view teacher_course as
+select alluser.user_id, user_course.course_id, user_course.course_role, teacher.teacher_id, alluser.given_name, alluser.family_name, alluser.email, teacher.department, teacher.postition
+from alluser, teacher, user_course
+where alluser.user_id=user_course.user_id AND alluser.user_id=teacher.user_id_fk;
+
 insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP4035-1', 'COMP4035',
 'Math', '1');
 

@@ -8,7 +8,9 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudent } from '../../actions/student';
-import { getAllCourseUsers } from '../../actions/course';
+import { getAllStudentCourse } from '../../actions/course';
+import { getAllTeacherCourse } from '../../actions/course';
+import { getTeacher } from '../../actions/teacher';
 
 const Layout = ({ children }) => {
     const classes = useStyles();
@@ -18,6 +20,10 @@ const Layout = ({ children }) => {
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [userId, setUserId] = useState(null);
+    const [student] = useSelector((state) => state.student);
+    const [teacher] = useSelector((state) => state.teacher);
+    const AllStudentCourse = useSelector((state) => state.getAllStudentCourse.filter(({ user_id }) => user_id === userId?.user_id));
+    const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ user_id }) => user_id === userId?.user_id));
     const loggedIn = JSON.parse(localStorage.getItem('profile'));
     useEffect(() => {
         if (loggedIn) {
@@ -30,20 +36,19 @@ const Layout = ({ children }) => {
     useEffect(() => {
         if (userId?.role === "Student") {
             dispatch(getStudent({ user_id: userId?.user_id }));
-            dispatch(getAllCourseUsers());
+            dispatch(getAllStudentCourse());
         } else if (userId?.role === "Teacher") {
-            dispatch(getStudent({ user_id: userId?.user_id }));
-            dispatch(getAllCourseUsers());
+            dispatch(getTeacher({ user_id: userId?.user_id }));
+            dispatch(getAllTeacherCourse());
         }
     }, [userId]);
 
-    const [user] = useSelector((state) => state.student);
-    const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ user_id }) => user_id === user?.user_id));
 
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
         navigate('/register');
+        window.location.reload();
         //setUser(null);
     };
 
@@ -61,7 +66,7 @@ const Layout = ({ children }) => {
         setOpen(!open);
     };
 
-    const menuItems = [
+    const studentMenuItems = [
         {
             text: 'Home',
             icon: <Home color="primary" />,
@@ -70,7 +75,25 @@ const Layout = ({ children }) => {
         {
             text: 'Profile',
             icon: <AccountBox color="primary" />,
-            path: `/profile/${user?.user_id}`
+            path: `/profile/${student?.user_id}`
+        },
+        {
+            text: 'Classes',
+            icon: <Class color="primary" />,
+            path: ''
+        }
+    ];
+
+    const teacherMenuItems = [
+        {
+            text: 'Home',
+            icon: <Home color="primary" />,
+            path: '/'
+        },
+        {
+            text: 'Profile',
+            icon: <AccountBox color="primary" />,
+            path: `/profile/${teacher?.user_id}`
         },
         {
             text: 'Classes',
@@ -105,15 +128,23 @@ const Layout = ({ children }) => {
                         <Avatar className={classes.avatar} src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
                     </Link> */}
 
-                    {user ? (
+                    {student &&
                         <div className={classes.profile}>
-                            <Avatar className={classes.avatar} alt={user.given_name} src={user.profile_img} onClick={() => navigate(`/profile/${user.user_id}`)}>{user.given_name.slice(0, 1)}</Avatar>
-                            <Typography className={classes.name} variant="h6">{user.given_name} {user.family_name}</Typography>
+                            <Avatar className={classes.avatar} alt={student.given_name} src={student.profile_img} onClick={() => navigate(`/profile/${student.user_id}`)}>{student.given_name.slice(0, 1)}</Avatar>
+                            <Typography className={classes.name} variant="h6">{student.given_name} {student.family_name}</Typography>
                             <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
                         </div>
-                    ) : (
+                    }
+                    {teacher &&
+                        <div className={classes.profile}>
+                            <Avatar className={classes.avatar} alt={teacher.given_name} src={teacher.profile_img} onClick={() => navigate(`/profile/${teacher.user_id}`)}>{teacher.given_name.slice(0, 1)}</Avatar>
+                            <Typography className={classes.name} variant="h6">{teacher.given_name} {teacher.family_name}</Typography>
+                            <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
+                        </div>
+                    }
+                    {!student && !teacher &&
                         <Button className={classes.button} component={Link} to="/register" variant="contained" color="primary">Sign In</Button>
-                    )}
+                    }
 
                     <Notifications />
                 </Toolbar>
@@ -134,39 +165,76 @@ const Layout = ({ children }) => {
                     </Typography>
                 </div>
 
-                <List>
-                    {menuItems.map((item) => (
+                {student &&
+                    <List>
+                        {studentMenuItems.map((item) => (
+                            <ListItemButton
+                                key={item.text}
+                                selected={currentRoute.pathname === item.path ? true : false}
+                                onClick={() => navigate(item.path)}
+                                className={classes.menuItems}
+                            >
+                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                <ListItemText primary={item.text} />
+                            </ListItemButton  >
+                        ))}
+
+                        {AllStudentCourse.map((item) => (
+                            <ListItemButton
+                                key={item.course_id}
+                                // selected={currentRoute.pathname === item.path ? true : false}
+                                onClick={() => navigate(`/classes/${item.course_id}`)}
+                                className={classes.menuItems}
+                            >
+                                <ListItemText align="center" primary={item.course_id} />
+                            </ListItemButton  >
+                        ))}
+
                         <ListItemButton
-                            key={item.text}
-                            selected={currentRoute.pathname === item.path ? true : false}
-                            onClick={() => navigate(item.path)}
+                            selected={currentRoute.pathname === "/groups" ? true : false}
+                            onClick={() => navigate("/groups")}
                             className={classes.menuItems}
                         >
-                            <ListItemIcon>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.text} />
+                            <ListItemIcon><Groups color="primary" /></ListItemIcon>
+                            <ListItemText primary="Groups" />
                         </ListItemButton  >
-                    ))}
+                    </List>
+                }
+                {teacher &&
+                    <List>
+                        {teacherMenuItems.map((item) => (
+                            <ListItemButton
+                                key={item.text}
+                                selected={currentRoute.pathname === item.path ? true : false}
+                                onClick={() => navigate(item.path)}
+                                className={classes.menuItems}
+                            >
+                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                <ListItemText primary={item.text} />
+                            </ListItemButton  >
+                        ))}
 
-                    {allCourseUsers.map((item) => (
+                        {AllTeacherCourse.map((item) => (
+                            <ListItemButton
+                                key={item.course_id}
+                                // selected={currentRoute.pathname === item.path ? true : false}
+                                onClick={() => navigate(`/classes/${item.course_id}`)}
+                                className={classes.menuItems}
+                            >
+                                <ListItemText align="center" primary={item.course_id} />
+                            </ListItemButton  >
+                        ))}
+
                         <ListItemButton
-                            key={item.course_id}
-                            // selected={currentRoute.pathname === item.path ? true : false}
-                            onClick={() => navigate(`/classes/${item.course_id}`)}
+                            selected={currentRoute.pathname === "/groups" ? true : false}
+                            onClick={() => navigate("/groups")}
                             className={classes.menuItems}
                         >
-                            <ListItemText align="center" primary={item.course_id} />
+                            <ListItemIcon><Groups color="primary" /></ListItemIcon>
+                            <ListItemText primary="Groups" />
                         </ListItemButton  >
-                    ))}
-
-                    <ListItemButton
-                        selected={currentRoute.pathname === "/groups" ? true : false}
-                        onClick={() => navigate("/groups")}
-                        className={classes.menuItems}
-                    >
-                        <ListItemIcon><Groups color="primary" /></ListItemIcon>
-                        <ListItemText primary="Groups" />
-                    </ListItemButton  >
-                </List>
+                    </List>
+                }
 
             </Drawer>
 
@@ -175,7 +243,7 @@ const Layout = ({ children }) => {
                 {children}
             </div>
 
-        </div>
+        </div >
     )
 };
 

@@ -34,10 +34,12 @@ export const getStudent = (userId) => API.post('/student/getstudent', userId);
 export const updateStudent = (id, updatedUser) => API.patch(`/student/updatestudent/${id}`, updatedUser);
 
 //Teacher
+export const getTeacher = (userId) => API.post('/teacher/getteacher', userId);
 
 //Course
 export const createUsers = (newUser) => API.post('/course/registerCourse', newUser);
-export const getAllCourseUsers = () => API.get('/course/getallusercourse');
+export const getAllStudentCourse = () => API.get('/course/getAllStudentCourse');
+export const getAllTeacherCourse = () => API.get('/course/getAllTeacherCourse');
 
 
 export const deleteUser = (id) => API.delete(`users/${id}`);

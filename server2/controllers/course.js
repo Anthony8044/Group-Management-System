@@ -31,10 +31,26 @@ export const registerCourse = async (req, res) => {
     }
 };
 
-export const getAllUserCourse = async (req, res) => {
+export const getAllStudentCourse = async (req, res) => {
     
     try {
         const course = await pool.query("SELECT * FROM student_course");
+
+        if (course.rows.length === 0) {
+            return res.status(401).json("No one registered to any courses");
+        }
+
+        return res.status(200).json(course.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+export const getAllTeacherCourse = async (req, res) => {
+    
+    try {
+        const course = await pool.query("SELECT * FROM teacher_course");
 
         if (course.rows.length === 0) {
             return res.status(401).json("No one registered to any courses");
