@@ -3,40 +3,59 @@ import useStyles from './styles'
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider } from '@mui/material';
 import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from "react-redux";
-import { updateUser, getUsers } from "../../actions/users";
+import { updateStudent } from "../../actions/student";
 import { useTheme } from "@emotion/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getStudent } from '../../actions/student';
+import decode from 'jwt-decode';
 import Input from "../../components/login&register/Input";
 
 
 const Profile = () => {
     const theme = useTheme()
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getUsers());
-    }, []);
     const classes = useStyles()
+    const navigate = useNavigate();
     const { id } = useParams();
-    const [loggedInUser, setLoggedInUser] = useState(JSON.parse(localStorage.getItem('profile')));
+    const [userId, setUserId] = useState(null);
+    const loggedIn = JSON.parse(localStorage.getItem('profile'));
+    useEffect(() => {
+        if (loggedIn) {
+            setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
+        } else {
+            navigate('/register');
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userId?.role === "Student") {
+            dispatch(getStudent({ user_id: userId?.user_id }));
+        } else if (userId?.role === "Teacher") {
+            dispatch(getStudent({ user_id: userId?.user_id }));
+        }
+    }, [userId]);
+    const [user] = useSelector((state) => state.student);
 
     const [userData, setUserData] = useState({
-        password: '',
+        given_name: '',
+        family_name: '',
+        gender: '',
+        role: '',
         email: '',
-        firstname: '',
-        lastname: '',
-        studentID: '',
-        profileImg: '',
-        name: ''
+        profile_img: '',
+        study_program: '',
+        study_year: '',
+        student_id: ''
     });
-    const user = useSelector((state) => id ? state.users.find((u) => u._id === id) : null);
+    //const user = useSelector((state) => id ? state.student.find((u) => u._id === id) : null);
 
     useEffect(() => {
         if (user) setUserData(user);
     }, [user])
 
-    useEffect(() => {
-        setLoggedInUser(JSON.parse(localStorage.getItem('profile')));
-    }, []);
+    // useEffect(() => {
+    //     setUserId(decode(JSON.parse(localStorage.getItem('profile')).token).user_id);
+    // }, []);
 
     // const clear = () => {
     //     setCurrentId(0);
@@ -46,8 +65,8 @@ const Profile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        dispatch(updateUser(id, userData))
-            .then(() => dispatch(getUsers()));
+        dispatch(updateStudent(id, userData));
+        window.location.reload();
     }
 
     const handleChange = (e) => setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -63,21 +82,18 @@ const Profile = () => {
                     <Card elevation={5} style={{ height: '100%' }}>
                         <Avatar
                             className={classes.avatar}
-                            src={userData.profileImg}
+                            src={userData.profile_img}
                         />
                         <CardContent className={classes.profileTitle}>
                             <Typography gutterBottom variant="h5" component="div">
-                                {userData.firstname} {userData.lastname}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Created by: {userData.name}
+                                {userData.given_name} {userData.family_name}
                             </Typography>
                         </CardContent>
                         <CardActions>
                             <FileBase
                                 type='file'
                                 multiple={false}
-                                onDone={({ base64 }) => setUserData({ ...userData, profileImg: base64 })}
+                                onDone={({ base64 }) => setUserData({ ...userData, profile_img: base64 })}
                             />
                         </CardActions>
                     </Card>
@@ -89,24 +105,24 @@ const Profile = () => {
                                 <Typography variant="h6">Information</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <Grid container spacing={3}>
-                                    {(loggedInUser?.result?._id === user?.creator) ? (
+                                    {(user?.user_id === id) ? (
                                         <>
-                                            <Input name="firstname" label="First Name" value={userData.firstname} handleChange={handleChange} half />
-                                            <Input name="lastname" label="Last Name" value={userData.lastname} handleChange={handleChange} half />
+                                            <Input name="given_name" label="Given Name" value={userData.given_name} handleChange={handleChange} half />
+                                            <Input name="family_name" label="Family Name" value={userData.family_name} handleChange={handleChange} half />
                                             <Input name="email" label="Email" value={userData.email} handleChange={handleChange} />
-                                            <Input name="studentID" label="Student ID" value={userData.studentID} handleChange={handleChange} half />
-                                            <Input name="password" label="Password" value={userData.password} handleChange={handleChange} half />
+                                            <Input name="student_id" label="Student ID" value={userData.student_id} handleChange={handleChange} half />
+                                            <Input name="gender" label="Gender" value={userData.gender} handleChange={handleChange} half />
                                             <Grid item xs={12} >
                                                 <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Update</Button>
                                             </Grid>
                                         </>
                                     ) :
                                         <>
-                                            <Input name="firstname" label="First Name" value={userData.firstname} handleChange={handleChange} read="true" half />
-                                            <Input name="lastname" label="Last Name" value={userData.lastname} handleChange={handleChange} read="true" half />
+                                            <Input name="given_name" label="Given Name" value={userData.given_name} handleChange={handleChange} read="true" half />
+                                            <Input name="family_name" label="Family Name" value={userData.family_name} handleChange={handleChange} read="true" half />
                                             <Input name="email" label="Email" value={userData.email} handleChange={handleChange} read="true" />
-                                            <Input name="studentID" label="Student ID" value={userData.studentID} handleChange={handleChange} read="true" half />
-                                            <Input name="password" label="Password" value={userData.password} handleChange={handleChange} read="true" half />
+                                            <Input name="student_id" label="Student ID" value={userData.student_id} handleChange={handleChange} read="true" half />
+                                            <Input name="gender" label="Gender" value={userData.gender} handleChange={handleChange} read="true" half />
                                         </>
                                     }
                                 </Grid>
@@ -121,21 +137,19 @@ const Profile = () => {
                                 <Typography variant="h6">Other Information</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <Grid container spacing={3}>
-                                    {(loggedInUser?.result?._id === user?.creator) ? (
+                                    {(user?.user_id === id) ? (
                                         <>
-                                            <Input name="firstname" label="First Name" value={userData.firstname} handleChange={handleChange} half />
-                                            <Input name="lastname" label="Last Name" value={userData.lastname} handleChange={handleChange} half />
+                                            <Input name="study_program" label="Study Program" value={userData.study_program} handleChange={handleChange} half />
+                                            <Input name="study_year" label="Study Year" value={userData.study_year} handleChange={handleChange} half />
                                             <Input name="email" label="Email" value={userData.email} handleChange={handleChange} />
-                                            <Input name="studentID" label="Student ID" value={userData.studentID} handleChange={handleChange} half />
-                                            <Input name="password" label="Password" value={userData.password} handleChange={handleChange} half />
+                                            <Input name="student_id" label="Student ID" value={userData.student_id} handleChange={handleChange} />
                                         </>
                                     ) :
                                         <>
-                                            <Input name="firstname" label="First Name" value={userData.firstname} handleChange={handleChange} read="true" half />
-                                            <Input name="lastname" label="Last Name" value={userData.lastname} handleChange={handleChange} read="true" half />
+                                            <Input name="study_program" label="Study Program" value={userData.study_program} handleChange={handleChange} read="true" half />
+                                            <Input name="study_year" label="Study Year" value={userData.study_year} handleChange={handleChange} read="true" half />
                                             <Input name="email" label="Email" value={userData.email} handleChange={handleChange} read="true" />
-                                            <Input name="studentID" label="Student ID" value={userData.studentID} handleChange={handleChange} read="true" half />
-                                            <Input name="password" label="Password" value={userData.password} handleChange={handleChange} read="true" half />
+                                            <Input name="student_id" label="Student ID" value={userData.student_id} handleChange={handleChange} read="true" />
                                         </>
                                     }
                                 </Grid>

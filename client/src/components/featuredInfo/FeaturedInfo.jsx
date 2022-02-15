@@ -2,7 +2,7 @@ import { React } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteUser } from "../../actions/users";
+import { deleteUser } from "../../actions/student";
 import { DeleteOutline } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import useStyles from './styles'
@@ -10,9 +10,8 @@ import useStyles from './styles'
 const FeaturedInfo = ({ setCurrentId }) => {
    const classes = useStyles()
    const dispatch = useDispatch();
-   const users = useSelector((state) => state.users);
+   const student = useSelector((state) => state.student);
    const user = JSON.parse(localStorage.getItem('profile'));
-   console.log(users);
 
    // const handleDelete = (id) => {
    //    setData(data.filter((item) => item.id !== id));
@@ -61,8 +60,8 @@ const FeaturedInfo = ({ setCurrentId }) => {
       <Grid container maxWidth="lg" className={classes.container}>
          <Grid item xs={12}>
             <DataGrid
-               getRowId={users => users._id}
-               rows={users}
+               getRowId={student => student._id}
+               rows={student}
                columns={columns}
                pageSize={8}
                rowsPerPageOptions={[8]}

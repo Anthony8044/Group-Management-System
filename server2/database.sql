@@ -50,8 +50,16 @@ CREATE TABLE user_course(
     PRIMARY KEY(user_id, course_id)
 );
 
-insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP3080-1', 'COMP3080',
+create view student_course as
+select alluser.user_id, user_course.course_id, user_course.course_role, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
+from alluser, student, user_course
+where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk;
+
+insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP4035-1', 'COMP4035',
 'Math', '1');
+
+insert into course(course_id, course_code, course_title, course_section) VALUES ('ENG2055-1', 'ENG2055', 'English', '1');
+insert into user_course(user_id, course_id, course_role) VALUES ('34302cf6-a23f-428a-bce5-aa8c00d612c8', 'COMP3080-1', 'Student');
 
 INSERT INTO student (
     given_name,
@@ -75,6 +83,18 @@ INSERT INTO student (
     'Year 3'
 );
 
+INSERT INTO student (
+    student_id,
+    user_id_fk,
+    study_program,
+    study_year
+  ) VALUES (
+    '18208562',
+    '34302cf6-a23f-428a-bce5-aa8c00d612c8',
+    'Computer Science',
+    'Year 4'
+);
+
 INSERT INTO teacher (
     teacher_number,
     user_id_fk,
@@ -95,11 +115,11 @@ INSERT INTO alluser (
     email,
     password
   ) VALUES (
-    'Anthony',
-    'Stoltzfus',
-    'Male',
+    'Sarah',
+    'Lee',
+    'Female',
     'Student',
-    'anthonystoltzfus@gmail.com',
+    'anthonystoltzfus2@gmail.com',
     '123123'
 );
 

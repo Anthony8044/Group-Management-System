@@ -1,8 +1,11 @@
-import jwt from "jsonwebtoken";
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { pool } from '../db.js';
+const router = express.Router();
 
-const authorization = async (req, res, next) => {
+export const authorization = async (req, res, next) => {
     try {
-        console.log(req.headers);
         const token = req.headers.authorization.split(" ")[1];
         const isCustomAuth = token.length < 500;
 
@@ -10,15 +13,17 @@ const authorization = async (req, res, next) => {
 
         if (token && isCustomAuth) {
             decodedData = jwt.verify(token, 'test');
-
-            req.userId = decodedData?.id;
         }
 
-        next();
+        const user = await pool.query("SELECT * FROM alluser WHERE user_id = $1", [decodedData.user_id]);
+
+        if (user.rows[0].role === 'Teacher') {
+            next();
+        }
 
     } catch (error) {
         console.log(error);
     }
 }
 
-export default authorization;
+export default router;

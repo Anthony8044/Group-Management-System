@@ -2,6 +2,7 @@ import React from "react";
 import "./app.scss";
 import Home from "./containers/home/Home";
 import Profile from "./containers/profile/Profile";
+import Course from './containers/course/Course';
 import Layout from './containers/layout/Layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -40,7 +41,7 @@ const App = () => {
                <Routes>
                   <Route path="/" element={<Layout><Home /> </Layout>} />
                   <Route path="/profile/:id" element={<Layout><Profile /> </Layout>} />
-                  <Route path="/classes" element={<Layout><Home /> </Layout>} />
+                  <Route path="/classes/:id" element={<Layout><Course /> </Layout>} />
                   <Route path="/groups" element={<Layout><Home /> </Layout>} />
                   <Route path="/register" element={<RegisterStudent />} />
                </Routes>

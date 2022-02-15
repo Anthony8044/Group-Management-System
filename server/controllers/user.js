@@ -35,7 +35,7 @@ export const createUser = async (req, res) => {
     }
 }
 
-export const updateUser = async (req, res) => {
+export const updateStudent = async (req, res) => {
 
     const { id: _id } = req.params;
     const user = req.body;

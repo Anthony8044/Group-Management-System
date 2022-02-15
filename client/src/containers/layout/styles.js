@@ -48,6 +48,9 @@ export default makeStyles((theme) => ({
     menuItems: {
       marginTop: "20px !important" 
     },
+    innerItemsText: {
+        justifySelf: "right !important" 
+      },
     profile: {
         display: 'flex',
         justifyContent: 'space-between',

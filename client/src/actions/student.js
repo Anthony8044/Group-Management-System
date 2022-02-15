@@ -1,13 +1,13 @@
-import { FETCH_ALL_USERS, CREATE_USER, UPDATE, DELETE } from '../constants/actionTypes';
+import { GET_STUDENT, CREATE_USER, UPDATE, DELETE } from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
 //Action Creators
-export const getUsers = () => async (dispatch) => {
+export const getStudent = (user) => async (dispatch) => {
 
     try {
-        const { data } = await api.fetchUsers();
+        const { data } = await api.getStudent(user);
 
-        dispatch({type: FETCH_ALL_USERS, payload: data});
+        dispatch({type: GET_STUDENT, payload: data});
 
     } catch (error) {
 
@@ -28,10 +28,10 @@ export const createUsers = (user) => async (dispatch) => {
     }
 }
 
-export const updateUser = (id, user) => async (dispatch) => {
+export const updateStudent = (id, user) => async (dispatch) => {
 
     try {
-        const { data } = await api.updateUser(id, user);
+        const { data } = await api.updateStudent(id, user);
 
         dispatch({type: UPDATE, payload: data })
     } catch (error) {

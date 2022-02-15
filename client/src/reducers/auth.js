@@ -1,15 +1,15 @@
 import { AUTH, LOGOUT } from '../constants/actionTypes';
 
-const auth = (state = { authData: null }, action) => {
+const auth = (authData = [], action) => {
     switch(action.type){
         case AUTH:
-            localStorage.setItem('profile', JSON.stringify({ ...action?.data }));
-            return { ...state, authData: action?.data }
+            localStorage.setItem('profile', JSON.stringify({ ...action?.payload }));
+            return action.payload;
         case LOGOUT:
             localStorage.clear();
-            return { ...state, authData: null }
+            return authData = [];
         default:
-            return state;
+            return authData;
     }
 }
 
