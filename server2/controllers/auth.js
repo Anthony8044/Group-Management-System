@@ -5,7 +5,7 @@ import { pool } from '../db.js'
 const router = express.Router();
 
 
-export const register = async (req, res) => {
+export const registerStudent = async (req, res) => {
     const { given_name, family_name, gender, email, password, student_id, study_program, study_year } = req.body;
 
     try {
@@ -27,10 +27,36 @@ export const register = async (req, res) => {
             [student_id, newUser.rows[0].user_id, study_program, study_year]
         );
 
-        const token = jwt.sign({ user_id: newUser.rows[0].user_id, role: newUser.rows[0].role }, 'test', { expiresIn: "1h" });
-        const refreshToken = jwt.sign({ user_id: newUser.rows[0].user_id, role: newUser.rows[0].role }, 'test1', { expiresIn: "1w" });
+        res.status(200).json({ message: 'Created student successfully!' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
 
-        return res.status(200).json({ token, refreshToken })
+export const registerTeacher = async (req, res) => {
+    const { given_name, family_name, gender, email, password, teacher_id, department, postition } = req.body;
+
+    try {
+        const user = await pool.query("SELECT * FROM alluser WHERE email = $1", [email]);
+
+        if (user.rows.length > 0) {
+            return res.status(401).json("User already exists!");
+        }
+
+        const bcryptPassword = await bcrypt.hash(password, 12);
+
+        const newUser = await pool.query(
+            "INSERT INTO alluser (given_name, family_name, gender, role, email, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            [given_name, family_name, gender, 'Teacher', email, bcryptPassword]
+        );
+
+        const newStudent = await pool.query(
+            "INSERT INTO teacher (teacher_id, user_id_fk, department, postition) VALUES ($1, $2, $3, $4) RETURNING *",
+            [teacher_id, newUser.rows[0].user_id, department, postition]
+        );
+
+        res.status(200).json({ message: 'Created teacher successfully!' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server error");
