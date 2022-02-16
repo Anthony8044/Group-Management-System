@@ -50,6 +50,20 @@ CREATE TABLE user_course(
     PRIMARY KEY(user_id, course_id)
 );
 
+CREATE TABLE project(
+    project_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    course_id_fk VARCHAR(255) NOT NULL,
+    project_title VARCHAR(255) NOT NULL,
+    submission_date VARCHAR(255) NOT NULL,
+    students_per_group VARCHAR(255) NOT NULL,
+    formation_type VARCHAR(255) NOT NULL,
+    project_description VARCHAR(255),
+    user_id_fk uuid NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_id FOREIGN KEY(user_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
+);
+
 create view student_course as
 select alluser.user_id, user_course.course_id, user_course.course_role, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
 from alluser, student, user_course
@@ -110,6 +124,22 @@ INSERT INTO teacher (
     'b374a60e-cc37-4fc4-984b-dae70d29ce45',
     'Computer Science',
     'Head Teacher'
+);
+
+INSERT INTO alluser (
+    given_name,
+    family_name,
+    gender,
+    role,
+    email,
+    password
+  ) VALUES (
+    'Samantha',
+    'Chan',
+    'Female',
+    'Teacher',
+    'anthonystoltzfus3@gmail.com',
+    '123123'
 );
 
 INSERT INTO alluser (
