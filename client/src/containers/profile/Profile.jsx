@@ -27,7 +27,7 @@ const Profile = () => {
         if (loggedIn) {
             setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
         } else {
-            navigate('/register');
+            navigate('/login');
         }
     }, []);
 
@@ -134,11 +134,11 @@ const Profile = () => {
                                     <Grid container spacing={3}>
                                         {(student?.user_id === id) ? (
                                             <>
-                                                <Input name="given_name" label="Given Name" value={studentData.given_name} handleChange={handleChange} half />
-                                                <Input name="family_name" label="Family Name" value={studentData.family_name} handleChange={handleChange} half />
-                                                <Input name="email" label="Email" value={studentData.email} handleChange={handleChange} />
-                                                <Input name="student_id" label="Student ID" value={studentData.student_id} handleChange={handleChange} half />
-                                                <Input name="gender" label="Gender" value={studentData.gender} handleChange={handleChange} half />
+                                                <Input name="given_name" label="Given Name" value={studentData.given_name} handleChange={handleChange}  half />
+                                                <Input name="family_name" label="Family Name" value={studentData.family_name} handleChange={handleChange}  half />
+                                                <Input name="email" label="Email" value={studentData.email} handleChange={handleChange}  />
+                                                <Input name="student_id" label="Student ID" value={studentData.student_id} handleChange={handleChange}  half />
+                                                <Input name="gender" label="Gender" value={studentData.gender} handleChange={handleChange}  half />
                                                 <Grid item xs={12} >
                                                     <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Update</Button>
                                                 </Grid>
@@ -166,10 +166,10 @@ const Profile = () => {
                                     <Grid container spacing={3}>
                                         {(student?.user_id === id) ? (
                                             <>
-                                                <Input name="study_program" label="Study Program" value={studentData.study_program} handleChange={handleChange} half />
-                                                <Input name="study_year" label="Study Year" value={studentData.study_year} handleChange={handleChange} half />
-                                                <Input name="email" label="Email" value={studentData.email} handleChange={handleChange} />
-                                                <Input name="student_id" label="Student ID" value={studentData.student_id} handleChange={handleChange} />
+                                                <Input name="study_program" label="Study Program" value={studentData.study_program} handleChange={handleChange}  half />
+                                                <Input name="study_year" label="Study Year" value={studentData.study_year} handleChange={handleChange}  half />
+                                                <Input name="email" label="Email" value={studentData.email} handleChange={handleChange}  />
+                                                <Input name="student_id" label="Student ID" value={studentData.student_id} handleChange={handleChange}  />
                                             </>
                                         ) :
                                             <>
@@ -219,11 +219,11 @@ const Profile = () => {
                                     <Grid container spacing={3}>
                                         {(teacher?.user_id === id) ? (
                                             <>
-                                                <Input name="given_name" label="Given Name" value={teacherData.given_name} handleChange={handleChange2} half />
-                                                <Input name="family_name" label="Family Name" value={teacherData.family_name} handleChange={handleChange2} half />
-                                                <Input name="email" label="Email" value={teacherData.email} handleChange={handleChange2} />
-                                                <Input name="teacher_id" label="Teacher ID" value={teacherData.teacher_id} handleChange={handleChange2} half />
-                                                <Input name="gender" label="Gender" value={teacherData.gender} handleChange={handleChange2} half />
+                                                <Input name="given_name" label="Given Name" value={teacherData.given_name} handleChange={handleChange2}  half />
+                                                <Input name="family_name" label="Family Name" value={teacherData.family_name} handleChange={handleChange2}  half />
+                                                <Input name="email" label="Email" value={teacherData.email} handleChange={handleChange2}  />
+                                                <Input name="teacher_id" label="Teacher ID" value={teacherData.teacher_id} handleChange={handleChange2}  half />
+                                                <Input name="gender" label="Gender" value={teacherData.gender} handleChange={handleChange2}  half />
                                                 <Grid item xs={12} >
                                                     <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Update</Button>
                                                 </Grid>
@@ -251,10 +251,10 @@ const Profile = () => {
                                     <Grid container spacing={3}>
                                         {(teacher?.user_id === id) ? (
                                             <>
-                                                <Input name="department" label="Department" value={teacherData.department} handleChange={handleChange2} half />
-                                                <Input name="postition" label="Position" value={teacherData.postition} handleChange={handleChange2} half />
-                                                <Input name="email" label="Email" value={teacherData.email} handleChange={handleChange2} />
-                                                <Input name="teacher_id" label="Teacher ID" value={teacherData.teacher_id} handleChange={handleChange2} />
+                                                <Input name="department" label="Department" value={teacherData.department} handleChange={handleChange2}  half />
+                                                <Input name="postition" label="Position" value={teacherData.postition} handleChange={handleChange2}  half />
+                                                <Input name="email" label="Email" value={teacherData.email} handleChange={handleChange2}  />
+                                                <Input name="teacher_id" label="Teacher ID" value={teacherData.teacher_id} handleChange={handleChange2}  />
                                             </>
                                         ) :
                                             <>

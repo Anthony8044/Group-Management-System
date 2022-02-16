@@ -26,7 +26,7 @@ const Course = () => {
         if (loggedIn) {
             setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
         } else {
-            navigate('/register');
+            navigate('/login');
         }
     }, []);
 

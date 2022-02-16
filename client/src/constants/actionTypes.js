@@ -4,6 +4,8 @@ export const UPDATE = 'UPDATE';
 export const DELETE = 'DELETE';
 
 export const AUTH = 'AUTH';
+export const REGISTER_STUDENT = 'REGISTER_STUDENT';
+export const REGSITER_TEACHER = 'REGSITER_TEACHER';
 export const LOGOUT = 'LOGOUT';
 
 export const GET_TEACHER = 'GET_TEACHER';

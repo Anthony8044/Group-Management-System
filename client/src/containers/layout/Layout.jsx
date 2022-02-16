@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
         if (loggedIn) {
             setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
         } else {
-            navigate('/register');
+            navigate('/login');
         }
     }, []);
 
@@ -47,7 +47,7 @@ const Layout = ({ children }) => {
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
-        navigate('/register');
+        navigate('/login');
         window.location.reload();
         //setUser(null);
     };
@@ -143,7 +143,7 @@ const Layout = ({ children }) => {
                         </div>
                     }
                     {!student && !teacher &&
-                        <Button className={classes.button} component={Link} to="/register" variant="contained" color="primary">Sign In</Button>
+                        <Button className={classes.button} component={Link} to="/login" variant="contained" color="primary">Sign In</Button>
                     }
 
                     <Notifications />

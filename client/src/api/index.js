@@ -27,7 +27,8 @@ API.interceptors.request.use( async (req) => {
 
 //Auth
 export const signin = (formData) => API.post('/auth/login', formData);
-export const signup = (formData) => API.post('/auth/register', formData);
+export const registerStudent = (formData) => API.post('/auth/registerStudent', formData);
+export const registerTeacher = (formData) => API.post('/auth/registerTeacher', formData);
 
 //Student
 export const getStudent = (userId) => API.post('/student/getstudent', userId);

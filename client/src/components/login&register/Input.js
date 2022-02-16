@@ -14,19 +14,21 @@ const Input = ({ name, handleChange, value, label, half, autoFocus, read, type, 
       type={type}
       value={value}
       onChange={handleChange}
-      InputProps={name === 'password' ? {
+      InputProps={{
+        readOnly: read ? true : false,
         endAdornment: (
-          <InputAdornment position="end">
-            <IconButton onClick={handleShowPassword}>
-              {type === 'password' ? <Visibility /> : <VisibilityOff />}
-            </IconButton>
+          < InputAdornment position="end" >
+            {name === 'password' &&
+              <IconButton onClick={handleShowPassword}>
+                {type === 'password' ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            }
           </InputAdornment>
-        ),
-      } : null,
-        read === 'true'? { readOnly: true } : null
+        )
+      }
       }
     />
-  </Grid>
+  </Grid >
 );
 
 export default Input;
