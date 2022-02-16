@@ -48,16 +48,16 @@ export const updateTeacher = async (req, res) => {
         role,
         email,
         profile_img,
-        study_program,
-        study_year,
-        student_id
+        department,
+        postition,
+        teacher_id
     } = req.body;
     const { id } = req.params;
 
 
     try {
         const user = await pool.query("SELECT * FROM alluser WHERE user_id = $1", [id]);
-        //const user = await pool.query("Select alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id from alluser, student where alluser.user_id = $1 and student.user_id_fk = $1;", [user_id]);
+        //const user = await pool.query("Select alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.department, teacher.postition, teacher.teacher_id from alluser, student where alluser.user_id = $1 and teacher.user_id_fk = $1;", [user_id]);
 
         if (user.rows.length === 0) {
             return res.status(401).json("User does'nt exist.");
@@ -76,12 +76,12 @@ export const updateTeacher = async (req, res) => {
             ]
         );
 
-        const updatedStudent = await pool.query(
-            "UPDATE student SET study_program = $1, study_year = $2, student_id = $3 WHERE user_id_fk = $4 RETURNING *",
+        const updatedTeadcher = await pool.query(
+            "UPDATE teacher SET department = $1, postition = $2, teacher_id = $3 WHERE user_id_fk = $4 RETURNING *",
             [
-                study_program,
-                study_year,
-                student_id,
+                department,
+                postition,
+                teacher_id,
                 id
             ]
         );
@@ -93,9 +93,9 @@ export const updateTeacher = async (req, res) => {
             "role": updatedUser.rows[0].role,
             "email": updatedUser.rows[0].email,
             "profile_img": updatedUser.rows[0].profile_img,
-            "study_program": updatedStudent.rows[0].study_program,
-            "study_year": updatedStudent.rows[0].study_year,
-            "student_id": updatedStudent.rows[0].student_id
+            "study_program": updatedTeadcher.rows[0].department,
+            "study_year": updatedTeadcher.rows[0].postition,
+            "student_id": updatedTeadcher.rows[0].teacher_id
         }
 
         return res.status(200).json( sendUser )

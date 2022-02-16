@@ -35,6 +35,7 @@ export const updateStudent = (id, updatedUser) => API.patch(`/student/updatestud
 
 //Teacher
 export const getTeacher = (userId) => API.post('/teacher/getteacher', userId);
+export const updateTeacher = (id, updatedUser) => API.patch(`/teacher/updateteacher/${id}`, updatedUser);
 
 //Course
 export const createUsers = (newUser) => API.post('/course/registerCourse', newUser);

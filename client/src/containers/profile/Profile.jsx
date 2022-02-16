@@ -10,6 +10,7 @@ import { getStudent } from '../../actions/student';
 import { getTeacher } from '../../actions/teacher';
 import decode from 'jwt-decode';
 import Input from "../../components/login&register/Input";
+import { updateTeacher } from "../../api";
 
 
 const Profile = () => {
@@ -84,6 +85,12 @@ const Profile = () => {
         e.preventDefault();
 
         dispatch(updateStudent(id, studentData));
+        window.location.reload();
+    }
+    const handleSubmit2 = (e) => {
+        e.preventDefault();
+
+        dispatch(updateTeacher(id, teacherData));
         window.location.reload();
     }
 
@@ -206,7 +213,7 @@ const Profile = () => {
                     <Grid item xs={12} md={8}>
                         <Card elevation={5} style={{ height: '100%' }}>
                             <CardContent className={classes.infoContent}>
-                                <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+                                <form autoComplete="off" noValidate onSubmit={handleSubmit2}>
                                     <Typography variant="h6">Information</Typography>
                                     <Divider style={{ margin: theme.spacing(2) }} />
                                     <Grid container spacing={3}>
@@ -238,7 +245,7 @@ const Profile = () => {
                     <Grid item xs={12} md={12}>
                         <Card elevation={5} style={{ height: '100%' }}>
                             <CardContent className={classes.infoContent}>
-                                <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+                                <form autoComplete="off" noValidate onSubmit={handleSubmit2}>
                                     <Typography variant="h6">Other Information</Typography>
                                     <Divider style={{ margin: theme.spacing(2) }} />
                                     <Grid container spacing={3}>

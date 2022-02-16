@@ -7,6 +7,7 @@ export const AUTH = 'AUTH';
 export const LOGOUT = 'LOGOUT';
 
 export const GET_TEACHER = 'GET_TEACHER';
+export const UPDATE_TEACHER = 'UPDATE_TEACHER';
 
 
 export const GET_ALL_STUDENT_COURSE = 'GET_ALL_STUDENT_COURSE';
