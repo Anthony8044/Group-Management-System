@@ -39,6 +39,7 @@ export const getTeachers = () => API.get('/teacher/getallteachers');
 export const updateTeacher = (id, updatedUser) => API.patch(`/teacher/updateteacher/${id}`, updatedUser);
 
 //Course
+export const createCourse = (formData) => API.post('/course/createCourse', formData);
 export const registerCourse = (formData) => API.post('/course/registerCourse', formData);
 export const getAllCourses = () => API.get('/course/getAllCourses');
 

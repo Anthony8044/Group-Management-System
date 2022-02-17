@@ -4,6 +4,40 @@ import jwt from 'jsonwebtoken';
 import { pool } from '../db.js'
 const router = express.Router();
 
+export const createCourse = async (req, res) => {
+    const { code, sections, course_title } = req.body;
+    const course_id = [];
+    const course_section = [];
+    let i = 1;
+
+    while (i <= sections) {
+        course_id.push(code + "-" + i);
+        course_section.push(i);
+        i++;
+    }
+
+    try {
+        const course = await pool.query("SELECT * FROM course WHERE course_id = $1", [code + "-1"]);
+
+        if (!course.rows.length === 0) {
+            return res.status(401).json("Course already exiists!");
+        }
+        let a = 0;
+        while (a < sections) {
+            await pool.query(
+                "INSERT INTO course (course_id, course_code, course_title, course_section) VALUES ($1, $2, $3, $4) RETURNING *",
+                [course_id[a], code, course_title, course_section[a]]
+            );
+            a++;
+        }
+
+        return res.status(200).json({ message: "Created course successfully!" })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 export const registerCourse = async (req, res) => {
     const { course_code, user_id, course_section } = req.body;
 
