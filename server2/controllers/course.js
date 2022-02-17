@@ -21,9 +21,9 @@ export const registerCourse = async (req, res) => {
         }
         const user = await pool.query("SELECT * FROM alluser WHERE user_id = $1", [user_id]);
 
-        const insertCourseUser = await pool.query("INSERT INTO user_course (user_id, course_id, course_role) VALUES ($1, $2, $3) RETURNING *", [user_id, course.rows[0].course_id, user.rows[0].role] );
+        const insertCourseUser = await pool.query("INSERT INTO user_course (user_id, course_id, course_role) VALUES ($1, $2, $3) RETURNING *", [user_id, course.rows[0].course_id, user.rows[0].role]);
 
-        res.status(200).json( {message: 'User added to course successfully!'});
+        res.status(200).json({ message: 'User added to course successfully!' });
 
     } catch (err) {
         console.error(err.message);
@@ -31,8 +31,24 @@ export const registerCourse = async (req, res) => {
     }
 };
 
+export const getAllCourses = async (req, res) => {
+
+    try {
+        const course = await pool.query("SELECT e.course_id, array_agg(te.user_id) AS student_user_id FROM course e LEFT JOIN student_course te on e.course_id=te.course_id LEFT JOIN alluser t on te.user_id=t.user_id GROUP BY e.course_id;");
+
+        if (course.rows.length === 0) {
+            return res.status(401).json("No courses");
+        }
+
+        return res.status(200).json(course.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 export const getAllStudentCourse = async (req, res) => {
-    
+
     try {
         const course = await pool.query("SELECT * FROM student_course");
 
@@ -48,7 +64,7 @@ export const getAllStudentCourse = async (req, res) => {
 };
 
 export const getAllTeacherCourse = async (req, res) => {
-    
+
     try {
         const course = await pool.query("SELECT * FROM teacher_course");
 

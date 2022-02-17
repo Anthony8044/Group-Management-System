@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, Container, Grid, useTheme } from "@mui/material";
 import FeaturedInfo from "../../components/featuredInfo/FeaturedInfo";
 import { useDispatch, useSelector } from 'react-redux';
-import { createUsers } from '../../actions/student';
 import FileBase from 'react-file-base64';
 import Input from "../../components/login&register/Input";
 

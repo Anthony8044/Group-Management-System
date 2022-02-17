@@ -2,10 +2,10 @@ import { GET_TEACHER, UPDATE_TEACHER } from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
 //Action Creators
-export const getTeacher = (user) => async (dispatch) => {
+export const getTeachers = () => async (dispatch) => {
 
     try {
-        const { data } = await api.getTeacher(user);
+        const { data } = await api.getTeachers();
 
         dispatch({type: GET_TEACHER, payload: data});
 

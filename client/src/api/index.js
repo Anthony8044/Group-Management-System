@@ -31,17 +31,18 @@ export const registerStudent = (formData) => API.post('/auth/registerStudent', f
 export const registerTeacher = (formData) => API.post('/auth/registerTeacher', formData);
 
 //Student
-export const getStudent = (userId) => API.post('/student/getstudent', userId);
+export const getStudents = () => API.get('/student/getallstudents');
 export const updateStudent = (id, updatedUser) => API.patch(`/student/updatestudent/${id}`, updatedUser);
 
 //Teacher
-export const getTeacher = (userId) => API.post('/teacher/getteacher', userId);
+export const getTeachers = () => API.get('/teacher/getallteachers');
 export const updateTeacher = (id, updatedUser) => API.patch(`/teacher/updateteacher/${id}`, updatedUser);
 
 //Course
-export const createUsers = (newUser) => API.post('/course/registerCourse', newUser);
-export const getAllStudentCourse = () => API.get('/course/getAllStudentCourse');
-export const getAllTeacherCourse = () => API.get('/course/getAllTeacherCourse');
+export const registerCourse = (formData) => API.post('/course/registerCourse', formData);
+export const getAllCourses = () => API.get('/course/getAllCourses');
+// export const getAllStudentCourse = () => API.get('/course/getAllStudentCourse');
+// export const getAllTeacherCourse = () => API.get('/course/getAllTeacherCourse');
 
 
 export const deleteUser = (id) => API.delete(`users/${id}`);

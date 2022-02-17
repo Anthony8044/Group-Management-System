@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import student from './student';
-import teacher from './teacher';
+import students from './students';
+import teachers from './teachers';
 import auth from './auth';
-import { getAllStudentCourse, getAllTeacherCourse  } from './course';
+import courses from './courses';
 
 
-export default combineReducers({ student, teacher, auth, getAllStudentCourse, getAllTeacherCourse })
+export default combineReducers({ students, teachers, auth, courses })

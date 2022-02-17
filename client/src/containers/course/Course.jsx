@@ -6,10 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateStudent } from "../../actions/student";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStudent } from '../../actions/student';
-import { getTeacher } from '../../actions/teacher';
-import { getAllStudentCourse } from '../../actions/course';
-import { getAllTeacherCourse } from '../../actions/course';
+import { getStudents } from '../../actions/student';
+import { getTeachers } from '../../actions/teacher';
+import { getAllCourses } from '../../actions/course';
 import decode from 'jwt-decode';
 import { AccountCircle } from "@mui/icons-material";
 
@@ -32,22 +31,24 @@ const Course = () => {
 
     useEffect(() => {
         if (userId) {
-            dispatch(getAllTeacherCourse());
-            dispatch(getAllStudentCourse());
+            dispatch(getAllCourses());
+            dispatch(getStudents());
         }
         // if (userId?.role === "Student") {
-        //     dispatch(getStudent({ user_id: userId?.user_id }));
+        //     dispatch(getStudents({ user_id: userId?.user_id }));
         //     dispatch(getAllStudentCourse());
         // } else if (userId?.role === "Teacher") {
-        //     dispatch(getTeacher({ user_id: userId?.user_id }));
+        //     dispatch(getTeachers({ user_id: userId?.user_id }));
         //     dispatch(getAllTeacherCourse());
         // }
     }, [userId]);
 
-    const [user] = useSelector((state) => state.student);
+    //const [user] = useSelector((state) => state.student);
     //const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));
-    const AllStudentCourse = useSelector((state) => state.getAllStudentCourse.filter(({ course_id }) => course_id === id));
-    const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ course_id }) => course_id === id));
+    //const courses = useSelector((state) => state.courses.filter(({ course_id }) => course_id === id));
+    const [allCourses] = useSelector((state) => userId ? state.courses.filter(item => item.course_id === id) : "");
+    const student = useSelector((state) => userId ? state.students.filter((u) => allCourses?.student_user_id.includes(u.user_id)) : null);
+    //const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ course_id }) => course_id === id));
 
 
     return (
@@ -59,8 +60,8 @@ const Course = () => {
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
                             <Typography variant="h5" align="center">Teacher</Typography>
-                            <List >
-                                {AllTeacherCourse.map((item) => (
+                            {/* <List >
+                                {student?.map((item) => (
                                     <ListItemButton
                                         key={item.user_id}
                                         // selected={currentRoute.pathname === item.path ? true : false}
@@ -78,7 +79,7 @@ const Course = () => {
                                         />
                                     </ListItemButton>
                                 ))}
-                            </List>
+                            </List> */}
                             <Divider style={{ margin: theme.spacing(2) }} />
 
                             <Typography variant="h5" align="center">Students</Typography>
@@ -87,7 +88,7 @@ const Course = () => {
                             <Grid container spacing={2}>
                                 <Grid item >
                                     <List >
-                                        {AllStudentCourse.map((item) => (
+                                        {student?.map((item) => (
                                             <ListItemButton
                                                 key={item.user_id}
                                                 // selected={currentRoute.pathname === item.path ? true : false}

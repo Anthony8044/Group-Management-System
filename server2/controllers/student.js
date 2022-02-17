@@ -5,17 +5,15 @@ import { pool } from '../db.js'
 const router = express.Router();
 
 
-export const getStudentParams = async (req, res) => {
-    const { id } = req.params;
-
+export const getAllStudents = async (req, res) => {
     try {
-        const user = await pool.query("Select alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id from alluser, student where alluser.user_id = $1 and student.user_id_fk = $1;", [id]);
+        const user = await pool.query("Select alluser.user_id, alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id from alluser, student WHERE alluser.user_id = student.user_id_fk;");
 
         if (user.rows.length === 0) {
-            return res.status(401).json("User does'nt exist.");
+            return res.status(401).json("No Students.");
         }
 
-        return res.status(200).json(user.rows[0])
+        return res.status(200).json(user.rows)
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server error");

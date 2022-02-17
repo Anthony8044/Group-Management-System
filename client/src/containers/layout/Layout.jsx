@@ -7,10 +7,10 @@ import { Home, AccountBox, Class, Groups, Menu, Notifications } from "@mui/icons
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudent } from '../../actions/student';
-import { getAllStudentCourse } from '../../actions/course';
-import { getAllTeacherCourse } from '../../actions/course';
-import { getTeacher } from '../../actions/teacher';
+import { getStudents } from '../../actions/student';
+import { getAllCourses } from '../../actions/course';
+//import { getAllTeacherCourse } from '../../actions/course';
+import { getTeachers } from '../../actions/teacher';
 
 const Layout = ({ children }) => {
     const classes = useStyles();
@@ -20,10 +20,13 @@ const Layout = ({ children }) => {
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [userId, setUserId] = useState(null);
-    const [student] = useSelector((state) => state.student);
-    const [teacher] = useSelector((state) => state.teacher);
-    const AllStudentCourse = useSelector((state) => state.getAllStudentCourse.filter(({ user_id }) => user_id === userId?.user_id));
-    const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ user_id }) => user_id === userId?.user_id));
+    const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
+    const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
+    //const [teacher] = useSelector((state) => state.teacher);
+
+    const allCourses = useSelector((state) => state.courses.filter(item => item.student_user_id
+        .some(student_user_id => student_user_id === userId?.user_id)
+    ));
     const loggedIn = JSON.parse(localStorage.getItem('profile'));
     useEffect(() => {
         if (loggedIn) {
@@ -35,11 +38,11 @@ const Layout = ({ children }) => {
 
     useEffect(() => {
         if (userId?.role === "Student") {
-            dispatch(getStudent({ user_id: userId?.user_id }));
-            dispatch(getAllStudentCourse());
+            dispatch(getStudents());
+            dispatch(getAllCourses());
         } else if (userId?.role === "Teacher") {
-            dispatch(getTeacher({ user_id: userId?.user_id }));
-            dispatch(getAllTeacherCourse());
+            dispatch(getTeachers());
+            dispatch(getAllCourses());
         }
     }, [userId]);
 
@@ -179,7 +182,7 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        {AllStudentCourse.map((item) => (
+                        {allCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
                                 // selected={currentRoute.pathname === item.path ? true : false}
@@ -214,7 +217,7 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        {AllTeacherCourse.map((item) => (
+                        {allCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
                                 // selected={currentRoute.pathname === item.path ? true : false}
