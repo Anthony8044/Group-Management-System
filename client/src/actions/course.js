@@ -26,33 +26,3 @@ export const getAllCourses = () => async (dispatch) => {
     }
 
 }
-
-// export const getAllStudentCourse = () => async (dispatch) => {
-
-//     try {
-//         const { data } = await api.getAllStudentCourse();
-
-//         dispatch({type: GET_ALL_STUDENT_COURSE, payload: data});
-
-//     } catch (error) {
-
-//         console.log(error);
-
-//     }
-
-// }
-
-// export const getAllTeacherCourse = () => async (dispatch) => {
-
-//     try {
-//         const { data } = await api.getAllTeacherCourse();
-
-//         dispatch({type: GET_ALL_TEACHER_COURSE, payload: data});
-
-//     } catch (error) {
-
-//         console.log(error);
-
-//     }
-
-// }

@@ -1,4 +1,4 @@
-import { GET_STUDENT, UPDATE, DELETE } from '../constants/actionTypes';
+import { GET_STUDENT, UPDATE_STUDENT, DELETE_STUDENT } from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
 //Action Creators
@@ -23,17 +23,17 @@ export const updateStudent = (id, user) => async (dispatch) => {
     try {
         const { data } = await api.updateStudent(id, user);
 
-        dispatch({type: UPDATE, payload: data })
+        dispatch({type: UPDATE_STUDENT, payload: data })
     } catch (error) {
         console.log(error);
     }
 }
 
-export const deleteUser = (id) => async (dispatch) => {
+export const deleteStudent = (id) => async (dispatch) => {
     try {
-        await api.deleteUser(id);
+        await api.deleteStudent(id);
 
-        dispatch({ type: DELETE, payload: id});
+        dispatch({ type: DELETE_STUDENT, payload: id});
     } catch (error) {
         console.log(error);
     }

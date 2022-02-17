@@ -33,21 +33,17 @@ const Course = () => {
         if (userId) {
             dispatch(getAllCourses());
             dispatch(getStudents());
+            dispatch(getTeachers());
         }
-        // if (userId?.role === "Student") {
-        //     dispatch(getStudents({ user_id: userId?.user_id }));
-        //     dispatch(getAllStudentCourse());
-        // } else if (userId?.role === "Teacher") {
-        //     dispatch(getTeachers({ user_id: userId?.user_id }));
-        //     dispatch(getAllTeacherCourse());
-        // }
+
     }, [userId]);
 
     //const [user] = useSelector((state) => state.student);
     //const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));
     //const courses = useSelector((state) => state.courses.filter(({ course_id }) => course_id === id));
     const [allCourses] = useSelector((state) => userId ? state.courses.filter(item => item.course_id === id) : "");
-    const student = useSelector((state) => userId ? state.students.filter((u) => allCourses?.student_user_id.includes(u.user_id)) : null);
+    const student = useSelector((state) => userId ? state.students.filter((u) => allCourses?.user_id.includes(u.user_id)) : null);
+    const teacher = useSelector((state) => userId ? state.teachers.filter((u) => allCourses?.user_id.includes(u.user_id)) : null);
     //const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ course_id }) => course_id === id));
 
 
@@ -60,8 +56,8 @@ const Course = () => {
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
                             <Typography variant="h5" align="center">Teacher</Typography>
-                            {/* <List >
-                                {student?.map((item) => (
+                            <List >
+                                {teacher?.map((item) => (
                                     <ListItemButton
                                         key={item.user_id}
                                         // selected={currentRoute.pathname === item.path ? true : false}
@@ -79,7 +75,7 @@ const Course = () => {
                                         />
                                     </ListItemButton>
                                 ))}
-                            </List> */}
+                            </List>
                             <Divider style={{ margin: theme.spacing(2) }} />
 
                             <Typography variant="h5" align="center">Students</Typography>

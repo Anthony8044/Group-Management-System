@@ -34,42 +34,10 @@ export const registerCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
 
     try {
-        const course = await pool.query("SELECT e.course_id, array_agg(te.user_id) AS student_user_id FROM course e LEFT JOIN student_course te on e.course_id=te.course_id LEFT JOIN alluser t on te.user_id=t.user_id GROUP BY e.course_id;");
+        const course = await pool.query("SELECT e.course_id, array_agg(te.user_id) AS user_id FROM course e LEFT JOIN user_course te on e.course_id=te.course_id LEFT JOIN alluser t on te.user_id=t.user_id GROUP BY e.course_id;");
 
         if (course.rows.length === 0) {
             return res.status(401).json("No courses");
-        }
-
-        return res.status(200).json(course.rows)
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server error");
-    }
-};
-
-export const getAllStudentCourse = async (req, res) => {
-
-    try {
-        const course = await pool.query("SELECT * FROM student_course");
-
-        if (course.rows.length === 0) {
-            return res.status(401).json("No one registered to any courses");
-        }
-
-        return res.status(200).json(course.rows)
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server error");
-    }
-};
-
-export const getAllTeacherCourse = async (req, res) => {
-
-    try {
-        const course = await pool.query("SELECT * FROM teacher_course");
-
-        if (course.rows.length === 0) {
-            return res.status(401).json("No one registered to any courses");
         }
 
         return res.status(200).json(course.rows)

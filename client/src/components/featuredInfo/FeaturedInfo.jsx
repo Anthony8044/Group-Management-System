@@ -2,7 +2,7 @@ import { React } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteUser } from "../../actions/student";
+import { deleteStudent } from "../../actions/student";
 import { DeleteOutline } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import useStyles from './styles'
@@ -47,7 +47,7 @@ const FeaturedInfo = ({ setCurrentId }) => {
                   {(user?.result?._id === params.row.creator) && (
                      <DeleteOutline
                         className={classes.userDelete}
-                        onClick={() => dispatch(deleteUser(params.row._id))}
+                        onClick={() => dispatch(deleteStudent(params.row._id))}
                      />
                   )}
                </div>

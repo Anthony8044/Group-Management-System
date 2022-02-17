@@ -41,14 +41,9 @@ export const updateTeacher = (id, updatedUser) => API.patch(`/teacher/updateteac
 //Course
 export const registerCourse = (formData) => API.post('/course/registerCourse', formData);
 export const getAllCourses = () => API.get('/course/getAllCourses');
-// export const getAllStudentCourse = () => API.get('/course/getAllStudentCourse');
-// export const getAllTeacherCourse = () => API.get('/course/getAllTeacherCourse');
 
 
-export const deleteUser = (id) => API.delete(`users/${id}`);
-
-// export const signin = (formData) => API.post('/users/signin', formData);
-// export const signup = (formData) => API.post('/users/signup', formData);
+export const deleteStudent = (id) => API.delete(`users/${id}`);
 
 
 

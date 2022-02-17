@@ -9,7 +9,6 @@ import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../actions/student';
 import { getAllCourses } from '../../actions/course';
-//import { getAllTeacherCourse } from '../../actions/course';
 import { getTeachers } from '../../actions/teacher';
 
 const Layout = ({ children }) => {
@@ -22,10 +21,8 @@ const Layout = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
-    //const [teacher] = useSelector((state) => state.teacher);
-
-    const allCourses = useSelector((state) => state.courses.filter(item => item.student_user_id
-        .some(student_user_id => student_user_id === userId?.user_id)
+    const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
+        .some(user_id => user_id === userId?.user_id)
     ));
     const loggedIn = JSON.parse(localStorage.getItem('profile'));
     useEffect(() => {
