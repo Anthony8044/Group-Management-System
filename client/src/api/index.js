@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 const baseURL = 'http://localhost:5000';
 const API = axios.create({ baseURL });
 
-API.interceptors.request.use( async (req) => {
+API.interceptors.request.use(async (req) => {
   let userToken = '';
   if (localStorage.getItem('profile')) {
     userToken = JSON.parse(localStorage.getItem('profile'));
@@ -17,7 +17,7 @@ API.interceptors.request.use( async (req) => {
     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
     if (!isExpired) return req
 
-    const response = await axios.post(`${baseURL}/auth/refreshToken`, {tok: userToken?.refreshToken});
+    const response = await axios.post(`${baseURL}/auth/refreshToken`, { tok: userToken?.refreshToken });
     console.log(response);
     localStorage.setItem('profile', JSON.stringify(response.data));
     req.headers.Authorization = `Bearer ${response.data.token}`;
@@ -45,6 +45,7 @@ export const getAllCourses = () => API.get('/course/getAllCourses');
 
 
 export const deleteStudent = (id) => API.delete(`users/${id}`);
+
 
 
 

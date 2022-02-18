@@ -3,13 +3,16 @@ import useStyles from './styles'
 import { useTheme } from '@mui/styles';
 import { List, useMediaQuery, CssBaseline, Avatar, Button } from '@mui/material'
 import { ListItemButton, ListItemIcon, ListItemText, Drawer, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
-import { Home, AccountBox, Class, Groups, Menu, Notifications } from "@mui/icons-material";
+import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite } from "@mui/icons-material";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../actions/student';
 import { getAllCourses } from '../../actions/course';
 import { getTeachers } from '../../actions/teacher';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Layout = ({ children }) => {
     const classes = useStyles();
@@ -19,12 +22,14 @@ const Layout = ({ children }) => {
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [userId, setUserId] = useState(null);
+    const error = useSelector((state) => state.errors);
     const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
     const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
         .some(user_id => user_id === userId?.user_id)
     ));
     const loggedIn = JSON.parse(localStorage.getItem('profile'));
+
     useEffect(() => {
         if (loggedIn) {
             setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
@@ -43,7 +48,9 @@ const Layout = ({ children }) => {
         }
     }, [userId]);
 
-
+    const clearError = () => {
+        dispatch({ type: "ERROR_MESSAGE_REQUEST" });
+    };
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
@@ -52,8 +59,35 @@ const Layout = ({ children }) => {
         //setUser(null);
     };
 
+    const renderError = () => {
+        if (error.error) {
+            toast.error(error.error, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                toastId: 'error1',
+            });
+            clearError();
+        } else if (error.items.length != 0 && error.loading === false) {
+            toast.error("Success!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                toastId: 'success1',
+            });
+            clearError();
+        }
+    }
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     const toggleDrawer = event => {
         if (
@@ -104,7 +138,6 @@ const Layout = ({ children }) => {
 
     return (
         <div className={classes.root}>
-
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar} elevation={9} >
                 <Toolbar>
@@ -120,13 +153,6 @@ const Layout = ({ children }) => {
                     <Typography variant="h4" noWrap className={classes.title}>
                         Group Management System
                     </Typography>
-
-                    {/* <Typography variant="h7" noWrap className={classes.name}>
-                        Anthony Stoltzfus
-                    </Typography>
-                    <Link to={"/register"}>
-                        <Avatar className={classes.avatar} src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
-                    </Link> */}
 
                     {student &&
                         <div className={classes.profile}>
@@ -164,6 +190,7 @@ const Layout = ({ children }) => {
                         Dashboard
                     </Typography>
                 </div>
+                {renderError()}
 
                 {student &&
                     <List>
@@ -182,7 +209,6 @@ const Layout = ({ children }) => {
                         {allCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
-                                // selected={currentRoute.pathname === item.path ? true : false}
                                 onClick={() => navigate(`/classes/${item.course_id}`)}
                                 className={classes.menuItems}
                             >
@@ -217,7 +243,6 @@ const Layout = ({ children }) => {
                         {allCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
-                                // selected={currentRoute.pathname === item.path ? true : false}
                                 onClick={() => navigate(`/classes/${item.course_id}`)}
                                 className={classes.menuItems}
                             >

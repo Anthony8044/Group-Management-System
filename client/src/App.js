@@ -8,6 +8,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./components/login&register/Register";
 import Login from "./components/login&register/Login";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme({
    palette: {
@@ -49,6 +51,18 @@ const App = () => {
                </Routes>
             </div>
          </BrowserRouter>
+         <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+         />
+         <ToastContainer />
       </ThemeProvider>
    );
 }

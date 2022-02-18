@@ -19,8 +19,8 @@ export const createCourse = async (req, res) => {
     try {
         const course = await pool.query("SELECT * FROM course WHERE course_id = $1", [code + "-1"]);
 
-        if (!course.rows.length === 0) {
-            return res.status(401).json("Course already exiists!");
+        if (course.rows.length > 0) {
+            return res.status(401).json({ message: "Course already exists!" });
         }
         let a = 0;
         while (a < sections) {
@@ -45,13 +45,13 @@ export const registerCourse = async (req, res) => {
         const course = await pool.query("SELECT * FROM course WHERE course_id = $1", [course_id]);
 
         if (course.rows.length === 0) {
-            return res.status(401).json("Course does'nt exist.");
+            return res.status(401).json({ message: "Course does'nt exist." });
         }
 
         const courseUser = await pool.query("SELECT * FROM user_course WHERE course_id= $1 AND user_id = $2", [course_id, user_id]);
 
         if (courseUser.rows.length > 0) {
-            return res.status(401).json("Already joined course.");
+            return res.status(401).json({ message: "Already joined course." });
         }
         const user = await pool.query("SELECT * FROM alluser WHERE user_id = $1", [user_id]);
 
@@ -61,7 +61,7 @@ export const registerCourse = async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server error");
+        res.status(500).send(err.message);
     }
 };
 
