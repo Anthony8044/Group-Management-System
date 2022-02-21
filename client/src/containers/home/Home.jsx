@@ -8,13 +8,14 @@ import Input from "../../components/login&register/Input";
 import { createCourse, getAllCourses, registerCourse } from "../../actions/course";
 import { getStudents } from "../../actions/student";
 import ControlledSelect from "./ControlledSelect";
-
+import { toast } from 'react-toastify';
 
 
 const Home = () => {
     const theme = useTheme();
     const classes = useStyles();
     const dispatch = useDispatch();
+    const error = useSelector((state) => state.errors);
     const [newCourseData, setNewCourseData] = useState({ code: '', sections: '', course_title: '' });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     //const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
@@ -26,6 +27,12 @@ const Home = () => {
         dispatch(getAllCourses());
     }, []);
 
+    useEffect(() => {
+        if (error.error || error.success) {
+            dispatch({ type: "ERROR_CLEAR" });
+        }
+    }, [error.error, error.success]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         dispatch(createCourse(newCourseData));
@@ -36,12 +43,40 @@ const Home = () => {
         dispatch(registerCourse(regCourseData));
     };
 
+
+    const renderError = () => {
+        if (error.error) {
+            toast.error(error.error, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                toastId: 'error1',
+            });
+        } else if (error.success) {
+            toast.success(error.success, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                toastId: 'success1',
+            });
+        }
+    }
+
     const hCNewCourse = (e) => setNewCourseData({ ...newCourseData, [e.target.name]: e.target.value });
 
     const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
 
     return (
         <Container maxWidth="xl">
+            {renderError()}
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Home</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={4}>
@@ -86,7 +121,6 @@ const Home = () => {
                     </Card>
                 </Grid>
             </Grid>
-
         </Container >
     )
 }

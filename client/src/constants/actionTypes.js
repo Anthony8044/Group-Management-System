@@ -18,3 +18,8 @@ export const DELETE_TEACHER = 'DELETE_TEACHER';
 export const GET_COURSES = 'GET_COURSES';
 export const REGISTER_COURSE = 'REGISTER_COURSE';
 
+//ERROR
+export const ERROR_REQUEST = 'ERROR_REQUEST';
+export const ERROR_SUCCESS = 'ERROR_SUCCESS';
+export const ERROR_FAIL = 'ERROR_FAIL';
+export const ERROR_CLEAR = 'ERROR_CLEAR';

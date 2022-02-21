@@ -1,36 +1,36 @@
+import { errorReducer } from "../api/errorhandling";
+import { ERROR_REQUEST, ERROR_SUCCESS, ERROR_FAIL, ERROR_CLEAR } from '../constants/actionTypes';
 
 const initState = {
-    items: [],
-    loading: false,
-    error: null
+    isLoading: false,
+    error: null,
+    success: null
 }
+
 
 const userReducers = (state = initState, action) => {
     switch (action.type) {
-        case "ERROR_MESSAGE_REQUEST":
+        case ERROR_REQUEST:
             return {
-                ...state,
-                loading: true,
+                ...errorReducer(state, action),
+                isLoading: true,
+                success: null,
+            }
+        case ERROR_SUCCESS:
+            return {
+                ...errorReducer(state, action),
+                isLoading: false,
+            }
+        case ERROR_FAIL:
+            return {
+                ...errorReducer(state, action),
+                isLoading: false,
+            }
+        case ERROR_CLEAR:
+            return {
+                isLoading: false,
                 error: null,
-            }
-        case "ERROR_MESSAGE_SUCESS":
-            return {
-                ...state,
-                loading: false,
-                items: action.payload,
-            }
-        case "ERROR_MESSAGE_FAIL":
-            return {
-                ...state,
-                loading: false,
-                error: action.error,
-            }
-        case "ERROR_CLEAR":
-            return {
-                ...state,
-                items: [],
-                loading: false,
-                error: null,
+                success: null
             }
 
         default:

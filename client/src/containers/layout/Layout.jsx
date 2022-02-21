@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useStyles from './styles'
 import { useTheme } from '@mui/styles';
 import { List, useMediaQuery, CssBaseline, Avatar, Button } from '@mui/material'
 import { ListItemButton, ListItemIcon, ListItemText, Drawer, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite } from "@mui/icons-material";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
 import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../actions/student';
 import { getAllCourses } from '../../actions/course';
 import { getTeachers } from '../../actions/teacher';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 
 const Layout = ({ children }) => {
@@ -22,13 +20,15 @@ const Layout = ({ children }) => {
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [userId, setUserId] = useState(null);
-    const error = useSelector((state) => state.errors);
     const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
     const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
         .some(user_id => user_id === userId?.user_id)
     ));
     const loggedIn = JSON.parse(localStorage.getItem('profile'));
+    const [value, setValue] = useState('');
+    const countRef = useRef(0);
+
 
     useEffect(() => {
         if (loggedIn) {
@@ -39,18 +39,10 @@ const Layout = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        if (userId?.role === "Student") {
-            dispatch(getStudents());
-            dispatch(getAllCourses());
-        } else if (userId?.role === "Teacher") {
-            dispatch(getTeachers());
-            dispatch(getAllCourses());
-        }
-    }, [userId]);
-
-    const clearError = () => {
-        dispatch({ type: "ERROR_MESSAGE_REQUEST" });
-    };
+        dispatch(getStudents());
+        dispatch(getTeachers());
+        dispatch(getAllCourses());
+    }, [student?.user_id, teacher?.user_id]);
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
@@ -58,34 +50,6 @@ const Layout = ({ children }) => {
         window.location.reload();
         //setUser(null);
     };
-
-    const renderError = () => {
-        if (error.error) {
-            toast.error(error.error, {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'error1',
-            });
-            clearError();
-        } else if (error.items.length != 0 && error.loading === false) {
-            toast.error("Success!", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'success1',
-            });
-            clearError();
-        }
-    }
 
     const [open, setOpen] = useState(false);
 
@@ -190,7 +154,6 @@ const Layout = ({ children }) => {
                         Dashboard
                     </Typography>
                 </div>
-                {renderError()}
 
                 {student &&
                     <List>
@@ -265,7 +228,7 @@ const Layout = ({ children }) => {
 
             <div className={classes.page}>
                 <div className={classes.toolbar} />
-                {children}
+                <Outlet />
             </div>
 
         </div >

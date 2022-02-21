@@ -42,12 +42,14 @@ const App = () => {
          <BrowserRouter>
             <div className="container">
                <Routes>
-                  <Route path="/" element={<Layout><Home /> </Layout>} />
-                  <Route path="/profile/:id" element={<Layout><Profile /> </Layout>} />
-                  <Route path="/classes/:id" element={<Layout><Course /> </Layout>} />
-                  <Route path="/groups" element={<Layout><Home /> </Layout>} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/login" element={<Login />} />
+                  <Route element={<Layout />}>
+                     <Route path="/" element={<Home />} />
+                     <Route path="/profile/:id" element={<Profile />} />
+                     <Route path="/classes/:id" element={<Course />} />
+                     <Route path="/groups" element={<Home />} />
+                  </Route>
                </Routes>
             </div>
          </BrowserRouter>

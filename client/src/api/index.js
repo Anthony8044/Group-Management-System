@@ -1,6 +1,9 @@
 import axios from 'axios';
 import decode from 'jwt-decode';
 import dayjs from 'dayjs';
+import { store } from '../index';
+import { errorActionCreator } from '../api/errorhandling';
+
 
 const baseURL = 'http://localhost:5000';
 const API = axios.create({ baseURL });
@@ -24,6 +27,12 @@ API.interceptors.request.use(async (req) => {
   }
   return req;
 });
+
+API.interceptors.response.use(
+  response => response,
+  error => {
+    store.dispatch(errorActionCreator("ERROR_FAIL", error));
+  });
 
 //Auth
 export const signin = (formData) => API.post('/auth/login', formData);

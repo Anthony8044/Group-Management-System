@@ -32,12 +32,11 @@ const Profile = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (userId) {
-            dispatch(getStudents());
-            dispatch(getTeachers());
-        }
-    }, [userId]);
+    // useEffect(() => {
+    //     dispatch(getStudents());
+    //     dispatch(getTeachers());
+    // }, []);
+
 
     const [studentData, setStudentData] = useState({
         given_name: '',
@@ -62,15 +61,17 @@ const Profile = () => {
         teacher_id: ''
     });
     //const user = useSelector((state) => id ? state.student.find((u) => u._id === id) : null);
+    //console.log(student);
 
     useEffect(() => {
-        if (student) {
+        if (student?.user_id) {
             setStudentData(student);
         }
-        if (teacher) {
+        if (teacher?.user_id) {
             setTeacherData(teacher);
         }
-    }, [student, teacher])
+
+    }, [student?.user_id, teacher?.user_id])
 
     // useEffect(() => {
     //     setUserId(decode(JSON.parse(localStorage.getItem('profile')).token).user_id);
@@ -85,7 +86,7 @@ const Profile = () => {
         e.preventDefault();
 
         dispatch(updateStudent(id, studentData));
-        window.location.reload();
+        //window.location.reload();
     }
     const handleSubmit2 = (e) => {
         e.preventDefault();
