@@ -16,7 +16,7 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
         }
     };
     return (
-        <FormControl variant="standard" sx={{ m: 1, minWidth: minWidth }}>
+        <FormControl variant="outlined" sx={{ m: 1, minWidth: minWidth }}>
             {user ? (
                 <InputLabel >Users</InputLabel>
             )
@@ -34,7 +34,7 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
                     return (
 
                         <MenuItem key={user ? option.user_id : option.course_id} value={user ? option.user_id : option.course_id}>
-                            {user ? (option.given_name + " " + option.family_name + " | " + option.student_id) : option.course_id}
+                            {user ? (option.given_name + " " + option.family_name + " | " + option?.student_id) : option.course_id}
                         </MenuItem>
 
                     );

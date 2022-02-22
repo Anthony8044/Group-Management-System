@@ -92,7 +92,7 @@ const Profile = () => {
         e.preventDefault();
 
         dispatch(updateTeacher(id, teacherData));
-        window.location.reload();
+        //window.location.reload();
     }
 
     const handleChange = (e) => setStudentData({ ...studentData, [e.target.name]: e.target.value });

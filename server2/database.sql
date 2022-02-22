@@ -37,16 +37,15 @@ CREATE TABLE student(
 
 CREATE TABLE course(
     course_id VARCHAR(255) PRIMARY KEY,
-    course_code VARCHAR(255) NOT NULL,
     course_title VARCHAR(255) NOT NULL,
-    course_section VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    instructor_id_fk uuid NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_course(
     user_id uuid REFERENCES alluser(user_id) ON DELETE CASCADE,
     course_id VARCHAR(255) REFERENCES course(course_id) ON DELETE CASCADE,
-    course_role VARCHAR(255) NOT NULL,
     PRIMARY KEY(user_id, course_id)
 );
 
@@ -58,14 +57,14 @@ CREATE TABLE project(
     students_per_group VARCHAR(255) NOT NULL,
     formation_type VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
-    user_id_fk uuid NOT NULL,
+    instructor_id_fk uuid NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE,
-    CONSTRAINT fk_user_id FOREIGN KEY(user_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
 
 create view student_course as
-select alluser.user_id, user_course.course_id, user_course.course_role, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
+select alluser.user_id, user_course.course_id, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
 from alluser, student, user_course
 where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk;
 

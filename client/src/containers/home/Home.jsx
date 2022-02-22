@@ -16,11 +16,13 @@ const Home = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const error = useSelector((state) => state.errors);
-    const [newCourseData, setNewCourseData] = useState({ code: '', sections: '', course_title: '' });
+    const [newCourseData, setNewCourseData] = useState({ code: '', sections: '', course_title: '', instructor_id: '' });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     //const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const student = useSelector((state) => state.students);
+    const teacher = useSelector((state) => state.teachers);
     const allCourses = useSelector((state) => state.courses);
+    console.log(teacher);
 
     useEffect(() => {
         dispatch(getStudents());
@@ -89,7 +91,10 @@ const Home = () => {
                                 <Grid container spacing={3}>
                                     <Input name="code" label="Course Code" value={newCourseData.course_code} handleChange={hCNewCourse} />
                                     <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} />
-                                    <Input name="course_title" label="Course Title" value={newCourseData.course_section} handleChange={hCNewCourse} />
+                                    <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} />
+                                    <Grid item xs={12} >
+                                        <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} user={true} />
+                                    </Grid>
                                     <Grid item xs={12} >
                                         <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create Course</Button>
                                     </Grid>

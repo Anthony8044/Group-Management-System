@@ -29,21 +29,21 @@ const Course = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (userId) {
-            dispatch(getAllCourses());
-            dispatch(getStudents());
-            dispatch(getTeachers());
-        }
+    // useEffect(() => {
+    //     if (userId) {
+    //         dispatch(getAllCourses());
+    //         dispatch(getStudents());
+    //         dispatch(getTeachers());
+    //     }
 
-    }, [userId]);
+    // }, [userId]);
 
     //const [user] = useSelector((state) => state.student);
     //const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));
     //const courses = useSelector((state) => state.courses.filter(({ course_id }) => course_id === id));
     const [allCourses] = useSelector((state) => userId ? state.courses.filter(item => item.course_id === id) : "");
     const student = useSelector((state) => userId ? state.students.filter((u) => allCourses?.user_id.includes(u.user_id)) : null);
-    const teacher = useSelector((state) => userId ? state.teachers.filter((u) => allCourses?.user_id.includes(u.user_id)) : null);
+    const teacher = useSelector((state) => userId ? state.teachers.filter((u) => allCourses?.instructor_id_fk === u.user_id) : null);
     //const AllTeacherCourse = useSelector((state) => state.getAllTeacherCourse.filter(({ course_id }) => course_id === id));
 
 
@@ -71,7 +71,7 @@ const Course = () => {
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={item.given_name + ' ' + item.family_name}
-                                            secondary={item.student_id}
+                                            secondary={item.teacher_id}
                                         />
                                     </ListItemButton>
                                 ))}
