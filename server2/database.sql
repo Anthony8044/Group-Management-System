@@ -51,16 +51,27 @@ CREATE TABLE user_course(
 
 CREATE TABLE project(
     project_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    course_id_fk VARCHAR(255) NOT NULL,
+    course_code VARCHAR(255) NOT NULL,
     project_title VARCHAR(255) NOT NULL,
-    submission_date VARCHAR(255) NOT NULL,
-    students_per_group VARCHAR(255) NOT NULL,
+    group_submission_date VARCHAR(255) NOT NULL,
+    project_submission_date VARCHAR(255) NOT NULL,
+    group_min VARCHAR(255) NOT NULL,
+    group_max VARCHAR(255) NOT NULL,
     formation_type VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
     instructor_id_fk uuid NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE allgroup(
+    group_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_id_fk uuid NOT NULL,
+    course_id_fk VARCHAR(255) NOT NULL,
+    students_array text ARRAY,
+    group_status VARCHAR(255) DEFAULT 'Not Full',
+    CONSTRAINT fk_project_id FOREIGN KEY(project_id_fk) REFERENCES project(project_id) ON DELETE CASCADE,
+    CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
 create view student_course as
@@ -68,10 +79,14 @@ select alluser.user_id, user_course.course_id, student.student_id, alluser.given
 from alluser, student, user_course
 where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk;
 
-create view teacher_course as
-select alluser.user_id, user_course.course_id, user_course.course_role, teacher.teacher_id, alluser.given_name, alluser.family_name, alluser.email, teacher.department, teacher.postition
-from alluser, teacher, user_course
-where alluser.user_id=user_course.user_id AND alluser.user_id=teacher.user_id_fk;
+CREATE VIEW course_record AS
+SELECT *
+FROM  (
+   SELECT course_id AS course_id, count(*) AS course_count
+   FROM   user_course 
+   GROUP  BY 1 
+   ) c
+JOIN course p USING (course_id);
 
 insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP4035-1', 'COMP4035',
 'Math', '1');

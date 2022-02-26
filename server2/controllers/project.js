@@ -6,18 +6,29 @@ const router = express.Router();
 
 export const createproject = async (req, res) => {
     const {
-        course_id,
+        course_code,
         project_title,
-        submission_date,
-        students_per_group,
+        group_submission_date,
+        project_submission_date,
+        group_min,
+        group_max,
         formation_type,
         project_description,
         user_id
     } = req.body;
 
     try {
-        const teacherCourse = await pool.query("SELECT * FROM teacher_course WHERE user_id = $1 AND course_id =$2", [user_id, course_id]);
-        const project = await pool.query("SELECT * FROM project WHERE course_id_fk = $1 AND project_title =$2", [course_id, project_title]);
+        const teacherCourse = await pool.query("SELECT * FROM course WHERE instructor_id_fk = $1 AND course_id =$2", [user_id, course_code + "-1"]);
+        const project = await pool.query("SELECT * FROM project WHERE course_code = $1 AND project_title =$2", [course_code, project_title]);
+        const courseRecord = await pool.query("SELECT course_id, course_count FROM course_record WHERE LEFT(course_id, -2) = $1", [course_code]);
+
+        const GroupNum = [];
+        let i = 0;
+        while (i < courseRecord.rows.length) {
+            const numOfGroup = Math.ceil(courseRecord.rows[i].course_count / group_min)
+            GroupNum.push(numOfGroup);
+            i++;
+        }
 
 
         if (teacherCourse.rows.length === 0) {
@@ -28,16 +39,87 @@ export const createproject = async (req, res) => {
             return res.status(401).json({ message: 'Project already exisits' });
         }
 
-        const insertProject = await pool.query("INSERT INTO project (course_id_fk, project_title, submission_date, students_per_group, formation_type, project_description, user_id_fk) VALUES ($1, $2, $3, $4, $5, $6 ,$7) RETURNING *",
+
+        ///Students Choice
+
+        const insertProject = await pool.query("INSERT INTO project (course_code, project_title, group_submission_date, project_submission_date, group_min, group_max, formation_type, project_description, instructor_id_fk) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
             [
-                course_id,
+                course_code,
                 project_title,
-                submission_date,
-                students_per_group,
+                group_submission_date,
+                project_submission_date,
+                group_min,
+                group_max,
                 formation_type,
                 project_description,
                 user_id
             ]);
+
+
+        if (formation_type === "default") {
+            let x = 0;
+            let setting = null;
+            while (x < GroupNum.length) {
+
+                setting = courseRecord.rows[x].course_id
+                let a = 0;
+                while (a < GroupNum[x]) {
+                    await pool.query(
+                        "INSERT INTO allgroup (project_id_fk, course_id_fk) VALUES ($1, $2) RETURNING *",
+                        [
+                            insertProject.rows[0].project_id,
+                            setting
+                        ]);
+                    a++;
+                }
+                x++;
+            }
+
+        } else if (formation_type === "random") {
+
+            let x = 0;
+            let setting = null;
+            let studetentsList;
+            let randomizedList;
+            let studetentsList2;
+            while (x < GroupNum.length) {
+                let z = x + 1;
+                studetentsList = await pool.query("SELECT user_id FROM user_course WHERE user_course.course_id = $1", [course_code + "-" + z]);
+                studetentsList2 = studetentsList.rows.map(doc => Object.values(doc));
+                const merge3 = studetentsList2.flat(1);
+                randomizedList = randomizeAndSplit(merge3, Number(group_min));
+
+                setting = courseRecord.rows[x].course_id
+                let a = 0;
+                while (a < GroupNum[x]) {
+                    const asdlfkj = await pool.query(
+                        "INSERT INTO allgroup (project_id_fk, course_id_fk, students_array) VALUES ($1, $2, $3) RETURNING *",
+                        [
+                            insertProject.rows[0].project_id,
+                            setting,
+                            randomizedList[a]
+                        ]);
+                    //console.log(asdlfkj.rows)
+                    a++;
+                }
+                x++;
+            }
+
+        }
+
+
+
+        ////Randomize Choice
+
+        // const studetentsList = await pool.query("SELECT user_id FROM user_course WHERE course_id = $1", [course_code + "-1"]);
+
+        // //console.log(studetentsList.rows);
+        // const randomizedList = randomizeAndSplit(studetentsList.rows, Number(group_min));
+
+        // console.log(randomizedList);
+
+
+
 
         res.status(200).json({ message: 'Created Project successfully!' });
 
@@ -46,5 +128,22 @@ export const createproject = async (req, res) => {
         res.status(500).send("Server error");
     }
 };
+
+function randomizeAndSplit(data, chunkSize) {
+    var arrayOfArrays = [];
+    var shuffled = [...data]; //make a copy so that we don't mutate the original array
+
+    //shuffle the elements
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    //split the shuffled version by the chunk size
+    for (var i = 0; i < shuffled.length; i += chunkSize) {
+        arrayOfArrays.push(shuffled.slice(i, i + chunkSize));
+    }
+    return arrayOfArrays;
+}
 
 export default router;
