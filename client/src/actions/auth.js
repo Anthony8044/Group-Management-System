@@ -8,6 +8,7 @@ export const signin = (formData, navigate) => async (dispatch) => {
         dispatch({ type: AUTH, payload: data });
 
         navigate('/');
+        window.location.reload();
     } catch (error) {
         console.log(error);
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./app.scss";
 import Home from "./containers/home/Home";
 import Profile from "./containers/profile/Profile";
@@ -10,6 +10,8 @@ import Register from "./components/login&register/Register";
 import Login from "./components/login&register/Login";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { UserContextProvider } from "./containers/UserContext";
+
 
 const theme = createTheme({
    palette: {
@@ -44,7 +46,7 @@ const App = () => {
                <Routes>
                   <Route path="/register" element={<Register />} />
                   <Route path="/login" element={<Login />} />
-                  <Route element={<Layout />}>
+                  <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
                      <Route path="/" element={<Home />} />
                      <Route path="/profile/:id" element={<Profile />} />
                      <Route path="/classes/:id" element={<Course />} />
@@ -65,7 +67,7 @@ const App = () => {
             pauseOnHover
          />
          <ToastContainer />
-      </ThemeProvider>
+      </ThemeProvider >
    );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import useStyles from './styles'
 import { useTheme } from '@mui/styles';
 import { List, useMediaQuery, CssBaseline, Avatar, Button } from '@mui/material'
@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../actions/student';
 import { getAllCourses } from '../../actions/course';
 import { getTeachers } from '../../actions/teacher';
+import { UserContext } from '../UserContext';
 
 
 const Layout = ({ children }) => {
@@ -19,24 +20,15 @@ const Layout = ({ children }) => {
     const dispatch = useDispatch();
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
-    const [userId, setUserId] = useState(null);
+
+    const userId = useContext(UserContext);
     const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
     const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
         .some(user_id => user_id === userId?.user_id)
     ));
-    const loggedIn = JSON.parse(localStorage.getItem('profile'));
-    const [value, setValue] = useState('');
-    const countRef = useRef(0);
+    const [open, setOpen] = useState(false);
 
-
-    useEffect(() => {
-        if (loggedIn) {
-            setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
-        } else {
-            navigate('/login');
-        }
-    }, []);
 
     useEffect(() => {
         dispatch(getStudents());
@@ -50,8 +42,6 @@ const Layout = ({ children }) => {
         window.location.reload();
         //setUser(null);
     };
-
-    const [open, setOpen] = useState(false);
 
     const toggleDrawer = event => {
         if (

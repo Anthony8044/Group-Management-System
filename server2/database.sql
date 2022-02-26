@@ -172,6 +172,22 @@ INSERT INTO alluser (
     '123123'
 );
 
+INSERT INTO alluser (
+    given_name,
+    family_name,
+    gender,
+    role,
+    email,
+    password
+  ) VALUES (
+    'Admin',
+    'ADMIN',
+    'Male',
+    'Admin',
+    'anthonystoltzfus7@gmail.com',
+    '123123'
+);
+
 SELECT *
     FROM alluser u, teacher t
     WHERE u.user_id = 'b374a60e-cc37-4fc4-984b-dae70d29ce45' AND t.user_id_fk = 'b374a60e-cc37-4fc4-984b-dae70d29ce45';
