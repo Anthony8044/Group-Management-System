@@ -27,6 +27,7 @@ const Layout = ({ children }) => {
     const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
         .some(user_id => user_id === userId?.user_id)
     ));
+    const teacherCourses = useSelector((state) => userId ? state.courses.filter(item => item.instructor_id_fk === userId?.user_id) : "");
     const [open, setOpen] = useState(false);
 
 
@@ -53,42 +54,6 @@ const Layout = ({ children }) => {
 
         setOpen(!open);
     };
-
-    const studentMenuItems = [
-        {
-            text: 'Home',
-            icon: <Home color="primary" />,
-            path: '/'
-        },
-        {
-            text: 'Profile',
-            icon: <AccountBox color="primary" />,
-            path: `/profile/${student?.user_id}`
-        },
-        {
-            text: 'Classes',
-            icon: <Class color="primary" />,
-            path: ''
-        }
-    ];
-
-    const teacherMenuItems = [
-        {
-            text: 'Home',
-            icon: <Home color="primary" />,
-            path: '/'
-        },
-        {
-            text: 'Profile',
-            icon: <AccountBox color="primary" />,
-            path: `/profile/${teacher?.user_id}`
-        },
-        {
-            text: 'Classes',
-            icon: <Class color="primary" />,
-            path: ''
-        }
-    ];
 
     return (
         <div className={classes.root}>
@@ -122,7 +87,14 @@ const Layout = ({ children }) => {
                             <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
                         </div>
                     }
-                    {!student && !teacher &&
+                    {userId?.role === "Admin" &&
+                        <div className={classes.profile}>
+                            <Avatar className={classes.avatar} alt={userId?.given_name} src={userId?.profile_img} ></Avatar>
+                            <Typography className={classes.name} variant="h6">{userId?.given_name} {userId?.family_name}</Typography>
+                            <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
+                        </div>
+                    }
+                    {!userId &&
                         <Button className={classes.button} component={Link} to="/login" variant="contained" color="primary">Sign In</Button>
                     }
 
@@ -147,21 +119,33 @@ const Layout = ({ children }) => {
 
                 {student &&
                     <List>
-                        {studentMenuItems.map((item) => (
-                            <ListItemButton
-                                key={item.text}
-                                selected={currentRoute.pathname === item.path ? true : false}
-                                onClick={() => navigate(item.path)}
-                                className={classes.menuItems}
-                            >
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton  >
-                        ))}
+                        <ListItemButton
+                            selected={currentRoute.pathname === '/' ? true : false}
+                            onClick={() => navigate('/')}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Home color="primary" /></ListItemIcon>
+                            <ListItemText primary="Home" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            selected={currentRoute.pathname === `/profile/${student?.user_id}` ? true : false}
+                            onClick={() => navigate(`/profile/${student?.user_id}`)}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
+                            <ListItemText primary="Profile" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Class color="primary" /></ListItemIcon>
+                            <ListItemText primary="Classes" />
+                        </ListItemButton  >
 
                         {allCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
+                                selected={currentRoute.pathname === `/classes/${item.course_id}` ? true : false}
                                 onClick={() => navigate(`/classes/${item.course_id}`)}
                                 className={classes.menuItems}
                             >
@@ -169,33 +153,45 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        <ListItemButton
+                        {/* <ListItemButton
                             selected={currentRoute.pathname === "/groups" ? true : false}
                             onClick={() => navigate("/groups")}
                             className={classes.menuItems}
                         >
                             <ListItemIcon><Groups color="primary" /></ListItemIcon>
                             <ListItemText primary="Groups" />
-                        </ListItemButton  >
+                        </ListItemButton  > */}
                     </List>
                 }
                 {teacher &&
                     <List>
-                        {teacherMenuItems.map((item) => (
-                            <ListItemButton
-                                key={item.text}
-                                selected={currentRoute.pathname === item.path ? true : false}
-                                onClick={() => navigate(item.path)}
-                                className={classes.menuItems}
-                            >
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton  >
-                        ))}
+                        <ListItemButton
+                            selected={currentRoute.pathname === '/' ? true : false}
+                            onClick={() => navigate('/')}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Home color="primary" /></ListItemIcon>
+                            <ListItemText primary="Home" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            selected={currentRoute.pathname === `/profile/${teacher?.user_id}` ? true : false}
+                            onClick={() => navigate(`/profile/${teacher?.user_id}`)}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
+                            <ListItemText primary="Profile" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Class color="primary" /></ListItemIcon>
+                            <ListItemText primary="Classes" />
+                        </ListItemButton  >
 
-                        {allCourses.map((item) => (
+                        {teacherCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
+                                selected={currentRoute.pathname === `/classes/${item.course_id}` ? true : false}
                                 onClick={() => navigate(`/classes/${item.course_id}`)}
                                 className={classes.menuItems}
                             >
@@ -203,13 +199,40 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        <ListItemButton
+                        {/* <ListItemButton
                             selected={currentRoute.pathname === "/groups" ? true : false}
                             onClick={() => navigate("/groups")}
                             className={classes.menuItems}
                         >
                             <ListItemIcon><Groups color="primary" /></ListItemIcon>
                             <ListItemText primary="Groups" />
+                        </ListItemButton  > */}
+                    </List>
+                }
+
+                {userId?.role === "Admin" &&
+                    <List>
+                        <ListItemButton
+                            selected={currentRoute.pathname === '/' ? true : false}
+                            onClick={() => navigate('/')}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Home color="primary" /></ListItemIcon>
+                            <ListItemText primary="Home" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            // selected={currentRoute.pathname === `/profile/${student?.user_id}` ? true : false}
+                            // onClick={() => navigate(`/profile/${student?.user_id}`)}
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
+                            <ListItemText primary="Profile" />
+                        </ListItemButton  >
+                        <ListItemButton
+                            className={classes.menuItems}
+                        >
+                            <ListItemIcon><Class color="primary" /></ListItemIcon>
+                            <ListItemText primary="Classes" />
                         </ListItemButton  >
                     </List>
                 }

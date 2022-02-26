@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton } from '@mui/material';
-import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from "react-redux";
-import { updateStudent } from "../../actions/student";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStudents } from '../../actions/student';
-import { getTeachers } from '../../actions/teacher';
-import { getAllCourses } from '../../actions/course';
-import decode from 'jwt-decode';
 import { AccountCircle } from "@mui/icons-material";
+import { UserContext } from '../UserContext';
+
 
 const Course = () => {
     const theme = useTheme()
@@ -19,24 +15,8 @@ const Course = () => {
     const classes = useStyles();
     const { id } = useParams();
 
-    const [userId, setUserId] = useState(null);
-    const loggedIn = JSON.parse(localStorage.getItem('profile'));
-    useEffect(() => {
-        if (loggedIn) {
-            setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
-        } else {
-            navigate('/login');
-        }
-    }, []);
+    const userId = useContext(UserContext);
 
-    // useEffect(() => {
-    //     if (userId) {
-    //         dispatch(getAllCourses());
-    //         dispatch(getStudents());
-    //         dispatch(getTeachers());
-    //     }
-
-    // }, [userId]);
 
     //const [user] = useSelector((state) => state.student);
     //const allCourseUsers = useSelector((state) => state.allCourseUsers.filter(({ course_id }) => course_id === id));

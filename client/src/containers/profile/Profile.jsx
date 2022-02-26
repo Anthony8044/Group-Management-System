@@ -1,41 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider } from '@mui/material';
 import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from "react-redux";
 import { updateStudent } from "../../actions/student";
 import { useTheme } from "@emotion/react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getStudents } from '../../actions/student';
-import { getTeachers } from '../../actions/teacher';
-import decode from 'jwt-decode';
+import { useParams } from "react-router-dom";
 import Input from "../../components/login&register/Input";
 import { updateTeacher } from "../../api";
+import { UserContext } from '../UserContext';
 
 
 const Profile = () => {
     const theme = useTheme()
     const dispatch = useDispatch();
     const classes = useStyles()
-    const navigate = useNavigate();
     const { id } = useParams();
-    const [userId, setUserId] = useState(null);
+
+    const userId = useContext(UserContext);
     const student = useSelector((state) => id ? state.students.find((u) => u.user_id === id) : null);
     const teacher = useSelector((state) => id ? state.teachers.find((u) => u.user_id === id) : null);
-    //const [teacher] = useSelector((state) => state.teacher);
-    const loggedIn = JSON.parse(localStorage.getItem('profile'));
-    useEffect(() => {
-        if (loggedIn) {
-            setUserId(decode(JSON.parse(localStorage.getItem('profile')).token));
-        } else {
-            navigate('/login');
-        }
-    }, []);
-
-    // useEffect(() => {
-    //     dispatch(getStudents());
-    //     dispatch(getTeachers());
-    // }, []);
 
 
     const [studentData, setStudentData] = useState({
@@ -60,8 +44,7 @@ const Profile = () => {
         postition: '',
         teacher_id: ''
     });
-    //const user = useSelector((state) => id ? state.student.find((u) => u._id === id) : null);
-    //console.log(student);
+
 
     useEffect(() => {
         if (student?.user_id) {
@@ -73,26 +56,16 @@ const Profile = () => {
 
     }, [student?.user_id, teacher?.user_id])
 
-    // useEffect(() => {
-    //     setUserId(decode(JSON.parse(localStorage.getItem('profile')).token).user_id);
-    // }, []);
-
-    // const clear = () => {
-    //     setCurrentId(0);
-    //     //setUserData({ password: '', email: '', firstname: '', lastname: '', studentID: '', profileImg: '' });
-    // };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         dispatch(updateStudent(id, studentData));
-        //window.location.reload();
     }
     const handleSubmit2 = (e) => {
         e.preventDefault();
 
         dispatch(updateTeacher(id, teacherData));
-        //window.location.reload();
     }
 
     const handleChange = (e) => setStudentData({ ...studentData, [e.target.name]: e.target.value });
