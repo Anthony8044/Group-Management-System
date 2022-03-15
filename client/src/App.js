@@ -3,6 +3,7 @@ import "./app.scss";
 import Home from "./containers/home/Home";
 import Profile from "./containers/profile/Profile";
 import Course from './containers/course/Course';
+import Section from "./containers/course/Section";
 import Layout from './containers/layout/Layout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -49,7 +50,8 @@ const App = () => {
                   <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
                      <Route path="/" element={<Home />} />
                      <Route path="/profile/:id" element={<Profile />} />
-                     <Route path="/classes/:id" element={<Course />} />
+                     <Route path="/classes/:courseid" element={<Course />} />
+                     <Route path="/classes/:courseid/:sectionid" element={<Section />} />
                      <Route path="/groups" element={<Home />} />
                   </Route>
                </Routes>

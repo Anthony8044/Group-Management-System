@@ -58,7 +58,7 @@ export const updateTeacher = async (req, res) => {
         //const user = await pool.query("Select alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.department, teacher.postition, teacher.teacher_id from alluser, student where alluser.user_id = $1 and teacher.user_id_fk = $1;", [user_id]);
 
         if (user.rows.length === 0) {
-            return res.status(401).json("User does'nt exist.");
+            return res.status(401).json({ message: "User does'nt exist." });
         }
 
         const updatedUser = await pool.query(
@@ -96,7 +96,7 @@ export const updateTeacher = async (req, res) => {
             "student_id": updatedTeadcher.rows[0].teacher_id
         }
 
-        return res.status(200).json( sendUser )
+        return res.status(200).json({ message: "Updated Teacher" })
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server error");

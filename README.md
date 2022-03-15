@@ -7,7 +7,7 @@
 ## Development
 - Clone project: https://github.com/Anthony8044/Group-Management-System.git
 - server
-  - CD to server: cd server
+  - CD to server: cd server2
   - install node modules: npm install
   - Start server: npm start
 - client

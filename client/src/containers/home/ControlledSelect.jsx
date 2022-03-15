@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, user }) => {
+export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, student, course, teacher, formation }) => {
     const [localValue, setLocalValue] = useState(value ?? '');
     useEffect(() => setLocalValue(value ?? ''), [value]);
     const handleFocus = () => {
@@ -16,30 +16,99 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
         }
     };
     return (
-        <FormControl variant="outlined" sx={{ m: 1, minWidth: minWidth }}>
-            {user ? (
-                <InputLabel >Users</InputLabel>
-            )
-                :
-                <InputLabel >Course Code</InputLabel>
+        <FormControl variant="outlined" sx={{ m: 0, minWidth: minWidth }}>
+            {student &&
+                <>
+                    <InputLabel id="demo-simple-select-outlined-label">Students</InputLabel>
+                    <Select
+                        name={name}
+                        value={localValue}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Students"
+                    >
+                        {options?.map(option => {
+                            return (
+
+                                <MenuItem key={option.user_id} value={option.user_id}>
+                                    {option.given_name + " " + option.family_name + " | " + option?.student_id}
+                                </MenuItem>
+
+                            );
+                        })}
+                    </Select>
+                </>
             }
-            <Select
-                name={name}
-                value={localValue}
-                onFocus={handleFocus}
-                onChange={handleChange}
-                onBlur={handleBlur}
-            >
-                {options?.map(option => {
-                    return (
+            {course &&
+                <>
+                    <InputLabel >Course Code</InputLabel>
+                    <Select
+                        name={name}
+                        value={localValue}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Course Code"
+                    >
+                        {options?.map(option => {
+                            return (
 
-                        <MenuItem key={user ? option.user_id : option.course_id} value={user ? option.user_id : option.course_id}>
-                            {user ? (option.given_name + " " + option.family_name + " | " + option?.student_id) : option.course_id}
-                        </MenuItem>
+                                <MenuItem key={option.course_id} value={option.course_id}>
+                                    {option.course_id}
+                                </MenuItem>
 
-                    );
-                })}
-            </Select>
+                            );
+                        })}
+                    </Select>
+                </>
+            }
+            {teacher &&
+                <>
+                    <InputLabel >Teacher</InputLabel>
+                    <Select
+                        name={name}
+                        value={localValue}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Teacher"
+                    >
+                        {options?.map(option => {
+                            return (
+
+                                <MenuItem key={option.user_id} value={option.user_id}>
+                                    {option.given_name + " " + option.family_name}
+                                </MenuItem>
+
+                            );
+                        })}
+                    </Select>
+                </>
+            }
+            {formation &&
+                <>
+                    <InputLabel>Formation Type</InputLabel>
+                    <Select
+                        name={name}
+                        value={localValue}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Formation Type"
+                    >
+                        {options?.map(option => {
+                            return (
+
+                                <MenuItem key={option.id} value={option.type}>
+                                    {option.type}
+                                </MenuItem>
+
+                            );
+                        })}
+                    </Select>
+                </>
+            }
         </FormControl>
     );
 };

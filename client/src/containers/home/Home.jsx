@@ -97,7 +97,7 @@ const Home = () => {
                                         <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} />
                                         <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} />
                                         <Grid item xs={12} >
-                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} user={true} />
+                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} teacher={true} />
                                         </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create Course</Button>
@@ -115,10 +115,10 @@ const Home = () => {
                                 <form noValidate onSubmit={handleSubmit2}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={12} >
-                                            <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} />
+                                            <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} />
                                         </Grid>
                                         <Grid item xs={12} >
-                                            <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} user={true} />
+                                            <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} />
                                         </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Register Student</Button>

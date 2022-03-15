@@ -21,7 +21,7 @@ API.interceptors.request.use(async (req) => {
     if (!isExpired) return req
 
     const response = await axios.post(`${baseURL}/auth/refreshToken`, { tok: userToken?.refreshToken });
-    console.log(response);
+    //console.log(response);
     localStorage.setItem('profile', JSON.stringify(response.data));
     req.headers.Authorization = `Bearer ${response.data.token}`;
   }
@@ -51,6 +51,10 @@ export const updateTeacher = (id, updatedUser) => API.patch(`/teacher/updateteac
 export const createCourse = (formData) => API.post('/course/createCourse', formData);
 export const registerCourse = (formData) => API.post('/course/registerCourse', formData);
 export const getAllCourses = () => API.get('/course/getAllCourses');
+
+//Course
+export const createproject = (formData) => API.post('/project/createproject', formData);
+export const getAllProjects = () => API.get('/project/getAllProjects');
 
 
 export const deleteStudent = (id) => API.delete(`users/${id}`);

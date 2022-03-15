@@ -9,6 +9,7 @@ import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudents } from '../../actions/student';
 import { getAllCourses } from '../../actions/course';
+import { getAllProjects } from '../../actions/project';
 import { getTeachers } from '../../actions/teacher';
 import { UserContext } from '../UserContext';
 
@@ -27,7 +28,8 @@ const Layout = ({ children }) => {
     const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
         .some(user_id => user_id === userId?.user_id)
     ));
-    const teacherCourses = useSelector((state) => userId ? state.courses.filter(item => item.instructor_id_fk === userId?.user_id) : "");
+    const teacherCourses = useSelector((state) => userId ? state.courses.filter(item => item.instructor_id_fk === userId?.user_id && item.course_id.endsWith("-1")) : "");
+    const allProjects = useSelector((state) => userId ? state.projects : "");
     const [open, setOpen] = useState(false);
 
 
@@ -35,7 +37,8 @@ const Layout = ({ children }) => {
         dispatch(getStudents());
         dispatch(getTeachers());
         dispatch(getAllCourses());
-    }, [student?.user_id, teacher?.user_id]);
+        dispatch(getAllProjects());
+    }, [student?.user_id, teacher?.user_id, allProjects?.project_id]);
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
@@ -191,11 +194,11 @@ const Layout = ({ children }) => {
                         {teacherCourses.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
-                                selected={currentRoute.pathname === `/classes/${item.course_id}` ? true : false}
-                                onClick={() => navigate(`/classes/${item.course_id}`)}
+                                selected={currentRoute.pathname === `/classes/${item.course_id.slice(0, -2)}` ? true : false}
+                                onClick={() => navigate(`/classes/${item.course_id.slice(0, -2)}`)}
                                 className={classes.menuItems}
                             >
-                                <ListItemText align="center" primary={item.course_id} />
+                                <ListItemText align="center" primary={item.course_id.slice(0, -2)} />
                             </ListItemButton  >
                         ))}
 

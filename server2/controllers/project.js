@@ -129,6 +129,29 @@ export const createproject = async (req, res) => {
     }
 };
 
+export const getAllProjects = async (req, res) => {
+
+    try {
+        // const project = await pool.query("SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, ta.course_id, array_agg(te.group_id) AS group_id FROM project e LEFT JOIN allgroup te on e.project_id=te.project_id_fk LEFT JOIN (SELECT LEFT(course_id, -2) AS course_code, array_agg(course_id) AS course_id FROM course GROUP BY course_id) ta USING (course_code) GROUP BY e.project_id, ta.course_id ORDER BY e.course_code ASC;");
+        const project = await pool.query(
+            "SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, te.groups, ta.section_id " +
+            "FROM project e " +
+            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk)) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +
+            "LEFT JOIN  (SELECT LEFT(course_id, -2) AS course_code, array_agg(course_id) AS section_id FROM course GROUP  BY 1) ta USING (course_code) " +
+            "GROUP BY e.project_id, te.groups, ta.section_id;"
+        );
+
+        if (project.rows.length === 0) {
+            return res.status(401).json("No Projects");
+        }
+
+        return res.status(200).json(project.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 function randomizeAndSplit(data, chunkSize) {
     var arrayOfArrays = [];
     var shuffled = [...data]; //make a copy so that we don't mutate the original array
