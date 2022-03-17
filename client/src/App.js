@@ -12,6 +12,9 @@ import Login from "./components/login&register/Login";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserContextProvider } from "./containers/UserContext";
+import { LocalizationProvider } from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+
 
 
 const theme = createTheme({
@@ -38,10 +41,11 @@ const theme = createTheme({
    }
 });
 
-const App = () => {
+const App = ({ children }) => {
 
    return (
       <ThemeProvider theme={theme}>
+         <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
          <BrowserRouter>
             <div className="container">
                <Routes>
