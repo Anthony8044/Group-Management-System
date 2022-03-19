@@ -6,51 +6,60 @@ import { useDispatch, useSelector } from 'react-redux';
 import FileBase from 'react-file-base64';
 import Input from "../../components/login&register/Input";
 import { createCourse, getAllCourses, registerCourse } from "../../actions/course";
-import { getStudents } from "../../actions/student";
+import { getStudents } from '../../features/Student';
+import { getTeachers } from '../../features/Teacher';
 import ControlledSelect from "./ControlledSelect";
 import { toast } from 'react-toastify';
 import { UserContext } from "../UserContext";
+import { useGetStudentsQuery } from "../../services/student";
+import { useGetTeachersQuery } from "../../services/teacher";
+import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
 
 
 const Home = () => {
     const theme = useTheme();
     const classes = useStyles();
     const dispatch = useDispatch();
+    const userId = useContext(UserContext);
     const [newCourseData, setNewCourseData] = useState({ code: '', sections: '', course_title: '', instructor_id: '' });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     //const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
+    const [isErr, setIsErr] = useState("");
+    const [isSucc, setIsSucc] = useState(false);
 
-    const userId = useContext(UserContext);
-    const error = useSelector((state) => state.errors);
-    const student = useSelector((state) => state.students);
-    const teacher = useSelector((state) => state.teachers);
-    const allCourses = useSelector((state) => state.courses);
-
-    useEffect(() => {
-        dispatch(getStudents());
-        dispatch(getAllCourses());
-    }, []);
-
-    useEffect(() => {
-        if (error.error || error.success) {
-            dispatch({ type: "ERROR_CLEAR" });
-        }
-    }, [error.error, error.success]);
+    const { data: student } = useGetStudentsQuery();
+    const { data: teacher } = useGetTeachersQuery();
+    const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
+    const [createCourse, { error: sError, isSuccess: sSuccess }] = useCreateCourseMutation();
+    const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(createCourse(newCourseData));
+        await createCourse(newCourseData);
     };
 
     const handleSubmit2 = async (e) => {
         e.preventDefault();
-        dispatch(registerCourse(regCourseData));
+        await registerCourse(regCourseData);
     };
+
+    useEffect(() => {
+        if (sError) {
+            setIsErr(sError?.data.message);
+        } else if (tError) {
+            setIsErr(tError?.data.message);
+        }
+        if (sSuccess) {
+            setIsSucc(sSuccess);
+        } else if (tSuccess) {
+            setIsSucc(tSuccess);
+        }
+    }, [sError?.data, sSuccess, tError?.data, tSuccess]);
 
 
     const renderError = () => {
-        if (error.error) {
-            toast.error(error.error, {
+        if (isErr) {
+            toast.error(isErr, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -60,8 +69,9 @@ const Home = () => {
                 progress: undefined,
                 toastId: 'error1',
             });
-        } else if (error.success) {
-            toast.success(error.success, {
+            setIsErr("");
+        } else if (isSucc) {
+            toast.success("Registered Succesfully!", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -71,6 +81,7 @@ const Home = () => {
                 progress: undefined,
                 toastId: 'success1',
             });
+            setIsSucc(false);
         }
     }
 

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import decode from 'jwt-decode';
 import dayjs from 'dayjs';
-import { store } from '../index';
-import { errorActionCreator } from '../api/errorhandling';
+// import { store } from '../index';
+// import { errorActionCreator } from '../api/errorhandling';
 
 
 const baseURL = 'http://localhost:5000';
@@ -28,11 +28,11 @@ API.interceptors.request.use(async (req) => {
   return req;
 });
 
-API.interceptors.response.use(
-  response => response,
-  error => {
-    store.dispatch(errorActionCreator("ERROR_FAIL", error));
-  });
+// API.interceptors.response.use(
+//   response => response,
+//   error => {
+//     store.dispatch(errorActionCreator("ERROR_FAIL", error));
+//   });
 
 //Auth
 export const signin = (formData) => API.post('/auth/login', formData);
@@ -52,7 +52,7 @@ export const createCourse = (formData) => API.post('/course/createCourse', formD
 export const registerCourse = (formData) => API.post('/course/registerCourse', formData);
 export const getAllCourses = () => API.get('/course/getAllCourses');
 
-//Course
+//Project
 export const createproject = (formData) => API.post('/project/createproject', formData);
 export const getAllProjects = () => API.get('/project/getAllProjects');
 

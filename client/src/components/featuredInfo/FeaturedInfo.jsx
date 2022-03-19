@@ -2,7 +2,7 @@ import { React } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteStudent } from "../../actions/student";
+import { deleteStudent } from "../../features/Student";
 import { DeleteOutline } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import useStyles from './styles'
@@ -36,13 +36,13 @@ const FeaturedInfo = ({ setCurrentId }) => {
             return (
                <div>
                   {(user?.result?._id === params.row.creator) ? (
-                  <Link to={"/profile/" + params.row._id}>
-                     <Button variant="contained" className={classes.userEdit} onClick={() => setCurrentId(params.row._id)}>Edit</Button>
-                  </Link>
-                  ):
-                  <Link to={"/profile/" + params.row._id}>
-                     <Button variant="contained" className={classes.userEdit} onClick={() => setCurrentId(params.row._id)}>View</Button>
-                  </Link>
+                     <Link to={"/profile/" + params.row._id}>
+                        <Button variant="contained" className={classes.userEdit} onClick={() => setCurrentId(params.row._id)}>Edit</Button>
+                     </Link>
+                  ) :
+                     <Link to={"/profile/" + params.row._id}>
+                        <Button variant="contained" className={classes.userEdit} onClick={() => setCurrentId(params.row._id)}>View</Button>
+                     </Link>
                   }
                   {(user?.result?._id === params.row.creator) && (
                      <DeleteOutline

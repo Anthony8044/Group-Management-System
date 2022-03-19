@@ -1,0 +1,27 @@
+import { api } from "./api"
+
+
+export const projectApi = api.injectEndpoints({
+    endpoints: (build) => ({
+        getAllProjects: build.query({
+            query: () => {
+                return {
+                    url: "/project/getAllProjects",
+                }
+            },
+            providesTags: ['Project'],
+        }),
+        createproject: build.mutation({
+            query: (body) => {
+                return {
+                    url: "/project/createproject",
+                    method: "POST",
+                    body,
+                }
+            },
+            invalidatesTags: ['Project'],
+        }),
+    }),
+})
+
+export const { useGetAllProjectsQuery, useCreateprojectMutation } = projectApi

@@ -3,8 +3,10 @@ import { Button, Typography, Container, Grid, Card, CardContent, Divider, useThe
 import { useDispatch } from "react-redux";
 import Input from "./Input";
 import useStyles from './styles'
-import { signin, registerStudent, registerTeacher } from '../../actions/auth';
+import { signin, registerStudent, registerTeacher } from '../../features/Auth';
 import { useNavigate } from "react-router-dom";
+import { useRegisterStudentMutation, useRegisterTeacherMutation } from "../../services/auth";
+
 
 const studentInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '' };
 const teacherInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', teacher_id: '', department: '', postition: '' };
@@ -19,6 +21,9 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
     const [alignment, setAlignment] = useState('student');
+    const [registerStudent, { data: studentData, isError: sIsError, error: sError }] = useRegisterStudentMutation();
+    const [registerTeacher, { data: teacherData, isError: tIsError, error: tError }] = useRegisterTeacherMutation();
+    console.log(JSON.stringify(sError?.data.message));
 
     const switchMode = () => {
         setStudentFormData(studentInitial);
@@ -27,14 +32,17 @@ const Register = () => {
     };
 
     const dispatch = useDispatch();
-    const history = useNavigate();
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (alignment === 'student') {
-            dispatch(registerStudent(studentFormData, history))
+            registerStudent(studentFormData);
+            //navigate('/login');
         } else if (alignment === 'teacher') {
-            dispatch(registerTeacher(teacherFormData, history))
+            registerTeacher(teacherFormData);
+            //navigate('/login');
         }
     }
     const handleChangeStudent = (e) => setStudentFormData({ ...studentFormData, [e.target.name]: e.target.value });
@@ -106,7 +114,7 @@ const Register = () => {
                                 </Grid>
                                 <Grid container justifyContent="flex-end" style={{ marginTop: theme.spacing(2) }}>
                                     <Grid item>
-                                        <Button onClick={() => history('/login')}>
+                                        <Button onClick={() => navigate('/login')}>
                                             {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Register"}
                                         </Button>
                                     </Grid>

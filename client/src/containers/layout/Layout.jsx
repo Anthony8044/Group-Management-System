@@ -7,11 +7,16 @@ import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite } from 
 import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
 import decode from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudents } from '../../actions/student';
+import { getStudents } from '../../features/Student';
 import { getAllCourses } from '../../actions/course';
 import { getAllProjects } from '../../actions/project';
-import { getTeachers } from '../../actions/teacher';
+import { getTeachers } from '../../features/Teacher';
 import { UserContext } from '../UserContext';
+import { useGetStudentQuery } from "../../services/student";
+import { useGetTeacherQuery } from "../../services/teacher";
+import { useGetAllCoursesQuery } from '../../services/course';
+
+
 
 
 const Layout = ({ children }) => {
@@ -21,24 +26,34 @@ const Layout = ({ children }) => {
     const dispatch = useDispatch();
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+    const [studentLogin, setStudentLogin] = useState(true);
+    const [teacherLogin, setTeacherLogin] = useState(true);
 
     const userId = useContext(UserContext);
-    const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
-    const teacher = useSelector((state) => userId ? state.teachers.find((u) => u.user_id === userId?.user_id) : null);
-    const allCourses = useSelector((state) => state.courses.filter(item => item.user_id
-        .some(user_id => user_id === userId?.user_id)
-    ));
-    const teacherCourses = useSelector((state) => userId ? state.courses.filter(item => item.instructor_id_fk === userId?.user_id && item.course_id.endsWith("-1")) : "");
-    const allProjects = useSelector((state) => userId ? state.projects : "");
+
+    const { data: student, isError: sIsError, error: sError } = useGetStudentQuery(userId?.user_id, { skip: studentLogin });
+    const { data: teacher, isError: tIsError, error: tError } = useGetTeacherQuery(userId?.user_id, { skip: teacherLogin });
+    const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            data: data?.filter(item => item.user_id.some(user_id => user_id === userId?.user_id)),
+        }),
+    });
+    const { data: teacherCourses, isError: tErr, error: tErrMsg } = useGetAllCoursesQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            data: data?.filter(item => item.instructor_id_fk === userId?.user_id && item.course_id.endsWith("-1")),
+        }),
+    });
+
     const [open, setOpen] = useState(false);
 
 
     useEffect(() => {
-        dispatch(getStudents());
-        dispatch(getTeachers());
-        dispatch(getAllCourses());
-        dispatch(getAllProjects());
-    }, [student?.user_id, teacher?.user_id, allProjects?.project_id]);
+        if (userId?.role === "Student") {
+            setStudentLogin(false);
+        } else if (userId?.role === "Teacher") {
+            setTeacherLogin(false);
+        }
+    }, [userId?.user_id]);
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
@@ -156,14 +171,6 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        {/* <ListItemButton
-                            selected={currentRoute.pathname === "/groups" ? true : false}
-                            onClick={() => navigate("/groups")}
-                            className={classes.menuItems}
-                        >
-                            <ListItemIcon><Groups color="primary" /></ListItemIcon>
-                            <ListItemText primary="Groups" />
-                        </ListItemButton  > */}
                     </List>
                 }
                 {teacher &&
@@ -191,7 +198,7 @@ const Layout = ({ children }) => {
                             <ListItemText primary="Classes" />
                         </ListItemButton  >
 
-                        {teacherCourses.map((item) => (
+                        {teacherCourses?.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
                                 selected={currentRoute.pathname === `/classes/${item.course_id.slice(0, -2)}` ? true : false}
@@ -202,14 +209,6 @@ const Layout = ({ children }) => {
                             </ListItemButton  >
                         ))}
 
-                        {/* <ListItemButton
-                            selected={currentRoute.pathname === "/groups" ? true : false}
-                            onClick={() => navigate("/groups")}
-                            className={classes.menuItems}
-                        >
-                            <ListItemIcon><Groups color="primary" /></ListItemIcon>
-                            <ListItemText primary="Groups" />
-                        </ListItemButton  > */}
                     </List>
                 }
 
@@ -224,8 +223,6 @@ const Layout = ({ children }) => {
                             <ListItemText primary="Home" />
                         </ListItemButton  >
                         <ListItemButton
-                            // selected={currentRoute.pathname === `/profile/${student?.user_id}` ? true : false}
-                            // onClick={() => navigate(`/profile/${student?.user_id}`)}
                             className={classes.menuItems}
                         >
                             <ListItemIcon><AccountBox color="primary" /></ListItemIcon>

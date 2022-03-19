@@ -9,10 +9,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AccountCircle } from "@mui/icons-material";
 import { UserContext } from '../UserContext';
 import Input from "../../components/login&register/Input";
-import { createproject } from "../../actions/project";
 import ControlledSelect from "../home/ControlledSelect";
 import { toast } from 'react-toastify';
 import { getAllProjects } from "../../api";
+import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
 
 
 const Course = () => {
@@ -22,18 +22,21 @@ const Course = () => {
     const classes = useStyles();
     const { courseid } = useParams();
     const userId = useContext(UserContext);
-    const error = useSelector((state) => state.errors);
     const [newProjectData, setNewProjectData] = useState({ course_code: '', project_title: '', group_min: '', group_max: '', formation_type: 'default', project_description: '', user_id: '' });
     const [dateGroup, setDateGroup] = useState(new Date());
     const [dateProject, setDateProject] = useState(new Date());
     const [isFormInvalid, setIsFormInvalid] = useState({ project_title: false, group_min: false, group_max: false, project_description: false });
-    const allProjects = useSelector((state) => userId ? state.projects.filter(item => item.course_code === courseid) : "");
+    const [isErr, setIsErr] = useState("");
+    const [isSucc, setIsSucc] = useState(false);
 
-    useEffect(() => {
-        if (error.error || error.success) {
-            dispatch({ type: "ERROR_CLEAR" });
-        }
-    }, [error.error, error.success]);
+    //const allProjects = useSelector((state) => userId ? state.projects.filter(item => item.course_code === courseid) : "");
+    const { data: allProjects, isError: tErr, error: tErrMsg } = useGetAllProjectsQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            data: data?.filter(item => item.course_code === courseid),
+        }),
+    });
+    const [createproject, { error: sError, isSuccess: sSuccess }] = useCreateprojectMutation();
+
 
     const validate = values => {
         Object.entries(values).forEach(([key, value]) => {
@@ -47,10 +50,22 @@ const Course = () => {
     };
     useEffect(() => {
         if (Object.values(isFormInvalid).every((v) => v === false) && newProjectData.project_title !== '') {
-            dispatch(createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject }));
+            const fetchData = async () => {
+                await createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject });
+            }
+            fetchData().catch(console.error);
         }
 
     }, [isFormInvalid]);
+
+    useEffect(() => {
+        if (sError) {
+            setIsErr(sError?.data.message);
+        }
+        if (sSuccess) {
+            setIsSucc(sSuccess);
+        }
+    }, [sError?.data, sSuccess]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,8 +82,8 @@ const Course = () => {
     };
 
     const renderError = () => {
-        if (error.error) {
-            toast.error(error.error, {
+        if (isErr) {
+            toast.error(isErr, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -78,8 +93,9 @@ const Course = () => {
                 progress: undefined,
                 toastId: 'error1',
             });
-        } else if (error.success) {
-            toast.success(error.success, {
+            setIsErr("");
+        } else if (isSucc) {
+            toast.success("Succesfully Updated!", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -89,6 +105,7 @@ const Course = () => {
                 progress: undefined,
                 toastId: 'success1',
             });
+            setIsSucc(false);
         }
     }
 
