@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, ToggleButtonGroup, ToggleButton } from '@mui/material';
-import { useDispatch } from "react-redux";
 import Input from "./Input";
 import useStyles from './styles'
-import { signin, registerStudent, registerTeacher } from '../../features/Auth';
 import { useNavigate } from "react-router-dom";
+//// UI Imports ////
+import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, ToggleButtonGroup, ToggleButton } from '@mui/material';
+//// API Imports ////
 import { useRegisterStudentMutation, useRegisterTeacherMutation } from "../../services/auth";
-
 
 const studentInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '' };
 const teacherInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', teacher_id: '', department: '', postition: '' };
@@ -15,15 +14,16 @@ const teacherInitial = { given_name: '', family_name: '', gender: '', email: '',
 const Register = () => {
     const theme = useTheme();
     const classes = useStyles()
+    const navigate = useNavigate();
     const [studentFormData, setStudentFormData] = useState(studentInitial);
     const [teacherFormData, setTeacherFormData] = useState(teacherInitial);
     const [isSignup, setIsSignup] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
     const [alignment, setAlignment] = useState('student');
+
     const [registerStudent, { data: studentData, isError: sIsError, error: sError }] = useRegisterStudentMutation();
     const [registerTeacher, { data: teacherData, isError: tIsError, error: tError }] = useRegisterTeacherMutation();
-    console.log(JSON.stringify(sError?.data.message));
 
     const switchMode = () => {
         setStudentFormData(studentInitial);
@@ -31,18 +31,15 @@ const Register = () => {
         setShowPassword(false);
     };
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (alignment === 'student') {
             registerStudent(studentFormData);
-            //navigate('/login');
+            navigate('/login');
         } else if (alignment === 'teacher') {
             registerTeacher(teacherFormData);
-            //navigate('/login');
+            navigate('/login');
         }
     }
     const handleChangeStudent = (e) => setStudentFormData({ ...studentFormData, [e.target.name]: e.target.value });

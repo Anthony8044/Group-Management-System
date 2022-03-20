@@ -28,7 +28,7 @@ export const getTeacher = async (req, res) => {
         const user = await pool.query("Select alluser.user_id, alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, teacher.department, teacher.postition, teacher.teacher_id from alluser, teacher where alluser.user_id = $1 and teacher.user_id_fk = $1;", [id]);
 
         if (user.rows.length === 0) {
-            return res.status(401).json("User does'nt exist.");
+            return res.status(401).json({ message: "User does'nt exist." });
         }
 
         return res.status(200).json(user.rows[0])

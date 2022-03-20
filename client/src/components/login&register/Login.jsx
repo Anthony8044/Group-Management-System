@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme } from '@mui/material';
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 import Input from "./Input";
 import useStyles from './styles'
-import { signin } from '../../features/Auth';
-import { useLoginMutation } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
-
+//// UI Imports ////
+import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme } from '@mui/material';
+//// API Imports ////
+import { useLoginMutation } from "../../services/auth";
 
 
 const initialState = { email: '', password: '' };
@@ -20,7 +19,9 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
+
     const [loginUser, { data, isError, error }] = useLoginMutation();
+
 
     useEffect(() => {
         if (data && data.token) {
@@ -34,18 +35,14 @@ const Login = () => {
     }, [data, isError]);
 
 
-
-    const dispatch = useDispatch();
+    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         await loginUser(formData);
         navigate('/');
-
-        //dispatch(signin(formData));
     }
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     return (
         <Container maxWidth="sm">
@@ -71,6 +68,9 @@ const Login = () => {
                                             Sign In
                                         </Button>
                                     </Grid>
+                                    {errorMsg &&
+                                        <Typography variant="h7" align="center">{errorMsg}</Typography>
+                                    }
                                 </Grid>
                                 <Grid container justifyContent="flex-end" style={{ marginTop: theme.spacing(2) }}>
                                     <Grid item>
@@ -83,9 +83,6 @@ const Login = () => {
                         </CardContent>
                     </Card>
                 </Grid>
-                {errorMsg &&
-                    <div>{errorMsg}</div>
-                }
             </Grid>
         </Container >
     )

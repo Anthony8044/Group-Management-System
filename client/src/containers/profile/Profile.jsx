@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider } from '@mui/material';
 import FileBase from 'react-file-base64';
-import { useDispatch, useSelector } from "react-redux";
-import { updateStudent } from "../../features/Student";
 import { useTheme } from "@emotion/react";
 import { useParams } from "react-router-dom";
 import Input from "../../components/login&register/Input";
-import { updateTeacher } from "../../features/Teacher";
 import { UserContext } from '../UserContext';
+//// UI Imports ////
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider } from '@mui/material';
+//// API Imports ////
 import { useGetStudentQuery, useUpdateStudentMutation } from "../../services/student";
 import { useGetTeacherQuery, useUpdateTeacherMutation } from "../../services/teacher";
 import { toast } from 'react-toastify';
@@ -16,14 +15,14 @@ import { toast } from 'react-toastify';
 
 const Profile = () => {
     const theme = useTheme()
-    const dispatch = useDispatch();
     const classes = useStyles()
     const { id } = useParams();
     const userId = useContext(UserContext);
-    const [studentLogin, setStudentLogin] = useState(true);
-    const [teacherLogin, setTeacherLogin] = useState(true);
+    const [studentLogin, setStudentLogin] = useState(false);
+    const [teacherLogin, setTeacherLogin] = useState(false);
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
+
     const { data: student } = useGetStudentQuery(id, { skip: studentLogin });
     const { data: teacher } = useGetTeacherQuery(id, { skip: teacherLogin });
     const [updateStudent, { error: sError, isSuccess: sSuccess }] = useUpdateStudentMutation();
@@ -60,13 +59,13 @@ const Profile = () => {
 
     }, [student?.user_id, teacher?.user_id]);
 
-    useEffect(() => {
-        if (userId?.role === "Student") {
-            setStudentLogin(false);
-        } else if (userId?.role === "Teacher") {
-            setTeacherLogin(false);
-        }
-    }, [userId?.role]);
+    // useEffect(() => {
+    //     if (userId?.role === "Student") {
+    //         setStudentLogin(false);
+    //     } else if (userId?.role === "Teacher") {
+    //         setTeacherLogin(false);
+    //     }
+    // }, [userId?.role]);
 
     useEffect(() => {
         if (sError) {
@@ -81,6 +80,8 @@ const Profile = () => {
         }
     }, [sError?.data, sSuccess, tError?.data, tSuccess]);
 
+    const handleChange = (e) => setStudentData({ ...studentData, [e.target.name]: e.target.value });
+    const handleChange2 = (e) => setTeacherData({ ...teacherData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -94,8 +95,6 @@ const Profile = () => {
 
     }
 
-    const handleChange = (e) => setStudentData({ ...studentData, [e.target.name]: e.target.value });
-    const handleChange2 = (e) => setTeacherData({ ...teacherData, [e.target.name]: e.target.value });
 
     const renderError = () => {
         if (isErr) {

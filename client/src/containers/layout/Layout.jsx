@@ -1,34 +1,27 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import useStyles from './styles'
 import { useTheme } from '@mui/styles';
+import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
+import { UserContext } from '../UserContext';
+//// UI Imports ////
 import { List, useMediaQuery, CssBaseline, Avatar, Button } from '@mui/material'
 import { ListItemButton, ListItemIcon, ListItemText, Drawer, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite } from "@mui/icons-material";
-import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
-import decode from 'jwt-decode';
-import { useDispatch, useSelector } from 'react-redux';
-import { getStudents } from '../../features/Student';
-import { getAllCourses } from '../../actions/course';
-import { getAllProjects } from '../../actions/project';
-import { getTeachers } from '../../features/Teacher';
-import { UserContext } from '../UserContext';
+//// API Imports ////
 import { useGetStudentQuery } from "../../services/student";
 import { useGetTeacherQuery } from "../../services/teacher";
 import { useGetAllCoursesQuery } from '../../services/course';
-
-
 
 
 const Layout = ({ children }) => {
     const classes = useStyles();
     const theme = useTheme();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const currentRoute = useLocation();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [studentLogin, setStudentLogin] = useState(true);
     const [teacherLogin, setTeacherLogin] = useState(true);
-
+    const [open, setOpen] = useState(false);
     const userId = useContext(UserContext);
 
     const { data: student, isError: sIsError, error: sError } = useGetStudentQuery(userId?.user_id, { skip: studentLogin });
@@ -44,9 +37,6 @@ const Layout = ({ children }) => {
         }),
     });
 
-    const [open, setOpen] = useState(false);
-
-
     useEffect(() => {
         if (userId?.role === "Student") {
             setStudentLogin(false);
@@ -56,10 +46,9 @@ const Layout = ({ children }) => {
     }, [userId?.user_id]);
 
     const logout = () => {
-        dispatch({ type: 'LOGOUT' });
+        localStorage.clear();
         navigate('/login');
         window.location.reload();
-        //setUser(null);
     };
 
     const toggleDrawer = event => {
@@ -69,7 +58,6 @@ const Layout = ({ children }) => {
         ) {
             return;
         }
-
         setOpen(!open);
     };
 
@@ -160,11 +148,11 @@ const Layout = ({ children }) => {
                             <ListItemText primary="Classes" />
                         </ListItemButton  >
 
-                        {allCourses.map((item) => (
+                        {allCourses?.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
-                                selected={currentRoute.pathname === `/classes/${item.course_id}` ? true : false}
-                                onClick={() => navigate(`/classes/${item.course_id}`)}
+                                selected={currentRoute.pathname === `/classes/${item.course_id.slice(0, -2)}/${item.course_id}` ? true : false}
+                                onClick={() => navigate(`/classes/${item.course_id.slice(0, -2)}/${item.course_id}`)}
                                 className={classes.menuItems}
                             >
                                 <ListItemText align="center" primary={item.course_id} />

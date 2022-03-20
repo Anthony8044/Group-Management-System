@@ -2,24 +2,16 @@ import { React } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteStudent } from "../../features/Student";
+//// UI Imports ////
 import { DeleteOutline } from "@mui/icons-material";
 import { Button, Grid } from "@mui/material";
 import useStyles from './styles'
 
 const FeaturedInfo = ({ setCurrentId }) => {
    const classes = useStyles()
-   const dispatch = useDispatch();
    const student = useSelector((state) => state.student);
    const user = JSON.parse(localStorage.getItem('profile'));
 
-   // const handleDelete = (id) => {
-   //    setData(data.filter((item) => item.id !== id));
-   // };
-
-   // const handleDelete = (id) => {
-   //    setData(data.filter((item) => item.id !== id));
-   // };
 
    const columns = [
       { field: "_id", hide: true },
@@ -47,7 +39,7 @@ const FeaturedInfo = ({ setCurrentId }) => {
                   {(user?.result?._id === params.row.creator) && (
                      <DeleteOutline
                         className={classes.userDelete}
-                        onClick={() => dispatch(deleteStudent(params.row._id))}
+                        onClick={() => ""}
                      />
                   )}
                </div>

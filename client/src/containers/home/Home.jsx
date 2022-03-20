@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Card, CardContent, Container, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Typography, useTheme } from "@mui/material";
 import useStyles from './styles'
 import FeaturedInfo from "../../components/featuredInfo/FeaturedInfo";
-import { useDispatch, useSelector } from 'react-redux';
 import FileBase from 'react-file-base64';
 import Input from "../../components/login&register/Input";
-import { createCourse, getAllCourses, registerCourse } from "../../actions/course";
-import { getStudents } from '../../features/Student';
-import { getTeachers } from '../../features/Teacher';
 import ControlledSelect from "./ControlledSelect";
-import { toast } from 'react-toastify';
 import { UserContext } from "../UserContext";
+//// UI Imports ////
+import { toast } from 'react-toastify';
+import { Button, Card, CardContent, Container, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Typography, useTheme } from "@mui/material";
+//// API Imports ////
 import { useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
 import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
@@ -19,11 +17,9 @@ import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutati
 const Home = () => {
     const theme = useTheme();
     const classes = useStyles();
-    const dispatch = useDispatch();
     const userId = useContext(UserContext);
     const [newCourseData, setNewCourseData] = useState({ code: '', sections: '', course_title: '', instructor_id: '' });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
-    //const student = useSelector((state) => userId ? state.students.find((u) => u.user_id === userId?.user_id) : null);
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
 

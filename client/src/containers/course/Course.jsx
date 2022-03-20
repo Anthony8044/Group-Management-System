@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDateFns';
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AccountCircle } from "@mui/icons-material";
 import { UserContext } from '../UserContext';
 import Input from "../../components/login&register/Input";
 import ControlledSelect from "../home/ControlledSelect";
+//// UI Imports ////
 import { toast } from 'react-toastify';
-import { getAllProjects } from "../../api";
+import { DateTimePicker, LocalizationProvider } from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+import { AccountCircle } from "@mui/icons-material";
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack } from '@mui/material';
+//// API Imports ////
 import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
 
 
@@ -29,7 +30,6 @@ const Course = () => {
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
 
-    //const allProjects = useSelector((state) => userId ? state.projects.filter(item => item.course_code === courseid) : "");
     const { data: allProjects, isError: tErr, error: tErrMsg } = useGetAllProjectsQuery(undefined, {
         selectFromResult: ({ data }) => ({
             data: data?.filter(item => item.course_code === courseid),
@@ -48,6 +48,13 @@ const Course = () => {
             }
         });
     };
+
+    useEffect(() => {
+        if (userId?.role === "Student") {
+            navigate('/');
+        }
+    }, [userId?.user_id]);
+
     useEffect(() => {
         if (Object.values(isFormInvalid).every((v) => v === false) && newProjectData.project_title !== '') {
             const fetchData = async () => {
