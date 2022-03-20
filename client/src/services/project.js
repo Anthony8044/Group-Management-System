@@ -11,6 +11,14 @@ export const projectApi = api.injectEndpoints({
             },
             providesTags: ['Project'],
         }),
+        getProjectsByCourseId: build.query({
+            query: (id) => {
+                return {
+                    url: `/project/getProjectsByCourseId/${id}`,
+                }
+            },
+            providesTags: ['Project'],
+        }),
         createproject: build.mutation({
             query: (body) => {
                 return {
@@ -24,4 +32,4 @@ export const projectApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery } = projectApi

@@ -26,7 +26,6 @@ export const createGroup = async (req, res) => {
                 course_id,
                 [student_id]
             ]);
-        console.log(insertGroup.rows);
 
         res.status(200).json(insertGroup.rows);
 
@@ -41,14 +40,17 @@ export const joinGroup = async (req, res) => {
         group_id,
         project_id,
         course_id,
-        student_id
+        user_id
     } = req.body;
 
     try {
-        const checkallgroup = await pool.query("SELECT * FROM allgroup WHERE project_id_fk = $1 AND LEFT(course_id_fk, -2) = LEFT($2, -2) AND $3 = ANY (students_array)", [project_id, course_id, student_id]);
-        const allgroup = await pool.query("SELECT * FROM allgroup WHERE project_id_fk = $1 AND LEFT(course_id_fk, -2) = LEFT($2, -2) AND $3 = ANY (students_array)", [project_id, course_id, student_id]);
+        const inCourse = await pool.query("SELECT * FROM user_course WHERE user_id= $1 AND course_id = $2 ", [user_id, course_id]);
+        const checkallgroup = await pool.query("SELECT * FROM allgroup WHERE project_id_fk = $1 AND LEFT(course_id_fk, -2) = LEFT($2, -2) AND $3 = ANY (students_array)", [project_id, course_id, user_id]);
         //const project = await pool.query("SELECT * FROM project WHERE course_code = $1 AND project_title =$2", [course_code, project_title]);
 
+        if (inCourse.rows.length === 0) {
+            return res.status(401).json({ message: 'You have not joined this course!' });
+        }
 
         if (checkallgroup.rows.length > 0) {
             return res.status(401).json({ message: 'You already joined a group in this project' });
@@ -64,12 +66,11 @@ export const joinGroup = async (req, res) => {
         const insertGroup = await pool.query(
             "UPDATE allgroup SET students_array = array_append(students_array, $1 ) WHERE group_id = $2 RETURNING *",
             [
-                student_id,
+                user_id,
                 group_id
             ]
         );
 
-        console.log(insertGroup.rows);
 
         res.status(200).json(insertGroup.rows);
 

@@ -10,6 +10,8 @@ import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Av
 import { useGetCourseQuery } from "../../services/course";
 import { useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
+import { useGetProjectsByCourseIdQuery } from "../../services/project";
+import Input from "../../components/login&register/Input";
 
 
 const Section = () => {
@@ -30,6 +32,7 @@ const Section = () => {
         skip: teacherIn,
         selectFromResult: ({ data }) => ({ data: data?.filter((u) => Course?.instructor_id_fk === u.user_id), }),
     });
+    const { data: project } = useGetProjectsByCourseIdQuery(sectionid);
 
     useEffect(() => {
         if (Course?.user_id) {
@@ -46,6 +49,45 @@ const Section = () => {
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Section</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={4}>
+                <Grid item xs={12} md={10} >
+                    {project ?
+                        <>
+                            {project?.map((item) => (
+                                <div key={item.project_id}>
+                                    <Card elevation={5} style={{ height: '100%' }}>
+                                        <CardContent className={classes.infoContent}>
+                                            <form autoComplete="off" noValidate>
+                                                <Typography variant="h6">{item.project_title}</Typography>
+                                                <Divider style={{ margin: theme.spacing(2) }} />
+                                                <Grid container spacing={3}>
+                                                    <Input name="project_title" label="project_title" value={item.project_title} read="true" />
+                                                    <Input name="project_description" label="project_description" value={item.project_description} read="true" />
+                                                    <Input name="project_submission_date" label="project_submission_date" value={item.project_submission_date} read="true" half />
+                                                    <Input name="group_submission_date" label="group_submission_date" value={item.group_submission_date} read="true" half />
+                                                    <Input name="formation_type" label="formation_type" value={item.formation_type} read="true" half />
+                                                    {item.groups.map((it) => (
+                                                        <div key={it.group_id}>
+                                                            <Typography variant="h6">Group ID</Typography>
+                                                            <Typography variant="h6">{it.group_id}</Typography>
+                                                            <Typography variant="h6">Student ID</Typography>
+                                                            {it?.students_array.map((ite, id) => (
+                                                                <div key={id}>
+                                                                    <Typography variant="h6">{ite}</Typography>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ))}
+                                                </Grid>
+                                            </form>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            ))}
+                        </>
+                        :
+                        <></>
+                    }
+                </Grid>
                 <Grid item xs={12} md={5} >
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>

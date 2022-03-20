@@ -102,7 +102,7 @@ const Course = () => {
             });
             setIsErr("");
         } else if (isSucc) {
-            toast.success("Succesfully Updated!", {
+            toast.success("Succesfully Created!", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
