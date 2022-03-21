@@ -40,6 +40,7 @@ export const joinGroup = async (req, res) => {
         group_id,
         project_id,
         course_id,
+        group_position,
         user_id
     } = req.body;
 
@@ -64,9 +65,56 @@ export const joinGroup = async (req, res) => {
         //     ]);
 
         const insertGroup = await pool.query(
-            "UPDATE allgroup SET students_array = array_append(students_array, $1 ) WHERE group_id = $2 RETURNING *",
+            "UPDATE allgroup SET students_array[$1] =  $2  WHERE group_id = $3 RETURNING *",
             [
+                group_position,
                 user_id,
+                group_id
+            ]
+        );
+
+
+        res.status(200).json(insertGroup.rows);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+export const leaveGroup = async (req, res) => {
+    const {
+        group_id,
+        course_id,
+        group_position,
+        user_id
+    } = req.body;
+
+    try {
+        const inCourse = await pool.query("SELECT * FROM user_course WHERE user_id= $1 AND course_id = $2 ", [user_id, course_id]);
+        const checkallgroup = await pool.query("SELECT * FROM allgroup WHERE group_id = $1 AND $2 = ANY (students_array)", [group_id, user_id]);
+        //const project = await pool.query("SELECT * FROM project WHERE course_code = $1 AND project_title =$2", [course_code, project_title]);
+
+        if (inCourse.rows.length === 0) {
+            return res.status(401).json({ message: 'You have not joined this course!' });
+        }
+
+        if (checkallgroup.rows.length === 0) {
+            return res.status(401).json({ message: 'You have not joined this group!' });
+        }
+
+        // const insertGroup = await pool.query("INSERT INTO allgroup (project_id_fk, course_id_fk, students_array) VALUES ($1, $2, $3) RETURNING *",
+        //     [
+        //         project_id,
+        //         course_id,
+        //         [student_id]
+        //     ]);
+
+        const insertGroup = await pool.query(
+            "UPDATE allgroup SET students_array[$1] =  $2  WHERE group_id = $3 RETURNING *",
+            [
+                group_position,
+                "empty" + group_position,
                 group_id
             ]
         );

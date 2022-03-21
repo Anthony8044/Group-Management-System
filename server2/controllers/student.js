@@ -20,6 +20,22 @@ export const getAllStudents = async (req, res) => {
     }
 };
 
+export const getSectionStudents = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await pool.query("Select alluser.user_id, alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id FROM alluser, student, user_course WHERE alluser.user_id = student.user_id_fk AND user_course.user_id = alluser.user_id AND user_course.course_id = $1;", [id]);
+
+        if (user.rows.length === 0) {
+            return res.status(401).json({ message: "No Students." });
+        }
+
+        return res.status(200).json(user.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 
 export const getStudent = async (req, res) => {
     const { id } = req.params;

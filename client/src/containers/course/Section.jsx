@@ -4,14 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from '../UserContext';
 //// UI Imports ////
 import { useTheme } from "@emotion/react";
-import { AccountCircle } from "@mui/icons-material";
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton } from '@mui/material';
+import { AccountCircle, ExpandMore } from "@mui/icons-material";
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Accordion, AccordionSummary, AccordionDetails, Switch } from '@mui/material';
 //// API Imports ////
 import { useGetCourseQuery } from "../../services/course";
-import { useGetStudentsQuery } from "../../services/student";
+import { useGetSectionStudentsQuery, useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
 import { useGetProjectsByCourseIdQuery } from "../../services/project";
 import Input from "../../components/login&register/Input";
+import GroupData from "./GroupData";
 
 
 const Section = () => {
@@ -23,8 +24,9 @@ const Section = () => {
     const [studentIn, setStudentIn] = useState(true);
     const [teacherIn, setTeacherIn] = useState(true);
 
+
     const { data: Course, isError: tErr, error: tErrMsg } = useGetCourseQuery(sectionid);
-    const { data: student } = useGetStudentsQuery(undefined, {
+    const { data: student } = useGetSectionStudentsQuery(sectionid, {
         skip: studentIn,
         selectFromResult: ({ data }) => ({ data: data?.filter((u) => Course?.user_id.includes(u.user_id)), }),
     });
@@ -45,51 +47,48 @@ const Section = () => {
 
 
     return (
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" >
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Section</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
-            <Grid container spacing={4}>
-                <Grid item xs={12} md={10} >
-                    {project ?
-                        <>
-                            {project?.map((item) => (
-                                <div key={item.project_id}>
-                                    <Card elevation={5} style={{ height: '100%' }}>
-                                        <CardContent className={classes.infoContent}>
-                                            <form autoComplete="off" noValidate>
-                                                <Typography variant="h6">{item.project_title}</Typography>
-                                                <Divider style={{ margin: theme.spacing(2) }} />
-                                                <Grid container spacing={3}>
-                                                    <Input name="project_title" label="project_title" value={item.project_title} read="true" />
-                                                    <Input name="project_description" label="project_description" value={item.project_description} read="true" />
-                                                    <Input name="project_submission_date" label="project_submission_date" value={item.project_submission_date} read="true" half />
-                                                    <Input name="group_submission_date" label="group_submission_date" value={item.group_submission_date} read="true" half />
-                                                    <Input name="formation_type" label="formation_type" value={item.formation_type} read="true" half />
-                                                    {item.groups.map((it) => (
-                                                        <div key={it.group_id}>
-                                                            <Typography variant="h6">Group ID</Typography>
-                                                            <Typography variant="h6">{it.group_id}</Typography>
-                                                            <Typography variant="h6">Student ID</Typography>
-                                                            {it?.students_array.map((ite, id) => (
-                                                                <div key={id}>
-                                                                    <Typography variant="h6">{ite}</Typography>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    ))}
-                                                </Grid>
-                                            </form>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            ))}
-                        </>
-                        :
-                        <></>
-                    }
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={7} md={8} >
+                    {project && project?.map((item) => (
+                        <div key={item.project_id}>
+                            <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
+                                <CardContent className={classes.infoContent}>
+                                    <form autoComplete="off" noValidate>
+                                        <Typography variant="h6">{item.project_title}</Typography>
+                                        <Divider style={{ margin: theme.spacing(2) }} />
+                                        <Grid container spacing={3}>
+                                            <Input name="project_title" label="project_title" value={item.project_title} read="true" />
+                                            <Input name="project_description" label="project_description" value={item.project_description} read="true" />
+                                            <Input name="project_submission_date" label="project_submission_date" value={item.project_submission_date} read="true" half />
+                                            <Input name="group_submission_date" label="group_submission_date" value={item.group_submission_date} read="true" half />
+                                            <Input name="formation_type" label="formation_type" value={item.formation_type} read="true" half />
+                                            <Grid item xs={12} sm={12} >
+                                                {item.groups.map((it, index) => (
+                                                    <Accordion key={it.group_id} >
+                                                        <AccordionSummary
+                                                            expandIcon={<ExpandMore />}
+                                                            id={it.group_id}
+                                                        >
+                                                            <Typography>Group {index + 1}</Typography>
+                                                        </AccordionSummary>
+                                                        <AccordionDetails>
+                                                            <GroupData group_id={it.group_id} value={it.students_array} section={sectionid} project_id={item.project_id} joined={it.students_array.find((u) => u === userId?.user_id)} />
+                                                        </AccordionDetails>
+                                                    </Accordion>
+                                                ))}
+                                            </Grid>
+                                        </Grid>
+                                    </form>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ))}
                 </Grid>
-                <Grid item xs={12} md={5} >
-                    <Card elevation={5} style={{ height: '100%' }}>
+                <Grid item xs={12} sm={5} md={4} >
+                    <Card elevation={5}>
                         <CardContent className={classes.infoContent}>
                             <Typography variant="h5" align="center">Teacher</Typography>
                             <List >
@@ -117,7 +116,7 @@ const Section = () => {
 
                             <Divider style={{ margin: theme.spacing(2) }} />
                             <Grid container spacing={2}>
-                                <Grid item >
+                                <Grid item xs={12} >
                                     <List >
                                         {student?.map((ite) => (
                                             <ListItemButton
@@ -133,6 +132,7 @@ const Section = () => {
                                                 <ListItemText
                                                     primary={ite.given_name + ' ' + ite.family_name}
                                                     secondary={ite.student_id}
+
                                                 />
                                             </ListItemButton>
                                         ))}

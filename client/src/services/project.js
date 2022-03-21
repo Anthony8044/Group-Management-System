@@ -29,7 +29,27 @@ export const projectApi = api.injectEndpoints({
             },
             invalidatesTags: ['Project'],
         }),
+        joinGroup: build.mutation({
+            query: (body) => {
+                return {
+                    url: "/group/joinGroup",
+                    method: "POST",
+                    body,
+                }
+            },
+            invalidatesTags: ['Project'],
+        }),
+        leaveGroup: build.mutation({
+            query: (body) => {
+                return {
+                    url: "/group/leaveGroup",
+                    method: "POST",
+                    body,
+                }
+            },
+            invalidatesTags: ['Project'],
+        }),
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation } = projectApi

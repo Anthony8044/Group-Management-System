@@ -19,6 +19,14 @@ export const studentsApi = api.injectEndpoints({
             },
             providesTags: ['Student'],
         }),
+        getSectionStudents: build.query({
+            query: (id) => {
+                return {
+                    url: `/student/getSectionStudents/${id}`,
+                }
+            },
+            providesTags: ['Student'],
+        }),
         updateStudent: build.mutation({
             query: (studentData) => {
                 return {
@@ -32,4 +40,4 @@ export const studentsApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetStudentsQuery, useGetStudentQuery, useUpdateStudentMutation } = studentsApi
+export const { useGetStudentsQuery, useGetStudentQuery, useUpdateStudentMutation, useGetSectionStudentsQuery } = studentsApi
