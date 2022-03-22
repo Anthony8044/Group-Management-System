@@ -15,7 +15,6 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
     const [joinGroup, { error: sError, isSuccess: sSuccess }] = useJoinGroupMutation();
     const [leaveGroup] = useLeaveGroupMutation();
 
-
     useEffect(() => {
         if (student?.user_id === value) {
             setIsEmpty(false);
@@ -48,12 +47,12 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                 <ListItem
                     secondaryAction={
                         <>
-                            {isEmpty && !joined &&
+                            {isEmpty && joined?.group_id === null &&
                                 <IconButton edge="end" aria-label="add" onClick={() => joinSubmit()}>
                                     <Add />
                                 </IconButton>
                             }
-                            {joined && userId?.user_id === value &&
+                            {joined?.group_id != null && userId?.user_id === value &&
                                 <IconButton edge="end" aria-label="add" onClick={() => leaveSubmit()}>
                                     <Minimize />
                                 </IconButton>

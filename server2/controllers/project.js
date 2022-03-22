@@ -14,6 +14,7 @@ export const createproject = async (req, res) => {
         group_max,
         formation_type,
         project_description,
+        project_status,
         user_id
     } = req.body;
 
@@ -49,7 +50,7 @@ export const createproject = async (req, res) => {
 
         ///Students Choice
 
-        const insertProject = await pool.query("INSERT INTO project (course_code, project_title, group_submission_date, project_submission_date, group_min, group_max, formation_type, project_description, instructor_id_fk) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+        const insertProject = await pool.query("INSERT INTO project (course_code, project_title, group_submission_date, project_submission_date, group_min, group_max, formation_type, project_description, project_status, instructor_id_fk) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
             [
                 course_code,
                 project_title,
@@ -59,6 +60,7 @@ export const createproject = async (req, res) => {
                 group_max,
                 formation_type,
                 project_description,
+                project_status,
                 user_id
             ]);
 
@@ -72,10 +74,11 @@ export const createproject = async (req, res) => {
                 let a = 0;
                 while (a < GroupNum[x]) {
                     await pool.query(
-                        "INSERT INTO allgroup (project_id_fk, course_id_fk, students_array) VALUES ($1, $2, $3) RETURNING *",
+                        "INSERT INTO allgroup (project_id_fk, course_id_fk, group_num, students_array) VALUES ($1, $2, $3, $4) RETURNING *",
                         [
                             insertProject.rows[0].project_id,
                             setting,
+                            a + 1,
                             GroupNum1
                         ]);
                     a++;
@@ -101,10 +104,11 @@ export const createproject = async (req, res) => {
                 let a = 0;
                 while (a < GroupNum[x]) {
                     const asdlfkj = await pool.query(
-                        "INSERT INTO allgroup (project_id_fk, course_id_fk, students_array) VALUES ($1, $2, $3) RETURNING *",
+                        "INSERT INTO allgroup (project_id_fk, course_id_fk, group_num, students_array) VALUES ($1, $2, $3, $4) RETURNING *",
                         [
                             insertProject.rows[0].project_id,
                             setting,
+                            a + 1,
                             randomizedList[a]
                         ]);
                     //console.log(asdlfkj.rows)
@@ -142,9 +146,9 @@ export const getAllProjects = async (req, res) => {
     try {
         // const project = await pool.query("SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, ta.course_id, array_agg(te.group_id) AS group_id FROM project e LEFT JOIN allgroup te on e.project_id=te.project_id_fk LEFT JOIN (SELECT LEFT(course_id, -2) AS course_code, array_agg(course_id) AS course_id FROM course GROUP BY course_id) ta USING (course_code) GROUP BY e.project_id, ta.course_id ORDER BY e.course_code ASC;");
         const project = await pool.query(
-            "SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, te.groups, ta.section_id " +
+            "SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_status, e.project_description, te.groups, ta.section_id " +
             "FROM project e " +
-            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk)) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +
+            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'group_num', group_num, 'group_status', group_status, 'course_id_fk', course_id_fk)ORDER BY course_id_fk, group_num) AS groups FROM allgroup GROUP BY 1) te USING (project_id) " +
             "LEFT JOIN  (SELECT LEFT(course_id, -2) AS course_code, array_agg(course_id) AS section_id FROM course GROUP  BY 1) ta USING (course_code) " +
             "GROUP BY e.project_id, te.groups, ta.section_id ORDER BY e.created_at;"
         );
@@ -168,7 +172,7 @@ export const getProjectsByCourseId = async (req, res) => {
         const project = await pool.query(
             "SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, te.groups " +
             "FROM project e " +
-            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup WHERE course_id_fk = $1 GROUP  BY 1) te USING (project_id) " +
+            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'group_num', group_num, 'group_status', group_status, 'students_array', students_array )ORDER BY group_num) AS groups FROM allgroup WHERE course_id_fk = $1 GROUP  BY 1) te USING (project_id) " +
             "WHERE LEFT($1, -2)=e.course_code GROUP BY e.project_id, te.groups ORDER BY e.created_at;", [id]
         );
 
@@ -191,7 +195,7 @@ export const getProject = async (req, res) => {
         const project = await pool.query(
             "SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, te.groups " +
             "FROM project e " +
-            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +
+            "LEFT JOIN  (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'group_num', group_num, 'group_status', group_status, 'students_array', students_array )ORDER BY course_id_fk, group_num) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +
             "WHERE e.project_id = $1 GROUP BY e.project_id, te.groups ORDER BY e.created_at;", [id]
         );
 

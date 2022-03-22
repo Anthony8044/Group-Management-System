@@ -57,6 +57,7 @@ CREATE TABLE project(
     project_submission_date VARCHAR(255) NOT NULL,
     group_min VARCHAR(255) NOT NULL,
     group_max VARCHAR(255) NOT NULL,
+    project_status VARCHAR(255) NOT NULL,
     formation_type VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
     instructor_id_fk uuid NOT NULL,
@@ -68,8 +69,10 @@ CREATE TABLE allgroup(
     group_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     project_id_fk uuid NOT NULL,
     course_id_fk VARCHAR(255) NOT NULL,
+    group_num SMALLINT NOT NULL,
     students_array text ARRAY,
     group_status VARCHAR(255) DEFAULT 'Not Full',
+    submission_status VARCHAR(255) DEFAULT 'Not Submitted',
     CONSTRAINT fk_project_id FOREIGN KEY(project_id_fk) REFERENCES project(project_id) ON DELETE CASCADE,
     CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE
 );

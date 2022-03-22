@@ -73,6 +73,16 @@ export const joinGroup = async (req, res) => {
             ]
         );
 
+        const checkgroup = await pool.query("SELECT * FROM allgroup join lateral unnest(students_array) as un(student) on true where un.student like 'empty_' AND group_id=$1;", [group_id]);
+        if (checkgroup.rows.length === 0) {
+            await pool.query(
+                "UPDATE allgroup SET group_status = 'Full' WHERE group_id = $1 RETURNING *",
+                [
+                    group_id
+                ]
+            );
+        }
+
 
         res.status(200).json(insertGroup.rows);
 
@@ -118,6 +128,16 @@ export const leaveGroup = async (req, res) => {
                 group_id
             ]
         );
+
+        const checkgroup = await pool.query("SELECT * FROM allgroup join lateral unnest(students_array) as un(student) on true where un.student like 'empty_' AND group_id=$1;", [group_id]);
+        if (checkgroup.rows.length > 0) {
+            await pool.query(
+                "UPDATE allgroup SET group_status = 'Not Full' WHERE group_id = $1 RETURNING *",
+                [
+                    group_id
+                ]
+            );
+        }
 
 
         res.status(200).json(insertGroup.rows);

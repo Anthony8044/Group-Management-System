@@ -6,6 +6,7 @@ import GroupItem from './GroupItem';
 
 export const GroupData = ({ value, section, group_id, project_id, joined }) => {
 
+
     return (
         <>
             {value && value?.map((it, index) => (

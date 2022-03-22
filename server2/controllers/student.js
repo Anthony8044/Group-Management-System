@@ -54,6 +54,64 @@ export const getStudent = async (req, res) => {
     }
 };
 
+export const getStudentGroups = async (req, res) => {
+    const { id } = req.params;
+    const idString = id.toString();
+
+    try {
+        // const user = await pool.query(
+        //     "SELECT u.user_id, u.course_id, p.project_id, bool_or(case when u.user_id::text = ANY (a.students_array) then true else false end) AS isJoined " +
+        //     "FROM user_course u, project p, allgroup a WHERE u.user_id = $1 AND LEFT(u.course_id, -2) = p.course_code AND p.project_id = a.project_id_fk " +
+        //     "GROUP BY u.user_id, u.course_id, p.project_id", [id]
+        // );
+        const user = await pool.query(
+            "SELECT u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status " +
+            "FROM user_course u, allgroup a, project p " +
+            "LEFT JOIN (SELECT project_id_fk AS project_id, group_id, group_num, group_status FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY group_id) te USING (project_id) " +
+            "WHERE u.user_id = $2 AND LEFT(u.course_id, -2) = p.course_code AND p.project_id = a.project_id_fk " +
+            "GROUP BY u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status", [idString, id]
+        );
+        //"LEFT JOIN (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY 1) te USING (project_id) " +
+        //"LEFT JOIN (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +
+
+
+
+        if (user.rows.length === 0) {
+            return res.status(401).json({ message: "User does'nt exist." });
+        }
+
+        return res.status(200).json(user.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+// export const getStudentinProject = async (req, res) => {
+//     const { id, projid } = req.params;
+//     const idString = id.toString();
+
+//     try {
+//         const user = await pool.query(
+//             "SELECT user_course.user_id, allgroup.course_id_fk, te.project_id, te.group_id, te.group_num, te.group_status " +
+//             "FROM user_course, allgroup, project " +
+//             "LEFT JOIN (SELECT project_id_fk AS project_id, group_id, group_num, group_status FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY group_id) te USING (project_id) " +
+//             "WHERE user_course.user_id = $2 AND user_course.course_id = allgroup.course_id_fk AND allgroup.project_id_fk = $3 " +
+//             "GROUP BY user_course.user_id, te.project_id, allgroup.course_id_fk, te.group_id, te.group_num, te.group_status", [idString, id, projid]
+//         );
+
+
+//         if (user.rows.length === 0) {
+//             return res.status(401).json({ message: "User does'nt exist." });
+//         }
+
+//         return res.status(200).json(user.rows[0])
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).send("Server error");
+//     }
+// };
+
 export const updateStudent = async (req, res) => {
     const {
         given_name,

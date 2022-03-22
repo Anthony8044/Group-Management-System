@@ -80,7 +80,7 @@ const Course = () => {
     };
 
     const formationType = [{ id: 1, type: "random" }, { id: 2, type: "default" }];
-    const hCNewProject = (e) => setNewProjectData({ ...newProjectData, [e.target.name]: e.target.value, course_code: courseid, user_id: userId?.user_id });
+    const hCNewProject = (e) => setNewProjectData({ ...newProjectData, [e.target.name]: e.target.value, course_code: courseid, user_id: userId?.user_id, project_status: "Find Groups" });
     const handledateGroup = (newValue) => {
         setDateGroup(newValue);
     };

@@ -3,16 +3,18 @@ import useStyles from './styles'
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from '../UserContext';
 //// UI Imports ////
+import DateAdapter from '@mui/lab/AdapterDateFns';
 import { useTheme } from "@emotion/react";
 import { AccountCircle, ExpandMore } from "@mui/icons-material";
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Accordion, AccordionSummary, AccordionDetails, Switch } from '@mui/material';
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Accordion, AccordionSummary, AccordionDetails, Switch, TextField } from '@mui/material';
 //// API Imports ////
 import { useGetCourseQuery } from "../../services/course";
 import { useGetSectionStudentsQuery, useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
-import { useGetProjectsByCourseIdQuery } from "../../services/project";
+import { useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudentinProjectMutation } from "../../services/project";
 import Input from "../../components/login&register/Input";
 import GroupData from "./GroupData";
+import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 
 
 const Section = () => {
@@ -23,6 +25,7 @@ const Section = () => {
     const userId = useContext(UserContext);
     const [studentIn, setStudentIn] = useState(true);
     const [teacherIn, setTeacherIn] = useState(true);
+    const [userIn, setUserIn] = useState(true);
 
 
     const { data: Course, isError: tErr, error: tErrMsg } = useGetCourseQuery(sectionid);
@@ -35,6 +38,9 @@ const Section = () => {
         selectFromResult: ({ data }) => ({ data: data?.filter((u) => Course?.instructor_id_fk === u.user_id), }),
     });
     const { data: project } = useGetProjectsByCourseIdQuery(sectionid);
+    const { data: isIn } = useGetStudentGroupsQuery({ "id": userId?.user_id }, {
+        skip: userIn,
+    });
 
     useEffect(() => {
         if (Course?.user_id) {
@@ -43,7 +49,10 @@ const Section = () => {
         if (Course?.user_id) {
             setTeacherIn(false);
         }
-    }, [Course?.user_id]);
+        if (userId?.user_id) {
+            setUserIn(false);
+        }
+    }, [Course?.user_id, userId?.user_id]);
 
 
     return (
@@ -52,40 +61,84 @@ const Section = () => {
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7} md={8} >
-                    {project && project?.map((item) => (
-                        <div key={item.project_id}>
+                    {project ?
+                        <>
+                            {project && project?.map((item) => (
+                                <div key={item.project_id}>
+                                    <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
+                                        <CardContent className={classes.infoContent}>
+                                            <form autoComplete="off" noValidate>
+                                                <Typography variant="h6">{item.project_title}</Typography>
+                                                <Divider style={{ margin: theme.spacing(2) }} />
+                                                <LocalizationProvider dateAdapter={DateAdapter}>
+                                                    <Grid container spacing={3}>
+                                                        <Input name="project_title" label="Project Title" value={item.project_title} read="true" />
+                                                        <Input name="project_description" label="Project Description" value={item.project_description} read="true" />
+                                                        <Grid item xs={6} >
+                                                            <DateTimePicker
+                                                                label="Project Submission Date"
+                                                                name="group_submission_date"
+                                                                value={item.group_submission_date}
+                                                                onChange={() => { }}
+                                                                renderInput={(params) => <TextField {...params} />}
+                                                                readOnly
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} >
+                                                            <DateTimePicker
+                                                                label="Project Submission Date"
+                                                                name="project_submission_date"
+                                                                value={item.project_submission_date}
+                                                                onChange={() => { }}
+                                                                renderInput={(params) => <TextField {...params} />}
+                                                                readOnly
+                                                            />
+                                                        </Grid>
+                                                        <Input name="formation_type" label="Formation Type" value={item.formation_type} read="true" half />
+                                                        <Grid item xs={12} sm={12} >
+                                                            {isIn && isIn?.find((u) => u.project_id === item.project_id && u.group_id != null) ?
+                                                                <Typography> You have joined a group. </Typography>
+                                                                :
+                                                                <Typography> You have not joined a group yet! </Typography>
+                                                            }
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} >
+                                                            {item.groups.map((it, index) => (
+                                                                <Accordion key={it.group_num} >
+                                                                    <AccordionSummary
+                                                                        expandIcon={<ExpandMore />}
+                                                                        id={it.group_id}
+                                                                    >
+                                                                        <Typography>Group {it.group_num} | {it.group_status} </Typography>
+                                                                        {isIn && isIn?.find((u) => u.group_id === it.group_id) ?
+                                                                            <Typography> | Your Group </Typography>
+                                                                            :
+                                                                            <Typography> </Typography>
+                                                                        }
+                                                                    </AccordionSummary>
+                                                                    <AccordionDetails>
+                                                                        <GroupData group_id={it.group_id} value={it.students_array} section={sectionid} project_id={item.project_id} joined={isIn?.find((u) => u.project_id === item.project_id)} />
+                                                                    </AccordionDetails>
+                                                                </Accordion>
+                                                            ))}
+                                                        </Grid>
+                                                    </Grid>
+                                                </LocalizationProvider>
+                                            </form>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            ))}
+                        </>
+                        :
+                        <>
                             <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
                                 <CardContent className={classes.infoContent}>
-                                    <form autoComplete="off" noValidate>
-                                        <Typography variant="h6">{item.project_title}</Typography>
-                                        <Divider style={{ margin: theme.spacing(2) }} />
-                                        <Grid container spacing={3}>
-                                            <Input name="project_title" label="project_title" value={item.project_title} read="true" />
-                                            <Input name="project_description" label="project_description" value={item.project_description} read="true" />
-                                            <Input name="project_submission_date" label="project_submission_date" value={item.project_submission_date} read="true" half />
-                                            <Input name="group_submission_date" label="group_submission_date" value={item.group_submission_date} read="true" half />
-                                            <Input name="formation_type" label="formation_type" value={item.formation_type} read="true" half />
-                                            <Grid item xs={12} sm={12} >
-                                                {item.groups.map((it, index) => (
-                                                    <Accordion key={it.group_id} >
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMore />}
-                                                            id={it.group_id}
-                                                        >
-                                                            <Typography>Group {index + 1}</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <GroupData group_id={it.group_id} value={it.students_array} section={sectionid} project_id={item.project_id} joined={it.students_array.find((u) => u === userId?.user_id)} />
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                ))}
-                                            </Grid>
-                                        </Grid>
-                                    </form>
+                                    <Typography variant="h6">No projects added yet. Please wait for the teacher to add projects to this course.</Typography>
                                 </CardContent>
                             </Card>
-                        </div>
-                    ))}
+                        </>
+                    }
                 </Grid>
                 <Grid item xs={12} sm={5} md={4} >
                     <Card elevation={5}>
@@ -145,7 +198,7 @@ const Section = () => {
                     </Card>
                 </Grid>
             </Grid>
-        </Container>
+        </Container >
     );
 }
 

@@ -19,6 +19,14 @@ export const projectApi = api.injectEndpoints({
             },
             providesTags: ['Project'],
         }),
+        getStudentGroups: build.query({
+            query: ({ id }) => {
+                return {
+                    url: `/student/getStudentGroups/${id}`,
+                }
+            },
+            providesTags: ['Project'],
+        }),
         createproject: build.mutation({
             query: (body) => {
                 return {
@@ -52,4 +60,4 @@ export const projectApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery } = projectApi
