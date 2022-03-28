@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from '../UserContext';
 //// UI Imports ////
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import { useTheme } from "@emotion/react";
 import { AccountCircle, ExpandMore } from "@mui/icons-material";
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Accordion, AccordionSummary, AccordionDetails, Switch, TextField } from '@mui/material';
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Accordion, AccordionSummary, AccordionDetails, Switch, TextField, Breadcrumbs } from '@mui/material';
 //// API Imports ////
 import { useGetCourseQuery } from "../../services/course";
 import { useGetSectionStudentsQuery, useGetStudentsQuery } from "../../services/student";
@@ -57,7 +57,7 @@ const Section = () => {
 
     return (
         <Container maxWidth="xl" >
-            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Section</Typography>
+            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >COMP0001-1 ~ Interactive Computer Graphics</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7} md={8} >
@@ -72,7 +72,6 @@ const Section = () => {
                                                 <Divider style={{ margin: theme.spacing(2) }} />
                                                 <LocalizationProvider dateAdapter={DateAdapter}>
                                                     <Grid container spacing={3}>
-                                                        <Input name="project_title" label="Project Title" value={item.project_title} read="true" />
                                                         <Input name="project_description" label="Project Description" value={item.project_description} read="true" />
                                                         <Grid item xs={6} >
                                                             <DateTimePicker
@@ -94,17 +93,23 @@ const Section = () => {
                                                                 readOnly
                                                             />
                                                         </Grid>
-                                                        <Input name="formation_type" label="Formation Type" value={item.formation_type} read="true" half />
-                                                        <Grid item xs={12} sm={12} >
-                                                            {isIn && isIn?.find((u) => u.project_id === item.project_id && u.group_id != null) ?
-                                                                <Typography> You have joined a group. </Typography>
-                                                                :
-                                                                <Typography> You have not joined a group yet! </Typography>
-                                                            }
-                                                        </Grid>
+                                                        {userId && userId?.role === 'Student' &&
+                                                            <Grid item xs={12} sm={12} >
+                                                                {isIn && isIn?.find((u) => u.project_id === item.project_id && u.group_id != null) ?
+                                                                    <Typography> </Typography>
+                                                                    :
+                                                                    <Typography> You have not joined a group yet! </Typography>
+                                                                }
+                                                            </Grid>
+                                                        }
+                                                        {userId && userId?.role === 'Teacher' &&
+                                                            <Grid item xs={12} sm={12} >
+                                                                <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Export Groups</Button>
+                                                            </Grid>
+                                                        }
                                                         <Grid item xs={12} sm={12} >
                                                             {item.groups.map((it, index) => (
-                                                                <Accordion key={it.group_num} >
+                                                                <Accordion key={it.group_num} elevation={2} >
                                                                     <AccordionSummary
                                                                         expandIcon={<ExpandMore />}
                                                                         id={it.group_id}
@@ -144,6 +149,7 @@ const Section = () => {
                     <Card elevation={5}>
                         <CardContent className={classes.infoContent}>
                             <Typography variant="h5" align="center">Teacher</Typography>
+                            <Divider style={{ margin: theme.spacing(2) }} />
                             <List >
                                 {teacher?.map((item) => (
                                     <ListItemButton

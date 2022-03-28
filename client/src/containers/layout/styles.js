@@ -1,14 +1,14 @@
 import { makeStyles } from '@mui/styles';
 
-const drawerWidth = 300
+const drawerWidth = 400
 
 export default makeStyles((theme) => ({
     root: {
         display: "flex"
     },
     page: {
-        background: '#f9f9f9',
-        width: '100%'
+        width: '100%',
+        height: '100vh'
     },
     appBar: {
         //zIndex: theme.zIndex.drawer + 1
@@ -37,25 +37,25 @@ export default makeStyles((theme) => ({
             display: "none !important"
         }
     },
-    title:{
+    title: {
         flexGrow: 1
     },
     avatar: {
         margin: theme.spacing(2),
-        height: '30px !important', 
+        height: '30px !important',
         width: '30px !important',
     },
     menuItems: {
-      marginTop: "20px !important" 
+        //marginTop: "20px !important"
     },
     innerItemsText: {
-        justifySelf: "right !important" 
-      },
+        justifySelf: "right !important"
+    },
     profile: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
-      },
+    },
     button: {
         margin: theme.spacing(2) + "!important"
     },

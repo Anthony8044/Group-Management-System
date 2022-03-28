@@ -14,6 +14,8 @@ import { AccountCircle } from "@mui/icons-material";
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack } from '@mui/material';
 //// API Imports ////
 import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
+import { useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
+import { useGetStudentsQuery } from "../../services/student";
 
 
 const Course = () => {
@@ -24,6 +26,7 @@ const Course = () => {
     const { courseid } = useParams();
     const userId = useContext(UserContext);
     const [newProjectData, setNewProjectData] = useState({ course_code: '', project_title: '', group_min: '', group_max: '', formation_type: 'default', project_description: '', user_id: '' });
+    const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     const [dateGroup, setDateGroup] = useState(new Date());
     const [dateProject, setDateProject] = useState(new Date());
     const [isFormInvalid, setIsFormInvalid] = useState({ project_title: false, group_min: false, group_max: false, project_description: false });
@@ -36,6 +39,11 @@ const Course = () => {
         }),
     });
     const [createproject, { error: sError, isSuccess: sSuccess }] = useCreateprojectMutation();
+    const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
+    const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
+    const { data: student } = useGetStudentsQuery();
+
+
 
 
     const validate = values => {
@@ -88,6 +96,13 @@ const Course = () => {
         setDateProject(newValue);
     };
 
+    const handleSubmit2 = async (e) => {
+        e.preventDefault();
+        await registerCourse(regCourseData);
+    };
+
+    const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
+
     const renderError = () => {
         if (isErr) {
             toast.error(isErr, {
@@ -119,49 +134,58 @@ const Course = () => {
     return (
         <Container maxWidth="xl">
             {renderError()}
-            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Course</Typography>
+            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >COMP0001 ~ Interactive Computer Graphics</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={4}>
                 <Grid item xs={12} md={10} >
-                    {allProjects ?
-                        <>
-                            {allProjects?.map((item) => (
-                                <div key={item.project_id}>
-                                    <Card elevation={5} style={{ height: '100%' }}>
-                                        <CardContent className={classes.infoContent}>
-                                            <form autoComplete="off" noValidate>
-                                                <Typography variant="h6">{item.project_title}</Typography>
-                                                <Divider style={{ margin: theme.spacing(2) }} />
-                                                <Grid container spacing={3}>
-                                                    <Input name="project_title" label="project_title" value={item.project_title} read="true" />
-                                                    <Input name="project_description" label="project_description" value={item.project_description} read="true" />
-                                                    <Input name="project_submission_date" label="project_submission_date" value={item.project_submission_date} read="true" half />
-                                                    <Input name="group_submission_date" label="group_submission_date" value={item.group_submission_date} read="true" half />
-                                                    <Input name="formation_type" label="formation_type" value={item.formation_type} read="true" half />
-                                                    <Grid item xs={12} >
-                                                        <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Update</Button>
-                                                    </Grid>
-                                                    {item.section_id.map((ite) => (
-                                                        <ListItemButton key={ite} onClick={() => navigate(`/classes/${courseid}/${ite}`)} >
-                                                            <ListItemText align="center" primary={ite} />
-                                                        </ListItemButton>
-                                                    ))}
-                                                </Grid>
-                                            </form>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            ))}
-                        </>
-                        :
-                        <></>
-                    }
+
+                    <Card elevation={5} style={{ height: '100%' }}>
+                        <CardContent className={classes.infoContent}>
+                            <Typography textAlign={'center'} variant="h6">Go to Section</Typography>
+                            <Divider style={{ margin: theme.spacing(2) }} />
+                            <Grid container spacing={4}>
+                                <Grid item xs={4} >
+                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-1</Button>
+                                </Grid>
+                                <Grid item xs={4} >
+                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-2</Button>
+                                </Grid>
+                                <Grid item xs={4} >
+                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-3</Button>
+                                </Grid>
+                            </Grid>
+
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={10} >
+                    <Card elevation={5} style={{ height: '100%' }}>
+                        <CardContent className={classes.infoContent}>
+                            <Typography textAlign={'center'} variant="h6">Register Student in Course</Typography>
+                            <Divider style={{ margin: theme.spacing(2) }} />
+                            <form noValidate onSubmit={handleSubmit2}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} >
+                                        <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Register Student</Button>
+                                    </Grid>
+                                </Grid>
+
+                            </form>
+                        </CardContent>
+                    </Card>
                 </Grid>
                 <Grid item xs={12} md={10} >
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
                             <form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                                <Typography variant="h6">Create New Project</Typography>
+                                <Typography textAlign={'center'} variant="h6">Create New Project</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <LocalizationProvider dateAdapter={DateAdapter}>
 

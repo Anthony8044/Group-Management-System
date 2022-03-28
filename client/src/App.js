@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import "./app.scss";
+//import "./app.scss";
 import Home from "./containers/home/Home";
 import Profile from "./containers/profile/Profile";
 import Course from './containers/course/Course';
@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { UserContextProvider } from "./containers/UserContext";
 import { LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDateFns';
+import { CssBaseline, ScopedCssBaseline } from "@mui/material";
 
 
 
@@ -47,19 +48,17 @@ const App = ({ children }) => {
       <ThemeProvider theme={theme}>
          <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
          <BrowserRouter>
-            <div className="container">
-               <Routes>
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
-                     <Route path="/" element={<Home />} />
-                     <Route path="/profile/:id" element={<Profile />} />
-                     <Route path="/classes/:courseid" element={<Course />} />
-                     <Route path="/classes/:courseid/:sectionid" element={<Section />} />
-                     <Route path="/groups" element={<Home />} />
-                  </Route>
-               </Routes>
-            </div>
+            <Routes>
+               <Route path="/register" element={<Register />} />
+               <Route path="/login" element={<Login />} />
+               <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/profile/:id" element={<Profile />} />
+                  <Route path="/course/:courseid" element={<Course />} />
+                  <Route path="/course/:courseid/:sectionid" element={<Section />} />
+                  <Route path="/groups" element={<Home />} />
+               </Route>
+            </Routes>
          </BrowserRouter>
          <ToastContainer
             position="top-right"

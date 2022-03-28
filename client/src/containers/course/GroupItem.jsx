@@ -1,9 +1,49 @@
-import { AccountCircle, Add, Delete, Minimize } from '@mui/icons-material';
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { AccountCircle, Add, AddCircle, Delete, Minimize, Person, PersonAdd, RemoveCircle } from '@mui/icons-material';
+import { Avatar, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useJoinGroupMutation, useLeaveGroupMutation } from '../../services/project';
 import { useGetSectionStudentsQuery } from '../../services/student';
 import { UserContext } from '../UserContext';
+import PropTypes from 'prop-types';
+
+
+
+
+const emails = ['Tom Smith', 'Harry Millar', 'Fiona Jones', 'Steven Park'];
+
+function SimpleDialog(props) {
+    const { onClose, selectedValue, open } = props;
+
+    const handleClose = () => {
+        onClose(selectedValue);
+    };
+
+    const handleListItemClick = (value) => {
+        onClose(value);
+    };
+
+    return (
+        <Dialog onClose={handleClose} open={open}>
+            <DialogTitle>Invite Classmates</DialogTitle>
+            <List sx={{ pt: 0 }}>
+                {emails.map((email) => (
+                    <ListItem button onClick={() => handleListItemClick(email)} key={email}>
+                        <ListItemAvatar>
+                            <Person />
+                        </ListItemAvatar>
+                        <ListItemText primary={email} />
+                    </ListItem>
+                ))}
+            </List>
+        </Dialog>
+    );
+}
+
+SimpleDialog.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    selectedValue: PropTypes.string.isRequired,
+};
 
 export const GroupItem = ({ value, itemNum, section, group_id, project_id, joined }) => {
     const userId = useContext(UserContext);
@@ -41,20 +81,38 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
         });
     };
 
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (value) => {
+        setOpen(false);
+        setSelectedValue(value);
+    };
+
     return (
         <>
-            <List >
+            <List dense >
+                <Divider />
                 <ListItem
                     secondaryAction={
                         <>
                             {isEmpty && joined?.group_id === null &&
                                 <IconButton edge="end" aria-label="add" onClick={() => joinSubmit()}>
-                                    <Add />
+                                    <AddCircle />
                                 </IconButton>
                             }
                             {joined?.group_id != null && userId?.user_id === value &&
                                 <IconButton edge="end" aria-label="add" onClick={() => leaveSubmit()}>
-                                    <Minimize />
+                                    <RemoveCircle />
+                                </IconButton>
+                            }
+                            {joined?.group_id != null && joined?.group_id === group_id && itemNum === 2 &&
+                                <IconButton edge="end" aria-label="add" onClick={handleClickOpen}>
+                                    <PersonAdd />
                                 </IconButton>
                             }
                         </>
@@ -67,9 +125,15 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                     </ListItemAvatar>
                     <ListItemText
                         primary={isEmpty ? "Empty Slot " + itemNum : student?.given_name + " " + student?.family_name}
-                        secondary={isEmpty ? "" : student?.student_id}
+                        secondary={isEmpty ? "Empty Slot " + itemNum : student?.student_id}
                     />
                 </ListItem>
+                <Divider />
+                <SimpleDialog
+                    selectedValue={selectedValue}
+                    open={open}
+                    onClose={handleClose}
+                />
             </List>
         </>
     );

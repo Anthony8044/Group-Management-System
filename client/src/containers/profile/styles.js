@@ -3,10 +3,10 @@ import { makeStyles } from '@mui/styles';
 
 export default makeStyles((theme) => ({
     avatar: {
-        marginTop: '20px',
+        marginTop: '50px',
         margin: 'auto',
-        height: '150px !important', 
-        width: '150px !important',
+        height: '200px !important',
+        width: '200px !important',
     },
     profileTitle: {
         textAlign: 'center'

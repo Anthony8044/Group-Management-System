@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, student, course, teacher, formation }) => {
+export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, student, course, teacher, formation, general }) => {
     const [localValue, setLocalValue] = useState(value ?? '');
     useEffect(() => setLocalValue(value ?? ''), [value]);
     const handleFocus = () => {
@@ -102,6 +102,29 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
 
                                 <MenuItem key={option.id} value={option.type}>
                                     {option.type}
+                                </MenuItem>
+
+                            );
+                        })}
+                    </Select>
+                </>
+            }
+            {general &&
+                <>
+                    <InputLabel>{general}</InputLabel>
+                    <Select
+                        name={name}
+                        value={localValue}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label={general}
+                    >
+                        {options?.map(option => {
+                            return (
+
+                                <MenuItem key={option} value={option}>
+                                    {option}
                                 </MenuItem>
 
                             );

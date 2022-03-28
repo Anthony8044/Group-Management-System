@@ -3,7 +3,7 @@ import Input from "./Input";
 import useStyles from './styles'
 import { useNavigate } from "react-router-dom";
 //// UI Imports ////
-import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme } from '@mui/material';
+import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, Paper } from '@mui/material';
 //// API Imports ////
 import { useLoginMutation } from "../../services/auth";
 
@@ -45,26 +45,30 @@ const Login = () => {
     }
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth={'100vh'} spacing={20} style={{ minHeight: "100vh", background: 'linear-gradient( #edf3f7, #93c3d9)' }} >
             <Grid
                 container
-                justifyContent="center"
-                alignItems="center"
                 direction="column"
+                alignItems="center"
+                justifyContent='center'
                 style={{ minHeight: "100vh" }}
-                spacing={5}
             >
                 <Grid item >
-                    <Card elevation={5} style={{ height: '100%' }}>
-                        <CardContent className={classes.infoContent}>
+                    <Typography variant="h2" color={'#001531'} style={{ marginBottom: '50px', fontWeight: 800 }} >
+                        Group Management System
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <Card elevation={16} style={{ height: '100%', maxWidth: '50vh', backgroundColor: '#edf3f7', borderRadius: 15 }} >
+                        <CardContent className={classes.infoContent} >
                             <form noValidate onSubmit={handleSubmit}>
-                                <Typography variant="h6" align="center">Sign in</Typography>
+                                <Typography variant="h4" align="center" style={{ fontWeight: 400 }}>Sign in</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <Grid container spacing={3} justifyContent={'center'}>
                                     <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
                                     <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? 'text' : 'password'} handleShowPassword={handleShowPassword} />
                                     <Grid item xs={6}>
-                                        <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                                        <Button type="submit" fullWidth variant="contained" color="primary" size="large" className={classes.submit}>
                                             Sign In
                                         </Button>
                                     </Grid>

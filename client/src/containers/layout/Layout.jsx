@@ -4,9 +4,9 @@ import { useTheme } from '@mui/styles';
 import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
 import { UserContext } from '../UserContext';
 //// UI Imports ////
-import { List, useMediaQuery, CssBaseline, Avatar, Button } from '@mui/material'
+import { List, useMediaQuery, CssBaseline, Avatar, Button, ListItem, Divider } from '@mui/material'
 import { ListItemButton, ListItemIcon, ListItemText, Drawer, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
-import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite } from "@mui/icons-material";
+import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite, KeyboardArrowDown } from "@mui/icons-material";
 //// API Imports ////
 import { useGetStudentQuery } from "../../services/student";
 import { useGetTeacherQuery } from "../../services/teacher";
@@ -125,6 +125,7 @@ const Layout = ({ children }) => {
 
                 {student &&
                     <List>
+                        <Divider />
                         <ListItemButton
                             selected={currentRoute.pathname === '/' ? true : false}
                             onClick={() => navigate('/')}
@@ -133,6 +134,7 @@ const Layout = ({ children }) => {
                             <ListItemIcon><Home color="primary" /></ListItemIcon>
                             <ListItemText primary="Home" />
                         </ListItemButton  >
+                        <Divider />
                         <ListItemButton
                             selected={currentRoute.pathname === `/profile/${student?.user_id}` ? true : false}
                             onClick={() => navigate(`/profile/${student?.user_id}`)}
@@ -141,23 +143,34 @@ const Layout = ({ children }) => {
                             <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
                             <ListItemText primary="Profile" />
                         </ListItemButton  >
-                        <ListItemButton
+                        <Divider />
+                        <ListItem
                             className={classes.menuItems}
+                            secondaryAction={
+                                <IconButton edge="end" aria-label="comments">
+                                    <KeyboardArrowDown />
+                                </IconButton>
+                            }
                         >
                             <ListItemIcon><Class color="primary" /></ListItemIcon>
-                            <ListItemText primary="Classes" />
-                        </ListItemButton  >
+                            <ListItemText primary="Courses" />
+                        </ListItem  >
+                        <Divider />
 
                         {allCourses?.map((item) => (
-                            <ListItemButton
-                                key={item.course_id}
-                                selected={currentRoute.pathname === `/classes/${item.course_id.slice(0, -2)}/${item.course_id}` ? true : false}
-                                onClick={() => navigate(`/classes/${item.course_id.slice(0, -2)}/${item.course_id}`)}
-                                className={classes.menuItems}
-                            >
-                                <ListItemText align="center" primary={item.course_id} />
-                            </ListItemButton  >
+                            <>
+                                <ListItemButton
+                                    key={item.course_id}
+                                    selected={currentRoute.pathname === `/course/${item.course_id.slice(0, -2)}/${item.course_id}` ? true : false}
+                                    onClick={() => navigate(`/course/${item.course_id.slice(0, -2)}/${item.course_id}`)}
+                                    className={classes.menuItems}
+                                >
+                                    <ListItemText align="center" primary={item.course_id} />
+                                </ListItemButton  >
+                                <Divider />
+                            </>
                         ))}
+
 
                     </List>
                 }
@@ -179,18 +192,23 @@ const Layout = ({ children }) => {
                             <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
                             <ListItemText primary="Profile" />
                         </ListItemButton  >
-                        <ListItemButton
+                        <ListItem
                             className={classes.menuItems}
+                            secondaryAction={
+                                <IconButton edge="end" aria-label="comments">
+                                    <KeyboardArrowDown />
+                                </IconButton>
+                            }
                         >
                             <ListItemIcon><Class color="primary" /></ListItemIcon>
-                            <ListItemText primary="Classes" />
-                        </ListItemButton  >
+                            <ListItemText primary="Courses" />
+                        </ListItem  >
 
                         {teacherCourses?.map((item) => (
                             <ListItemButton
                                 key={item.course_id}
-                                selected={currentRoute.pathname === `/classes/${item.course_id.slice(0, -2)}` ? true : false}
-                                onClick={() => navigate(`/classes/${item.course_id.slice(0, -2)}`)}
+                                selected={currentRoute.pathname === `/course/${item.course_id.slice(0, -2)}` ? true : false}
+                                onClick={() => navigate(`/course/${item.course_id.slice(0, -2)}`)}
                                 className={classes.menuItems}
                             >
                                 <ListItemText align="center" primary={item.course_id.slice(0, -2)} />
@@ -220,7 +238,7 @@ const Layout = ({ children }) => {
                             className={classes.menuItems}
                         >
                             <ListItemIcon><Class color="primary" /></ListItemIcon>
-                            <ListItemText primary="Classes" />
+                            <ListItemText primary="Courses" />
                         </ListItemButton  >
                     </List>
                 }
