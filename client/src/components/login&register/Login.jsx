@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, Paper } from '@mui/material';
 //// API Imports ////
 import { useLoginMutation } from "../../services/auth";
+import { ValidatorForm } from "react-material-ui-form-validator";
+import AlertDialog from "../AlertDialog";
 
 
 const initialState = { email: '', password: '' };
@@ -26,6 +28,7 @@ const Login = () => {
     useEffect(() => {
         if (data && data.token) {
             localStorage.setItem('profile', JSON.stringify({ ...data }));
+            navigate('/');
         }
         if (isError) {
             setErrorMsg(error.data.message);
@@ -37,15 +40,13 @@ const Login = () => {
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
         await loginUser(formData);
-        navigate('/');
     }
 
     return (
         <Container maxWidth={'100vh'} spacing={20} style={{ minHeight: "100vh", background: 'linear-gradient( #edf3f7, #93c3d9)' }} >
+            <AlertDialog alertTitle={'Error!'} alertMessage={errorMsg} isOpen={isError} />
             <Grid
                 container
                 direction="column"
@@ -61,20 +62,24 @@ const Login = () => {
                 <Grid item>
                     <Card elevation={16} style={{ height: '100%', maxWidth: '50vh', backgroundColor: '#edf3f7', borderRadius: 15 }} >
                         <CardContent className={classes.infoContent} >
-                            <form noValidate onSubmit={handleSubmit}>
+                            <ValidatorForm
+                                useref='form'
+                                onSubmit={handleSubmit}
+                                noValidate
+                            >
                                 <Typography variant="h4" align="center" style={{ fontWeight: 400 }}>Sign in</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <Grid container spacing={3} justifyContent={'center'}>
-                                    <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
-                                    <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? 'text' : 'password'} handleShowPassword={handleShowPassword} />
+                                    <Input name="email" label="Email Address" handleChange={handleChange} value={formData.email} type="email" validators={['required', 'isEmail']} errorMessages={['This field is required', 'Email is not valid']} />
+                                    <Input name="password" label="Password" handleChange={handleChange} value={formData.password} type={showPassword ? 'text' : 'password'} handleShowPassword={handleShowPassword} validators={['required']} errorMessages={['This field is required']} />
                                     <Grid item xs={6}>
                                         <Button type="submit" fullWidth variant="contained" color="primary" size="large" className={classes.submit}>
                                             Sign In
                                         </Button>
                                     </Grid>
-                                    {errorMsg &&
+                                    {/* {errorMsg &&
                                         <Typography variant="h7" align="center">{errorMsg}</Typography>
-                                    }
+                                    } */}
                                 </Grid>
                                 <Grid container justifyContent="flex-end" style={{ marginTop: theme.spacing(2) }}>
                                     <Grid item>
@@ -83,7 +88,7 @@ const Login = () => {
                                         </Button>
                                     </Grid>
                                 </Grid>
-                            </form>
+                            </ValidatorForm>
                         </CardContent>
                     </Card>
                 </Grid>

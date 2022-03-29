@@ -12,7 +12,7 @@ export const registerStudent = async (req, res) => {
         const user = await pool.query("SELECT * FROM alluser WHERE email = $1", [email]);
 
         if (user.rows.length > 0) {
-            return res.status(401).json({ message: "User already exists!" });
+            return res.status(401).json({ message: "Email registered to another user!" });
         }
 
         const bcryptPassword = await bcrypt.hash(password, 12);
@@ -41,7 +41,7 @@ export const registerTeacher = async (req, res) => {
         const user = await pool.query("SELECT * FROM alluser WHERE email = $1", [email]);
 
         if (user.rows.length > 0) {
-            return res.status(401).json({ message: "User already exists!" });
+            return res.status(401).json({ message: "Email registered to another user!" });
         }
 
         const bcryptPassword = await bcrypt.hash(password, 12);
@@ -70,7 +70,7 @@ export const login = async (req, res) => {
         const user = await pool.query("SELECT * FROM alluser WHERE email = $1", [email]);
 
         if (user.rows.length === 0) {
-            return res.status(401).json({ message: "User does'nt exist." });
+            return res.status(401).json({ message: "Invalid Email" });
         }
 
         const validPassword = await bcrypt.compare(
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
         );
 
         if (!validPassword) {
-            return res.status(401).json({ message: "Invalid Credential" });
+            return res.status(401).json({ message: "Invalid Password" });
         }
 
         const token = jwt.sign({ user_id: user.rows[0].user_id, role: user.rows[0].role }, 'test', { expiresIn: "1h" });

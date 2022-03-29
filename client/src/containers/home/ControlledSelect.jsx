@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { SelectValidator } from 'react-material-ui-form-validator';
 
-export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, student, course, teacher, formation, general }) => {
+export const ControlledSelect = ({ name, value, options, onFocus, handleChange, onBlur, minWidth, student, course, teacher, formation, general, errorMessages, validators }) => {
     const [localValue, setLocalValue] = useState(value ?? '');
     useEffect(() => setLocalValue(value ?? ''), [value]);
     const handleFocus = () => {
@@ -16,7 +17,7 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
         }
     };
     return (
-        <FormControl variant="outlined" sx={{ m: 0, minWidth: minWidth }}>
+        <FormControl variant="outlined" fullWidth>
             {student &&
                 <>
                     <InputLabel id="demo-simple-select-outlined-label">Students</InputLabel>
@@ -111,14 +112,16 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
             }
             {general &&
                 <>
-                    <InputLabel>{general}</InputLabel>
-                    <Select
+                    <SelectValidator
                         name={name}
                         value={localValue}
                         onFocus={handleFocus}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        validators={validators}
+                        errorMessages={errorMessages}
                         label={general}
+                        sx={{ minWidth: minWidth }}
                     >
                         {options?.map(option => {
                             return (
@@ -129,7 +132,7 @@ export const ControlledSelect = ({ name, value, options, onFocus, handleChange, 
 
                             );
                         })}
-                    </Select>
+                    </SelectValidator>
                 </>
             }
         </FormControl>
