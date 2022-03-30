@@ -53,7 +53,8 @@ const App = ({ children }) => {
                <Route path="/login" element={<Login />} />
                <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
                   <Route path="/" element={<Home />} />
-                  <Route path="/profile/:id" element={<Profile />} />
+                  <Route path="/profile/student/:sid" element={<Profile />} />
+                  <Route path="/profile/teacher/:tid" element={<Profile />} />
                   <Route path="/course/:courseid" element={<Course />} />
                   <Route path="/course/:courseid/:sectionid" element={<Section />} />
                   <Route path="/groups" element={<Home />} />

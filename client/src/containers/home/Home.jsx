@@ -19,6 +19,7 @@ import { useGetTeachersQuery } from "../../services/teacher";
 import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
 import { AccountCircle, Add, Bolt, ConnectWithoutContact, Delete, Minimize, RecordVoiceOver, Star } from "@mui/icons-material";
 import { Box } from "@mui/system";
+import { ValidatorForm } from "react-material-ui-form-validator";
 
 
 const Home = () => {
@@ -110,54 +111,6 @@ const Home = () => {
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Home</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
 
-            {userId?.role === "Admin" &&
-                <Grid container spacing={4}>
-                    <Grid item xs={8} md={8} >
-                        <Card elevation={5} style={{ height: '100%' }}>
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h6">Create New Course</Typography>
-                                <Divider style={{ margin: theme.spacing(2) }} />
-                                <form noValidate onSubmit={handleSubmit}>
-                                    <Grid container spacing={3}>
-                                        <Input name="code" label="Course Code" value={newCourseData.course_code} handleChange={hCNewCourse} />
-                                        <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} />
-                                        <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} />
-                                        <Grid item xs={12} >
-                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} teacher={true} />
-                                        </Grid>
-                                        <Grid item xs={12} >
-                                            <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create Course</Button>
-                                        </Grid>
-                                    </Grid>
-                                </form>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={8} md={8} >
-                        <Card elevation={5} style={{ height: '100%' }}>
-
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h6">Register Student in Course</Typography>
-                                <Divider style={{ margin: theme.spacing(2) }} />
-                                <form noValidate onSubmit={handleSubmit2}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12} >
-                                            <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} />
-                                        </Grid>
-                                        <Grid item xs={12} >
-                                            <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} />
-                                        </Grid>
-                                        <Grid item xs={12} >
-                                            <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Register Student</Button>
-                                        </Grid>
-                                    </Grid>
-
-                                </form>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            }
             {userId?.role === "Student" &&
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={7} >
@@ -507,19 +460,23 @@ const Home = () => {
                             <CardContent className={classes.infoContent}>
                                 <Typography variant="h6">Create New Course</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
-                                <form noValidate onSubmit={handleSubmit}>
+                                <ValidatorForm
+                                    useref='form'
+                                    onSubmit={handleSubmit}
+                                    noValidate
+                                >
                                     <Grid container spacing={3}>
-                                        <Input name="code" label="Course Code" value={newCourseData.course_code} handleChange={hCNewCourse} />
-                                        <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} />
-                                        <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} />
+                                        <Input name="code" label="Course Code" value={newCourseData.course_code} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
+                                        <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
+                                        <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
                                         <Grid item xs={12} >
-                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} teacher={true} />
+                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} teacher={true} validators={['required']} errorMessages={['This field is required']} />
                                         </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create Course</Button>
                                         </Grid>
                                     </Grid>
-                                </form>
+                                </ValidatorForm>
                             </CardContent>
                         </Card>
                     </Grid>

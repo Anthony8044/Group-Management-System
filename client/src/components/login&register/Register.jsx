@@ -10,7 +10,7 @@ import { useRegisterStudentMutation, useRegisterTeacherMutation } from "../../se
 import ControlledSelect from "../../containers/home/ControlledSelect";
 import AlertDialog from "../AlertDialog";
 
-const studentInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '', stregnths: '', weaknesses: '', personality_type: '' };
+const studentInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '', strenghts: '', weaknesses: '', personality_type: '' };
 const teacherInitial = { given_name: '', family_name: '', gender: '', email: '', password: '', teacher_id: '', department: '', postition: '' };
 const passwordInitial = { repeat_password: '' };
 
@@ -19,7 +19,7 @@ const Register = () => {
     const theme = useTheme();
     const classes = useStyles()
     const navigate = useNavigate();
-    const [studentFormData, setStudentFormData] = useState({ given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '', stregnths: '', weaknesses: '', personality_type: '' });
+    const [studentFormData, setStudentFormData] = useState({ given_name: '', family_name: '', gender: '', email: '', password: '', student_id: '', study_program: '', study_year: '', strenghts: '', weaknesses: '', personality_type: '' });
     const [rePassword, setRePassword] = useState({ repeat_password: '' });
     const [teacherFormData, setTeacherFormData] = useState({ given_name: '', family_name: '', gender: '', email: '', password: '', teacher_id: '', department: '', postition: '' });
     const [isSignup, setIsSignup] = useState(true);
@@ -146,7 +146,7 @@ const Register = () => {
                                             <Grid item xs={6} >
                                                 <ControlledSelect name="study_year" value={studentFormData.study_year} options={year} handleChange={handleChangeStudent} minWidth={"100%"} general={"Study Year"} validators={['required']} errorMessages={['This field is required']} />
                                             </Grid>
-                                            <Input name="stregnths" label="Strengths/Skills" value={studentFormData.stregnths} handleChange={handleChangeStudent} validators={['required']} errorMessages={['This field is required']} />
+                                            <Input name="strenghts" label="Strengths/Skills" value={studentFormData.strenghts} handleChange={handleChangeStudent} validators={['required']} errorMessages={['This field is required']} />
                                             <Input name="weaknesses" label="Weaknesses" value={studentFormData.weaknesses} handleChange={handleChangeStudent} validators={['required']} errorMessages={['This field is required']} />
                                             <Grid item xs={12} >
                                                 <Card variant="outlined" style={{ backgroundColor: '#e4f0f7', borderRadius: 6, padding: '4px' }}>

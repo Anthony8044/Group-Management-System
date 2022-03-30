@@ -176,9 +176,9 @@ export const getProjectsByCourseId = async (req, res) => {
             "WHERE LEFT($1, -2)=e.course_code GROUP BY e.project_id, te.groups ORDER BY e.created_at;", [id]
         );
 
-        if (project.rows.length === 0) {
-            return res.status(401).json("No Projects");
-        }
+        // if (project.rows.length === 0) {
+        //     return res.status(401).json("No Projects");
+        // }
 
         return res.status(200).json(project.rows)
     } catch (err) {

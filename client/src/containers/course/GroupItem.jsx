@@ -110,7 +110,7 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                                     <RemoveCircle />
                                 </IconButton>
                             }
-                            {joined?.group_id != null && joined?.group_id === group_id && itemNum === 2 &&
+                            {joined?.group_id != null && joined?.group_id === group_id && joined?.array_position != itemNum &&
                                 <IconButton edge="end" aria-label="add" onClick={handleClickOpen}>
                                     <PersonAdd />
                                 </IconButton>

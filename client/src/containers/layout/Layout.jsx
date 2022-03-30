@@ -81,14 +81,14 @@ const Layout = ({ children }) => {
 
                     {student &&
                         <div className={classes.profile}>
-                            <Avatar className={classes.avatar} alt={student.given_name} src={student.profile_img} onClick={() => navigate(`/profile/${student.user_id}`)}>{student.given_name.slice(0, 1)}</Avatar>
+                            <Avatar className={classes.avatar} alt={student.given_name} src={student.profile_img} onClick={() => navigate(`/profile/student/${student.user_id}`)}>{student.given_name.slice(0, 1)}</Avatar>
                             <Typography className={classes.name} variant="h6">{student.given_name} {student.family_name}</Typography>
                             <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
                         </div>
                     }
                     {teacher &&
                         <div className={classes.profile}>
-                            <Avatar className={classes.avatar} alt={teacher.given_name} src={teacher.profile_img} onClick={() => navigate(`/profile/${teacher.user_id}`)}>{teacher.given_name.slice(0, 1)}</Avatar>
+                            <Avatar className={classes.avatar} alt={teacher.given_name} src={teacher.profile_img} onClick={() => navigate(`/profile/teacher/${teacher.user_id}`)}>{teacher.given_name.slice(0, 1)}</Avatar>
                             <Typography className={classes.name} variant="h6">{teacher.given_name} {teacher.family_name}</Typography>
                             <Button className={classes.button} variant="contained" color="secondary" onClick={logout}>Logout</Button>
                         </div>
@@ -136,8 +136,8 @@ const Layout = ({ children }) => {
                         </ListItemButton  >
                         <Divider />
                         <ListItemButton
-                            selected={currentRoute.pathname === `/profile/${student?.user_id}` ? true : false}
-                            onClick={() => navigate(`/profile/${student?.user_id}`)}
+                            selected={currentRoute.pathname === `/profile/student/${student?.user_id}` ? true : false}
+                            onClick={() => navigate(`/profile/student/${student?.user_id}`)}
                             className={classes.menuItems}
                         >
                             <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
@@ -158,9 +158,8 @@ const Layout = ({ children }) => {
                         <Divider />
 
                         {allCourses?.map((item) => (
-                            <>
+                            <div key={item.course_id}>
                                 <ListItemButton
-                                    key={item.course_id}
                                     selected={currentRoute.pathname === `/course/${item.course_id.slice(0, -2)}/${item.course_id}` ? true : false}
                                     onClick={() => navigate(`/course/${item.course_id.slice(0, -2)}/${item.course_id}`)}
                                     className={classes.menuItems}
@@ -168,7 +167,7 @@ const Layout = ({ children }) => {
                                     <ListItemText align="center" primary={item.course_id} />
                                 </ListItemButton  >
                                 <Divider />
-                            </>
+                            </div>
                         ))}
 
 
@@ -185,8 +184,8 @@ const Layout = ({ children }) => {
                             <ListItemText primary="Home" />
                         </ListItemButton  >
                         <ListItemButton
-                            selected={currentRoute.pathname === `/profile/${teacher?.user_id}` ? true : false}
-                            onClick={() => navigate(`/profile/${teacher?.user_id}`)}
+                            selected={currentRoute.pathname === `/profile/teacher/${teacher?.user_id}` ? true : false}
+                            onClick={() => navigate(`/profile/teacher/${teacher?.user_id}`)}
                             className={classes.menuItems}
                         >
                             <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
@@ -205,41 +204,18 @@ const Layout = ({ children }) => {
                         </ListItem  >
 
                         {teacherCourses?.map((item) => (
-                            <ListItemButton
-                                key={item.course_id}
-                                selected={currentRoute.pathname === `/course/${item.course_id.slice(0, -2)}` ? true : false}
-                                onClick={() => navigate(`/course/${item.course_id.slice(0, -2)}`)}
-                                className={classes.menuItems}
-                            >
-                                <ListItemText align="center" primary={item.course_id.slice(0, -2)} />
-                            </ListItemButton  >
+                            <div key={item.course_id}>
+                                <ListItemButton
+                                    selected={currentRoute.pathname === `/course/${item.course_id.slice(0, -2)}` ? true : false}
+                                    onClick={() => navigate(`/course/${item.course_id.slice(0, -2)}`)}
+                                    className={classes.menuItems}
+                                >
+                                    <ListItemText align="center" primary={item.course_id.slice(0, -2)} />
+                                </ListItemButton  >
+                                <Divider />
+                            </div>
                         ))}
 
-                    </List>
-                }
-
-                {userId?.role === "Admin" &&
-                    <List>
-                        <ListItemButton
-                            selected={currentRoute.pathname === '/' ? true : false}
-                            onClick={() => navigate('/')}
-                            className={classes.menuItems}
-                        >
-                            <ListItemIcon><Home color="primary" /></ListItemIcon>
-                            <ListItemText primary="Home" />
-                        </ListItemButton  >
-                        <ListItemButton
-                            className={classes.menuItems}
-                        >
-                            <ListItemIcon><AccountBox color="primary" /></ListItemIcon>
-                            <ListItemText primary="Profile" />
-                        </ListItemButton  >
-                        <ListItemButton
-                            className={classes.menuItems}
-                        >
-                            <ListItemIcon><Class color="primary" /></ListItemIcon>
-                            <ListItemText primary="Courses" />
-                        </ListItemButton  >
                     </List>
                 }
 

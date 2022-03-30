@@ -16,6 +16,7 @@ import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Av
 import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
 import { useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
 import { useGetStudentsQuery } from "../../services/student";
+import { ValidatorForm } from "react-material-ui-form-validator";
 
 
 const Course = () => {
@@ -46,16 +47,16 @@ const Course = () => {
 
 
 
-    const validate = values => {
-        Object.entries(values).forEach(([key, value]) => {
+    // const validate = values => {
+    //     Object.entries(values).forEach(([key, value]) => {
 
-            if (value !== '') {
-                setIsFormInvalid(prevIsFormInvalid => ({ ...prevIsFormInvalid, [key]: false }));
-            } else {
-                setIsFormInvalid(prevIsFormInvalid => ({ ...prevIsFormInvalid, [key]: true }));
-            }
-        });
-    };
+    //         if (value !== '') {
+    //             setIsFormInvalid(prevIsFormInvalid => ({ ...prevIsFormInvalid, [key]: false }));
+    //         } else {
+    //             setIsFormInvalid(prevIsFormInvalid => ({ ...prevIsFormInvalid, [key]: true }));
+    //         }
+    //     });
+    // };
 
     useEffect(() => {
         if (userId?.role === "Student") {
@@ -63,15 +64,24 @@ const Course = () => {
         }
     }, [userId?.user_id]);
 
-    useEffect(() => {
-        if (Object.values(isFormInvalid).every((v) => v === false) && newProjectData.project_title !== '') {
-            const fetchData = async () => {
-                await createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject });
-            }
-            fetchData().catch(console.error);
-        }
+    // useEffect(() => {
+    //     if (Object.values(isFormInvalid).every((v) => v === false) && newProjectData.project_title !== '') {
+    //         const fetchData = async () => {
+    //             await createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject });
+    //         }
+    //         fetchData().catch(console.error);
+    //     }
 
-    }, [isFormInvalid]);
+    // }, [isFormInvalid]);
+
+    useEffect(() => {
+        ValidatorForm.addValidationRule('isLarger', (value) => {
+            if (newProjectData.group_min > value) {
+                return false;
+            }
+            return true;
+        });
+    }, [newProjectData]);
 
     useEffect(() => {
         if (sError) {
@@ -84,7 +94,8 @@ const Course = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        validate(newProjectData);
+        //validate(newProjectData);
+        await createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject });
     };
 
     const formationType = [{ id: 1, type: "random" }, { id: 2, type: "default" }];
@@ -164,34 +175,42 @@ const Course = () => {
                         <CardContent className={classes.infoContent}>
                             <Typography textAlign={'center'} variant="h6">Register Student in Course</Typography>
                             <Divider style={{ margin: theme.spacing(2) }} />
-                            <form noValidate onSubmit={handleSubmit2}>
+                            <ValidatorForm
+                                useref='form'
+                                onSubmit={handleSubmit2}
+                                noValidate
+                            >
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} >
-                                        <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} />
+                                        <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} validators={['required']} errorMessages={['This field is required']} />
                                     </Grid>
                                     <Grid item xs={12} >
-                                        <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} />
+                                        <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} validators={['required']} errorMessages={['This field is required']} />
                                     </Grid>
                                     <Grid item xs={12} >
                                         <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Register Student</Button>
                                     </Grid>
                                 </Grid>
 
-                            </form>
+                            </ValidatorForm>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item xs={12} md={10} >
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
-                            <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+                            <ValidatorForm
+                                useref='form'
+                                onSubmit={handleSubmit}
+                                noValidate
+                            >
                                 <Typography textAlign={'center'} variant="h6">Create New Project</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
                                 <LocalizationProvider dateAdapter={DateAdapter}>
 
                                     <Grid container spacing={3}>
-                                        <Input name="project_title" label="Title" value={newProjectData.project_title} handleChange={hCNewProject} isFormInvalid={isFormInvalid.project_title} errorMessage={"*Required"} />
-                                        <Input name="project_description" label="Project Description" value={newProjectData.project_description} handleChange={hCNewProject} isFormInvalid={isFormInvalid.project_description} errorMessage={"*Required"} />
+                                        <Input name="project_title" label="Title" value={newProjectData.project_title} handleChange={hCNewProject} validators={['required']} errorMessages={['This field is required']} />
+                                        <Input name="project_description" label="Project Description" value={newProjectData.project_description} handleChange={hCNewProject} validators={['required']} errorMessages={['This field is required']} />
                                         <Grid item xs={6} >
                                             <DateTimePicker
                                                 label="Group Submission Date"
@@ -211,18 +230,17 @@ const Course = () => {
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
                                         </Grid>
-                                        <Input name="group_min" label="Group Min" value={newProjectData.group_min} handleChange={hCNewProject} type={"number"} isFormInvalid={isFormInvalid.group_min} errorMessage={"*Required"} />
-                                        <Input name="group_max" label="Group Max" value={newProjectData.group_max} handleChange={hCNewProject} type={"number"} isFormInvalid={isFormInvalid.group_max} errorMessage={"*Required"} />
+                                        <Input name="group_min" label="Group Min" value={newProjectData.group_min} handleChange={hCNewProject} type={"number"} validators={['required', 'isNumber', 'maxStringLength:1']} errorMessages={['This field is required', 'Must be a number', 'Numbers 1-9']} />
+                                        <Input name="group_max" label="Group Max" value={newProjectData.group_max} handleChange={hCNewProject} type={"number"} validators={['required', 'isNumber', 'maxStringLength:1', 'isLarger']} errorMessages={['This field is required', 'Must be a number', 'Numbers 1-9', 'Value must be larger or equal to Group Min']} />
                                         <Grid item xs={12} >
-                                            <ControlledSelect name="formation_type" value={newProjectData.formation_type} options={formationType} handleChange={hCNewProject} minWidth={"100%"} formation={true} />
+                                            <ControlledSelect name="formation_type" value={newProjectData.formation_type} options={formationType} handleChange={hCNewProject} minWidth={"100%"} formation={true} validators={['required']} errorMessages={['This field is required']} />
                                         </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create New Project</Button>
                                         </Grid>
                                     </Grid>
                                 </LocalizationProvider>
-
-                            </form>
+                            </ValidatorForm>
                         </CardContent>
                     </Card>
                 </Grid>

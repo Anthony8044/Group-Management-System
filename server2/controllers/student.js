@@ -41,7 +41,7 @@ export const getStudent = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const user = await pool.query("Select alluser.user_id, alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id from alluser, student where alluser.user_id = $1 and student.user_id_fk = $1;", [id]);
+        const user = await pool.query("Select alluser.user_id, alluser.given_name, alluser.family_name, alluser.gender, alluser.role, alluser.email, alluser.profile_img, student.study_program, student.study_year, student.student_id, student.weeknesses, student.strenghts, student.personality_type from alluser, student where alluser.user_id = $1 and student.user_id_fk = $1;", [id]);
 
         if (user.rows.length === 0) {
             return res.status(401).json({ message: "User does'nt exist." });
@@ -65,11 +65,11 @@ export const getStudentGroups = async (req, res) => {
         //     "GROUP BY u.user_id, u.course_id, p.project_id", [id]
         // );
         const user = await pool.query(
-            "SELECT u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status " +
+            "SELECT u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status, te.array_position " +
             "FROM user_course u, allgroup a, project p " +
-            "LEFT JOIN (SELECT project_id_fk AS project_id, group_id, group_num, group_status FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY group_id) te USING (project_id) " +
+            "LEFT JOIN (SELECT project_id_fk AS project_id, group_id, group_num, group_status, array_position(students_array, $1) FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY group_id) te USING (project_id) " +
             "WHERE u.user_id = $2 AND LEFT(u.course_id, -2) = p.course_code AND p.project_id = a.project_id_fk " +
-            "GROUP BY u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status", [idString, id]
+            "GROUP BY u.user_id, u.course_id, p.project_id, te.group_id, te.group_num, te.group_status, te.array_position", [idString, id]
         );
         //"LEFT JOIN (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup WHERE $1 = ANY (students_array) GROUP  BY 1) te USING (project_id) " +
         //"LEFT JOIN (SELECT project_id_fk AS project_id, jsonb_agg(jsonb_build_object('group_id', group_id, 'course_id_fk', course_id_fk, 'students_array', students_array )) AS groups FROM allgroup GROUP  BY 1) te USING (project_id) " +

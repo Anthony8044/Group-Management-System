@@ -15,6 +15,7 @@ import { useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudenti
 import Input from "../../components/login&register/Input";
 import GroupData from "./GroupData";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
+import { ValidatorForm } from "react-material-ui-form-validator";
 
 
 const Section = () => {
@@ -49,10 +50,14 @@ const Section = () => {
         if (Course?.user_id) {
             setTeacherIn(false);
         }
-        if (userId?.user_id) {
+        if (userId?.user_id && userId?.role === 'student') {
             setUserIn(false);
         }
     }, [Course?.user_id, userId?.user_id]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    }
 
 
     return (
@@ -61,13 +66,17 @@ const Section = () => {
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7} md={8} >
-                    {project ?
+                    {project && project.length != 0 ?
                         <>
                             {project && project?.map((item) => (
                                 <div key={item.project_id}>
                                     <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
                                         <CardContent className={classes.infoContent}>
-                                            <form autoComplete="off" noValidate>
+                                            <ValidatorForm
+                                                useref='form'
+                                                onSubmit={handleSubmit}
+                                                noValidate
+                                            >
                                                 <Typography variant="h6">{item.project_title}</Typography>
                                                 <Divider style={{ margin: theme.spacing(2) }} />
                                                 <LocalizationProvider dateAdapter={DateAdapter}>
@@ -104,7 +113,7 @@ const Section = () => {
                                                         }
                                                         {userId && userId?.role === 'Teacher' &&
                                                             <Grid item xs={12} sm={12} >
-                                                                <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Export Groups</Button>
+                                                                <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" >Export Groups</Button>
                                                             </Grid>
                                                         }
                                                         <Grid item xs={12} sm={12} >
@@ -129,7 +138,7 @@ const Section = () => {
                                                         </Grid>
                                                     </Grid>
                                                 </LocalizationProvider>
-                                            </form>
+                                            </ValidatorForm>
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -154,7 +163,7 @@ const Section = () => {
                                 {teacher?.map((item) => (
                                     <ListItemButton
                                         key={item.user_id}
-                                        onClick={() => navigate(`/profile/${item.user_id}`)}
+                                        onClick={() => navigate(`/profile/teacher/${item.user_id}`)}
                                         className={classes.menuItems}
                                     >
                                         <ListItemAvatar>
@@ -180,7 +189,7 @@ const Section = () => {
                                         {student?.map((ite) => (
                                             <ListItemButton
                                                 key={ite.user_id}
-                                                onClick={() => navigate(`/profile/${ite.user_id}`)}
+                                                onClick={() => navigate(`/profile/student/${ite.user_id}`)}
                                                 className={classes.menuItems}
                                             >
                                                 <ListItemAvatar>
