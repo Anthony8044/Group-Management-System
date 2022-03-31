@@ -27,7 +27,7 @@ export default makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
-        [theme.breakpoints.up("md")]: {
+        [theme.breakpoints.up("lg")]: {
             display: "none !important"
         }
     },

@@ -77,6 +77,24 @@ CREATE TABLE allgroup(
     CONSTRAINT fk_course_id FOREIGN KEY(course_id_fk) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
+CREATE TABLE invite(
+    invite_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    sender_id_fk uuid NOT NULL,
+    recipient_id_fk uuid NOT NULL,
+    invite_status VARCHAR(255) NOT NULL,
+    section_id_fk VARCHAR(255) NOT NULL,
+    project_id_fk uuid NOT NULL,
+    group_id_fk uuid NOT NULL,
+    group_num SMALLINT NOT NULL,
+    group_position SMALLINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_sender_id FOREIGN KEY(sender_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_recipient_id FOREIGN KEY(recipient_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_section_id FOREIGN KEY(section_id_fk) REFERENCES course(course_id) ON DELETE CASCADE,
+    CONSTRAINT fk_project_id FOREIGN KEY(project_id_fk) REFERENCES project(project_id) ON DELETE CASCADE,
+    CONSTRAINT fk_group_id FOREIGN KEY(group_id_fk) REFERENCES allgroup(group_id) ON DELETE CASCADE
+);
+
 create view student_course as
 select alluser.user_id, user_course.course_id, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
 from alluser, student, user_course

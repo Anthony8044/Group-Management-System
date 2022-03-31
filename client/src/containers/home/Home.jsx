@@ -20,6 +20,8 @@ import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutati
 import { AccountCircle, Add, Bolt, ConnectWithoutContact, Delete, Minimize, RecordVoiceOver, Star } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { ValidatorForm } from "react-material-ui-form-validator";
+import { useGetStudentInviteQuery } from "../../services/project";
+import Invitations from "../../components/Invitations";
 
 
 const Home = () => {
@@ -36,6 +38,7 @@ const Home = () => {
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
     const [createCourse, { error: sError, isSuccess: sSuccess }] = useCreateCourseMutation();
     const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -120,7 +123,7 @@ const Home = () => {
                                 <Typography variant="h4">Welcome back, Sammuel Chan!</Typography>
                             </CardContent>
                         </Card>
-                        <Card elevation={5} style={{ marginTop: '30px', height: '576px' }}>
+                        <Card elevation={5} style={{ marginTop: '30px', height: '636px' }}>
                             <CardContent className={classes.infoContent}>
                                 <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
@@ -158,113 +161,8 @@ const Home = () => {
 
                     </Grid>
                     <Grid item xs={12} md={5} >
-                        <Card elevation={5} style={{ height: '400px' }}>
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h5" textAlign={'center'}>Invitations</Typography>
-                                <Divider style={{ margin: theme.spacing(2) }} />
-                                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                                    <ListItem
-                                        alignItems="flex-start"
-                                        secondaryAction={
-                                            <>
-                                                <IconButton edge="end" aria-label="add">
-                                                    <Delete />
-                                                </IconButton>
-                                            </>
-                                        }
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary="Sarah has invited you"
-                                                secondary={
-                                                    <React.Fragment>
-                                                        <Typography
-                                                            sx={{ display: 'inline' }}
-                                                            component="span"
-                                                            variant="body2"
-                                                            color="text.primary"
-                                                        >
-                                                            COMP0001-1
-                                                        </Typography>
-                                                        {" — Group 4"}
-                                                    </React.Fragment>
-                                                }
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <Divider variant="inset" component="li" />
-                                    <ListItem
-                                        alignItems="flex-start"
-                                        secondaryAction={
-                                            <>
-                                                <IconButton edge="end" aria-label="add">
-                                                    <Delete />
-                                                </IconButton>
-                                            </>
-                                        }
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary="Metthew has invited you"
-                                                secondary={
-                                                    <React.Fragment>
-                                                        <Typography
-                                                            sx={{ display: 'inline' }}
-                                                            component="span"
-                                                            variant="body2"
-                                                            color="text.primary"
-                                                        >
-                                                            COMP4097-1
-                                                        </Typography>
-                                                        {" — Group 2"}
-                                                    </React.Fragment>
-                                                }
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <Divider variant="inset" component="li" />
-                                    <ListItem
-                                        alignItems="flex-start"
-                                        secondaryAction={
-                                            <>
-                                                <IconButton edge="end" aria-label="add">
-                                                    <Delete />
-                                                </IconButton>
-                                            </>
-                                        }
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary="Tim has invited you"
-                                                secondary={
-                                                    <React.Fragment>
-                                                        <Typography
-                                                            sx={{ display: 'inline' }}
-                                                            component="span"
-                                                            variant="body2"
-                                                            color="text.primary"
-                                                        >
-                                                            COMP0001-1
-                                                        </Typography>
-                                                        {" — Group 3"}
-                                                    </React.Fragment>
-                                                }
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </List>
-                            </CardContent>
-                        </Card>
-                        <Card elevation={5} style={{ marginTop: '30px' }}>
+                        <Invitations userId={userId?.user_id} />
+                        <Card elevation={5} style={{ marginTop: '30px', height: '310px' }}>
                             <CardContent className={classes.infoContent}>
                                 <Typography variant="h5" textAlign={'center'}>Favorites</Typography>
                                 <Divider />
@@ -418,7 +316,7 @@ const Home = () => {
                                 <Typography variant="h4">Welcome back, Mr. Matthew Chau!</Typography>
                             </CardContent>
                         </Card>
-                        <Card elevation={5} style={{ marginTop: '30px', height: '576px' }}>
+                        <Card elevation={5} style={{ marginTop: '30px', height: '578px' }}>
                             <CardContent className={classes.infoContent}>
                                 <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />

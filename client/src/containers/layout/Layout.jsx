@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const currentRoute = useLocation();
-    const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+    const isMdUp = useMediaQuery(theme.breakpoints.up("lg"));
     const [studentLogin, setStudentLogin] = useState(true);
     const [teacherLogin, setTeacherLogin] = useState(true);
     const [open, setOpen] = useState(false);

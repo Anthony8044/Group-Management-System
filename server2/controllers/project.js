@@ -34,7 +34,7 @@ export const createproject = async (req, res) => {
         const GroupNum1 = [];
         let f = 1;
         while (f <= group_max) {
-            GroupNum1.push("empty" + f);
+            GroupNum1.push("empty");
             f++;
         }
 

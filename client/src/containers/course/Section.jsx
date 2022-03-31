@@ -50,7 +50,7 @@ const Section = () => {
         if (Course?.user_id) {
             setTeacherIn(false);
         }
-        if (userId?.user_id && userId?.role === 'student') {
+        if (userId?.user_id && userId?.role === 'Student') {
             setUserIn(false);
         }
     }, [Course?.user_id, userId?.user_id]);
@@ -158,11 +158,11 @@ const Section = () => {
                     <Card elevation={5}>
                         <CardContent className={classes.infoContent}>
                             <Typography variant="h5" align="center">Teacher</Typography>
-                            <Divider style={{ margin: theme.spacing(2) }} />
-                            <List >
-                                {teacher?.map((item) => (
+                            <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
+                            {teacher?.map((item) => (
+                                <List key={item.user_id} dense sx={{ bgcolor: 'background.paper', padding: '4px' }} >
                                     <ListItemButton
-                                        key={item.user_id}
+                                        sx={{ border: 1, borderColor: 'primary.main', borderRadius: 1 }}
                                         onClick={() => navigate(`/profile/teacher/${item.user_id}`)}
                                         className={classes.menuItems}
                                     >
@@ -176,21 +176,19 @@ const Section = () => {
                                             secondary={item.teacher_id}
                                         />
                                     </ListItemButton>
-                                ))}
-                            </List>
-                            <Divider style={{ margin: theme.spacing(2) }} />
+                                </List>
+                            ))}
 
                             <Typography variant="h5" align="center">Students</Typography>
 
-                            <Divider style={{ margin: theme.spacing(2) }} />
+                            <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
                             <Grid container spacing={2}>
                                 <Grid item xs={12} >
-                                    <List >
-                                        {student?.map((ite) => (
+                                    {student?.map((ite) => (
+                                        <List key={ite.user_id} dense sx={{ bgcolor: 'background.paper', padding: '4px' }} >
                                             <ListItemButton
-                                                key={ite.user_id}
+                                                sx={{ border: 1, borderColor: 'primary.main', borderRadius: 1 }}
                                                 onClick={() => navigate(`/profile/student/${ite.user_id}`)}
-                                                className={classes.menuItems}
                                             >
                                                 <ListItemAvatar>
                                                     <Avatar>
@@ -203,8 +201,8 @@ const Section = () => {
 
                                                 />
                                             </ListItemButton>
-                                        ))}
-                                    </List>
+                                        </List>
+                                    ))}
 
                                 </Grid>
 

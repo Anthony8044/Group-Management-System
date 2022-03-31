@@ -1,49 +1,12 @@
 import { AccountCircle, Add, AddCircle, Delete, Minimize, Person, PersonAdd, RemoveCircle } from '@mui/icons-material';
 import { Avatar, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { useJoinGroupMutation, useLeaveGroupMutation } from '../../services/project';
+import { useInviteMutation, useJoinGroupMutation, useLeaveGroupMutation } from '../../services/project';
 import { useGetSectionStudentsQuery } from '../../services/student';
 import { UserContext } from '../UserContext';
 import PropTypes from 'prop-types';
+import AlertInvite from '../../components/AlertInvite';
 
-
-
-
-const emails = ['Tom Smith', 'Harry Millar', 'Fiona Jones', 'Steven Park'];
-
-function SimpleDialog(props) {
-    const { onClose, selectedValue, open } = props;
-
-    const handleClose = () => {
-        onClose(selectedValue);
-    };
-
-    const handleListItemClick = (value) => {
-        onClose(value);
-    };
-
-    return (
-        <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>Invite Classmates</DialogTitle>
-            <List sx={{ pt: 0 }}>
-                {emails.map((email) => (
-                    <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-                        <ListItemAvatar>
-                            <Person />
-                        </ListItemAvatar>
-                        <ListItemText primary={email} />
-                    </ListItem>
-                ))}
-            </List>
-        </Dialog>
-    );
-}
-
-SimpleDialog.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,
-    selectedValue: PropTypes.string.isRequired,
-};
 
 export const GroupItem = ({ value, itemNum, section, group_id, project_id, joined }) => {
     const userId = useContext(UserContext);
@@ -82,22 +45,19 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
     };
 
     const [open, setOpen] = React.useState(false);
-    const [selectedValue, setSelectedValue] = React.useState(emails[1]);
 
     const handleClickOpen = () => {
         setOpen(true);
+        setTimeout(() => { setOpen(false); }, 1000);
     };
 
-    const handleClose = (value) => {
-        setOpen(false);
-        setSelectedValue(value);
-    };
 
     return (
         <>
-            <List dense >
+            <List dense sx={{ bgcolor: 'background.paper', padding: '4px' }} >
                 <Divider />
                 <ListItem
+                    sx={{ border: 2, borderColor: 'primary.main', borderRadius: 1 }}
                     secondaryAction={
                         <>
                             {isEmpty && joined?.group_id === null &&
@@ -110,7 +70,7 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                                     <RemoveCircle />
                                 </IconButton>
                             }
-                            {joined?.group_id != null && joined?.group_id === group_id && joined?.array_position != itemNum &&
+                            {isEmpty && joined?.group_id === group_id && joined?.array_position != itemNum &&
                                 <IconButton edge="end" aria-label="add" onClick={handleClickOpen}>
                                     <PersonAdd />
                                 </IconButton>
@@ -129,11 +89,7 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                     />
                 </ListItem>
                 <Divider />
-                <SimpleDialog
-                    selectedValue={selectedValue}
-                    open={open}
-                    onClose={handleClose}
-                />
+                <AlertInvite isOpen={open} section={section} project_id={project_id} group_id={group_id} group_num={joined?.group_num} group_position={itemNum} />
             </List>
         </>
     );
