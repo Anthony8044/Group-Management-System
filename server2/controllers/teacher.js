@@ -103,4 +103,27 @@ export const updateTeacher = async (req, res) => {
     }
 };
 
+export const getTeacherTable = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+
+        const user = await pool.query(
+            "SELECT * " +
+            "FROM course_record " +
+            "WHERE course_record.instructor_id_fk = $1 ORDER BY course_record.course_id ASC;", [id]
+        );
+
+
+        if (user.rows.length === 0) {
+            return res.status(401).json({ message: "User does'nt exist." });
+        }
+
+        return res.status(200).json(user.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 export default router;

@@ -14,14 +14,16 @@ import I from "../../assets/I.jpg"
 import S from "../../assets/S.jpg"
 import C from "../../assets/C.jpg"
 //// API Imports ////
-import { useGetStudentsQuery } from "../../services/student";
-import { useGetTeachersQuery } from "../../services/teacher";
+import { useGetStudentsQuery, useGetStudentQuery } from "../../services/student";
+import { useGetTeacherQuery, useGetTeachersQuery } from "../../services/teacher";
 import { useCreateCourseMutation, useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
 import { AccountCircle, Add, Bolt, ConnectWithoutContact, Delete, Minimize, RecordVoiceOver, Star } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { ValidatorForm } from "react-material-ui-form-validator";
 import { useGetStudentInviteQuery } from "../../services/project";
 import Invitations from "../../components/Invitations";
+import CoursesTable from "../../components/CoursesTable";
+import CoursesTableTeacher from "../../components/CoursesTableTeacher";
 
 
 const Home = () => {
@@ -38,6 +40,12 @@ const Home = () => {
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
     const [createCourse, { error: sError, isSuccess: sSuccess }] = useCreateCourseMutation();
     const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
+    const { data: sData } = useGetStudentQuery(userId?.user_id, {
+        skip: userId?.role === "Student" ? false : true
+    });
+    const { data: tData } = useGetTeacherQuery(userId?.user_id, {
+        skip: userId?.role === "Teacher" ? false : true
+    });
 
 
     const handleSubmit = async (e) => {
@@ -92,18 +100,6 @@ const Home = () => {
         }
     }
 
-    function createData(name, calories, fat, carbs, protein) {
-        return { name, calories, fat, carbs, protein };
-    }
-
-    const rows = [
-        createData('Interactive Computer Graphics', 'COMP0001-1', 15, 2, 1),
-        createData('Computer Science for Dummies', 'COMP4036-1', 10, 1, 0),
-        createData('Computer Algorithms', 'COMP4097-1', 30, 2, 1),
-        createData('Introduction to English', 'ENG2045-1', 25, 1, 1),
-        createData('Intro to Mathematics ', 'MATH2056-1', 10, 1, 0),
-    ];
-
     const hCNewCourse = (e) => setNewCourseData({ ...newCourseData, [e.target.name]: e.target.value });
 
     const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
@@ -120,45 +116,10 @@ const Home = () => {
 
                         <Card elevation={5} style={{ height: '120px' }}>
                             <CardContent className={classes.infoContent}>
-                                <Typography variant="h4">Welcome back, Sammuel Chan!</Typography>
+                                <Typography variant="h4">Welcome back, {sData?.given_name + " " + sData?.family_name}!</Typography>
                             </CardContent>
                         </Card>
-                        <Card elevation={5} style={{ marginTop: '30px', height: '636px' }}>
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
-                                <Divider style={{ margin: theme.spacing(2) }} />
-                                <TableContainer component={Paper}>
-                                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Course Name</TableCell>
-                                                <TableCell align="center">Course Code</TableCell>
-                                                <TableCell align="center">Student #</TableCell>
-                                                <TableCell align="center">Project #</TableCell>
-                                                <TableCell align="center">Projects Joined</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {rows.map((row) => (
-                                                <TableRow
-                                                    key={row.name}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                >
-                                                    <TableCell component="th" scope="row">
-                                                        {row.name}
-                                                    </TableCell>
-                                                    <TableCell align="center">{row.calories}</TableCell>
-                                                    <TableCell align="center">{row.fat}</TableCell>
-                                                    <TableCell align="center">{row.carbs}</TableCell>
-                                                    <TableCell align="center">{row.protein}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                        </Card>
-
+                        <CoursesTable />
                     </Grid>
                     <Grid item xs={12} md={5} >
                         <Invitations userId={userId?.user_id} />
@@ -313,44 +274,10 @@ const Home = () => {
 
                         <Card elevation={5} style={{ height: '120px' }}>
                             <CardContent className={classes.infoContent}>
-                                <Typography variant="h4">Welcome back, Mr. Matthew Chau!</Typography>
+                                <Typography variant="h4">Welcome back, {tData?.given_name + " " + tData?.family_name}!</Typography>
                             </CardContent>
                         </Card>
-                        <Card elevation={5} style={{ marginTop: '30px', height: '578px' }}>
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
-                                <Divider style={{ margin: theme.spacing(2) }} />
-                                <TableContainer component={Paper}>
-                                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Course Name</TableCell>
-                                                <TableCell align="center">Course Code</TableCell>
-                                                <TableCell align="center">Student #</TableCell>
-                                                <TableCell align="center">Project #</TableCell>
-                                                <TableCell align="center">Projects Joined</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {rows.map((row) => (
-                                                <TableRow
-                                                    key={row.name}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                >
-                                                    <TableCell component="th" scope="row">
-                                                        {row.name}
-                                                    </TableCell>
-                                                    <TableCell align="center">{row.calories}</TableCell>
-                                                    <TableCell align="center">{row.fat}</TableCell>
-                                                    <TableCell align="center">{row.carbs}</TableCell>
-                                                    <TableCell align="center">{row.protein}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                        </Card>
+                        <CoursesTableTeacher />
 
                     </Grid>
                     <Grid item xs={12} md={5} >

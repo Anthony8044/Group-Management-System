@@ -102,12 +102,31 @@ where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk
 
 CREATE VIEW course_record AS
 SELECT *
-FROM  (
+FROM course 
+LEFT JOIN(
    SELECT course_id AS course_id, count(*) AS course_count
    FROM   user_course 
    GROUP  BY 1 
-   ) c
-JOIN course p USING (course_id);
+   ) p USING (course_id)
+LEFT JOIN(
+   SELECT instructor_id_fk AS instructor_id_fk, count(*) AS project_count
+   FROM   project 
+   GROUP  BY 1 
+   ) a USING (instructor_id_fk)
+LEFT JOIN(
+   SELECT course_id_fk AS course_id, sum(trues) AS students_joined
+   FROM   group_record 
+   GROUP  BY 1 
+   ) b USING (course_id);
+
+LEFT JOIN(
+   SELECT course_id AS course_id, count(*) AS course_count
+   FROM   user_course 
+   GROUP  BY 1 
+   ) p USING (course_id)
+
+CREATE VIEW group_record AS
+SELECT *, (select sum(case b when 'empty' then 0 else 1 end) from unnest(students_array) as dt(b)) as trues from allgroup;
 
 insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP4035-1', 'COMP4035',
 'Math', '1');

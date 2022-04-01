@@ -35,6 +35,22 @@ export const projectApi = api.injectEndpoints({
             },
             providesTags: ['Project'],
         }),
+        getStudentTable: build.query({
+            query: (id) => {
+                return {
+                    url: `/student/getStudentTable/${id}`,
+                }
+            },
+            providesTags: ['Project'],
+        }),
+        getTeacherTable: build.query({
+            query: (id) => {
+                return {
+                    url: `/teacher/getTeacherTable/${id}`,
+                }
+            },
+            providesTags: ['Project'],
+        }),
         invite: build.mutation({
             query: (body) => {
                 return {
@@ -98,4 +114,4 @@ export const projectApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation, useGetStudentTableQuery, useGetTeacherTableQuery } = projectApi
