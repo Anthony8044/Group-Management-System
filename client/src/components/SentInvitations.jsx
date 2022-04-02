@@ -1,51 +1,36 @@
 import { Delete } from '@mui/icons-material';
 import { Avatar, Card, CardContent, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography, useTheme } from '@mui/material';
 import * as React from 'react';
-import { useAcceptInviteMutation, useGetStudentInviteQuery, useRejectInviteMutation } from '../services/project';
+import { useAcceptInviteMutation, useGetInviteSentQuery, useGetStudentInviteQuery, useRejectInviteMutation } from '../services/project';
 import AlertDialog from './AlertDialog';
 import { useSnackbar } from 'notistack';
 
-export default function Invitations({ userId }) {
+export default function SentInvitations({ userId }) {
     const theme = useTheme();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const { data: studentInvites } = useGetStudentInviteQuery(userId, {
+    const { data: studentInvites } = useGetInviteSentQuery(userId, {
         skip: userId ? false : true,
     });
-    const [regjectInvite, { isError: rIsError, error: rError, isSuccess: rSuccess, reset: rReset }] = useRejectInviteMutation();
-    const [acceptInvite, { isError: aIsError, error: aError, isSuccess: aSuccess, reset: aReset }] = useAcceptInviteMutation();
+    const [regjectInvite, { isError: rIsError, error: rError, isSuccess: rSuccess, reset }] = useRejectInviteMutation();
 
     const removeInvite = async (invite_id) => {
         await regjectInvite({
             "invite_id": invite_id
         });
     };
-    const clickInvite = async (invite_id, section_id_fk, project_id_fk, group_id_fk) => {
-        await acceptInvite({
-            "invite_id": invite_id,
-            "recipient_id_fk": userId,
-            "section_id_fk": section_id_fk,
-            "project_id_fk": project_id_fk,
-            "group_id_fk": group_id_fk
-        });
-    };
 
     React.useEffect(() => {
-        if (aSuccess) {
-            enqueueSnackbar('Successfully joined group', { variant: "success" });
-            aReset();
-        }
         if (rSuccess) {
-            enqueueSnackbar('Successfully deleted notification', { variant: "success" });
-            rReset();
+            enqueueSnackbar('Successfully deleted invitation', { variant: "success" });
+            reset();
         }
-    }, [aIsError, aSuccess, rSuccess]);
+    }, [rSuccess]);
 
     return (
-        <Card elevation={5} >
+        <Card elevation={5} style={{ marginTop: '30px' }}>
             <CardContent style={{ margin: theme.spacing(2) }} >
-                <AlertDialog alertTitle={'Error!'} alertMessage={aError?.data.message} isOpen={aIsError} />
-                <Typography variant="h5" textAlign={'center'}>Received Invitations</Typography>
+                <Typography variant="h5" textAlign={'center'}>Sent Invitations</Typography>
                 <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
                 <div style={{ height: '242px', overflow: 'auto' }}>
                     {studentInvites && studentInvites.length != 0 ?
@@ -65,12 +50,12 @@ export default function Invitations({ userId }) {
                                                 </>
                                             }
                                         >
-                                            <ListItemButton onClick={() => clickInvite(item.invite_id, item.section_id_fk, item.project_id_fk, item.group_id_fk)}>
+                                            <ListItemButton >
                                                 <ListItemAvatar>
                                                     <Avatar alt={item.given_name} src="/static/images/avatar/1.jpg" />
                                                 </ListItemAvatar>
                                                 <ListItemText
-                                                    primary={item.given_name + ' ' + item.family_name + ' has invited you to join'}
+                                                    primary={' You invited ' + item.given_name + ' ' + item.family_name + ' to join'}
                                                     secondary={
                                                         <React.Fragment>
                                                             <Typography
@@ -93,7 +78,7 @@ export default function Invitations({ userId }) {
                             ))}
                         </>
                         :
-                        <Typography variant="h6" textAlign={'center'}>You do not have any pending invitations</Typography>
+                        <Typography variant="h6" textAlign={'center'}>You have not sent any invitations</Typography>
                     }
                 </div>
             </CardContent>

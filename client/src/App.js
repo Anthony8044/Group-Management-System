@@ -15,6 +15,8 @@ import { UserContextProvider } from "./containers/UserContext";
 import { LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import { CssBaseline, ScopedCssBaseline } from "@mui/material";
+import { SnackbarProvider } from 'notistack';
+
 
 
 
@@ -46,33 +48,35 @@ const App = ({ children }) => {
 
    return (
       <ThemeProvider theme={theme}>
-         <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
-         <BrowserRouter>
-            <Routes>
-               <Route path="/register" element={<Register />} />
-               <Route path="/login" element={<Login />} />
-               <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/profile/student/:sid" element={<Profile />} />
-                  <Route path="/profile/teacher/:tid" element={<Profile />} />
-                  <Route path="/course/:courseid" element={<Course />} />
-                  <Route path="/course/:courseid/:sectionid" element={<Section />} />
-                  <Route path="/groups" element={<Home />} />
-               </Route>
-            </Routes>
-         </BrowserRouter>
-         <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-         />
-         <ToastContainer />
+         <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
+            <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
+            <BrowserRouter>
+               <Routes>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route element={<UserContextProvider><Layout /> </UserContextProvider>}>
+                     <Route path="/" element={<Home />} />
+                     <Route path="/profile/student/:sid" element={<Profile />} />
+                     <Route path="/profile/teacher/:tid" element={<Profile />} />
+                     <Route path="/course/:courseid" element={<Course />} />
+                     <Route path="/course/:courseid/:sectionid" element={<Section />} />
+                     <Route path="/groups" element={<Home />} />
+                  </Route>
+               </Routes>
+            </BrowserRouter>
+            <ToastContainer
+               position="top-right"
+               autoClose={5000}
+               hideProgressBar={false}
+               newestOnTop={false}
+               closeOnClick
+               rtl={false}
+               pauseOnFocusLoss
+               draggable
+               pauseOnHover
+            />
+            <ToastContainer />
+         </SnackbarProvider>
       </ThemeProvider >
    );
 }

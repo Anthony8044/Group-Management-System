@@ -7,12 +7,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import SnackbarToast from './SnackbarToast';
 import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
 import { AccountCircle, Person } from '@mui/icons-material';
 import { useGetSectionStudentsQuery } from '../services/student';
 import { useInviteMutation } from '../services/project';
 import AlertDialog from './AlertDialog';
+import { useSnackbar } from 'notistack';
 
 export default function AlertInvite({ isOpen, section, project_id, group_id, group_num, group_position, }) {
     const classes = useStyles();
@@ -21,6 +21,7 @@ export default function AlertInvite({ isOpen, section, project_id, group_id, gro
     const [open2, setOpen2] = React.useState(false);
     const [openSucc, setOpenSucc] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState("");
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const { data: studentList } = useGetSectionStudentsQuery(section);
     const [inviteStudent, { isError: isError, error: iError, isSuccess: iSuccess, reset }] = useInviteMutation();
@@ -34,8 +35,7 @@ export default function AlertInvite({ isOpen, section, project_id, group_id, gro
             setOpen2(true);
             setTimeout(() => { setOpen2(false); }, 1000);
         } else if (iSuccess) {
-            setOpenSucc(true);
-            setTimeout(() => { setOpenSucc(false); }, 1000);
+            enqueueSnackbar('Successfully sent an invitation', {  variant: "success" });
         }
     }, [isOpen, isError, iSuccess]);
 
@@ -97,7 +97,6 @@ export default function AlertInvite({ isOpen, section, project_id, group_id, gro
 
                             />
                         </ListItemButton>
-                        <SnackbarToast openned={openSucc} message={"Successfully sent invitation to " + ite.given_name + ' ' + ite.family_name} />
                     </List>
                 ))}
             </DialogContent>

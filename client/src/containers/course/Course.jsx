@@ -12,9 +12,10 @@ import { DateTimePicker, LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import { AccountCircle } from "@mui/icons-material";
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack } from '@mui/material';
+import { useSnackbar } from 'notistack';
 //// API Imports ////
 import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
-import { useGetAllCoursesQuery, useRegisterCourseMutation } from "../../services/course";
+import { useGetAllCoursesQuery, useGetCourseFullQuery, useRegisterCourseMutation } from "../../services/course";
 import { useGetStudentsQuery } from "../../services/student";
 import { ValidatorForm } from "react-material-ui-form-validator";
 
@@ -33,14 +34,16 @@ const Course = () => {
     const [isFormInvalid, setIsFormInvalid] = useState({ project_title: false, group_min: false, group_max: false, project_description: false });
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+    const { data: Course } = useGetCourseFullQuery(courseid);
     const { data: allProjects, isError: tErr, error: tErrMsg } = useGetAllProjectsQuery(undefined, {
         selectFromResult: ({ data }) => ({
             data: data?.filter(item => item.course_code === courseid),
         }),
     });
-    const [createproject, { error: sError, isSuccess: sSuccess }] = useCreateprojectMutation();
-    const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
+    const [createproject, { error: sError, isSuccess: sSuccess, reset: sReset }] = useCreateprojectMutation();
+    const [registerCourse, { error: tError, isSuccess: tSuccess, reset: tReset }] = useRegisterCourseMutation();
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
     const { data: student } = useGetStudentsQuery();
 
@@ -84,13 +87,35 @@ const Course = () => {
     }, [newProjectData]);
 
     useEffect(() => {
+        if (tError) {
+            enqueueSnackbar(tError?.data.message, { variant: "error" });
+            tReset();
+        }
+        if (tSuccess) {
+            enqueueSnackbar("Successfully registered student", { variant: "success" });
+            tReset();
+        }
+    }, [tError?.data, tSuccess]);
+
+    useEffect(() => {
         if (sError) {
-            setIsErr(sError?.data.message);
+            enqueueSnackbar(sError?.data.message, { variant: "error" });
+            sReset();
         }
         if (sSuccess) {
-            setIsSucc(sSuccess);
+            enqueueSnackbar("Successfully created project", { variant: "success" });
+            sReset();
         }
     }, [sError?.data, sSuccess]);
+
+    // useEffect(() => {
+    //     if (tError) {
+    //         setIsErr(sError?.data.message);
+    //     }
+    //     if (sSuccess) {
+    //         setIsSucc(sSuccess);
+    //     }
+    // }, [sError?.data, sSuccess]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -144,8 +169,8 @@ const Course = () => {
 
     return (
         <Container maxWidth="xl">
-            {renderError()}
-            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >COMP0001 ~ Interactive Computer Graphics</Typography>
+            {/* {renderError()} */}
+            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >{courseid}</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={4}>
                 <Grid item xs={12} md={10} >
@@ -155,17 +180,12 @@ const Course = () => {
                             <Typography textAlign={'center'} variant="h6">Go to Section</Typography>
                             <Divider style={{ margin: theme.spacing(2) }} />
                             <Grid container spacing={4}>
-                                <Grid item xs={4} >
-                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-1</Button>
-                                </Grid>
-                                <Grid item xs={4} >
-                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-2</Button>
-                                </Grid>
-                                <Grid item xs={4} >
-                                    <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >COMP0001-3</Button>
-                                </Grid>
+                                {Course && Course?.map((ite) => (
+                                    <Grid key={ite?.course_id} item xs={4} >
+                                        <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} onClick={() => navigate(`/course/${ite.course_id.slice(0, -2)}/${ite.course_id}`)} variant="contained" color="primary" size="large" type="submit" >{ite?.course_id}</Button>
+                                    </Grid>
+                                ))}
                             </Grid>
-
                         </CardContent>
                     </Card>
                 </Grid>
@@ -173,7 +193,7 @@ const Course = () => {
                 <Grid item xs={12} md={10} >
                     <Card elevation={5} style={{ height: '100%' }}>
                         <CardContent className={classes.infoContent}>
-                            <Typography textAlign={'center'} variant="h6">Register Student in Course</Typography>
+                            <Typography textAlign={'center'} variant="h6">Register Student in Section</Typography>
                             <Divider style={{ margin: theme.spacing(2) }} />
                             <ValidatorForm
                                 useref='form'
@@ -182,7 +202,7 @@ const Course = () => {
                             >
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} >
-                                        <ControlledSelect name="course_id" value={regCourseData.course_id} options={allCourses} handleChange={hCCourseCode} minWidth={"100%"} course={true} validators={['required']} errorMessages={['This field is required']} />
+                                        <ControlledSelect name="course_id" value={regCourseData.course_id} options={Course} handleChange={hCCourseCode} minWidth={"100%"} course={true} validators={['required']} errorMessages={['This field is required']} />
                                     </Grid>
                                     <Grid item xs={12} >
                                         <ControlledSelect name="user_id" value={regCourseData.user_id} options={student} handleChange={hCCourseCode} minWidth={"100%"} student={true} validators={['required']} errorMessages={['This field is required']} />

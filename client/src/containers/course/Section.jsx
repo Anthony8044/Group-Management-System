@@ -62,7 +62,7 @@ const Section = () => {
 
     return (
         <Container maxWidth="xl" >
-            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >COMP0001-1 ~ Interactive Computer Graphics</Typography>
+            <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >{Course?.course_id + " ~ " + Course?.course_title}</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7} md={8} >
@@ -117,7 +117,7 @@ const Section = () => {
                                                             </Grid>
                                                         }
                                                         <Grid item xs={12} sm={12} >
-                                                            {item.groups.map((it, index) => (
+                                                            {item.groups?.map((it, index) => (
                                                                 <Accordion key={it.group_num} elevation={2} >
                                                                     <AccordionSummary
                                                                         expandIcon={<ExpandMore />}
@@ -184,25 +184,31 @@ const Section = () => {
                             <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
                             <Grid container spacing={2}>
                                 <Grid item xs={12} >
-                                    {student?.map((ite) => (
-                                        <List key={ite.user_id} dense sx={{ bgcolor: 'background.paper', padding: '4px' }} >
-                                            <ListItemButton
-                                                sx={{ border: 1, borderColor: 'primary.main', borderRadius: 1 }}
-                                                onClick={() => navigate(`/profile/student/${ite.user_id}`)}
-                                            >
-                                                <ListItemAvatar>
-                                                    <Avatar>
-                                                        <AccountCircle />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText
-                                                    primary={ite.given_name + ' ' + ite.family_name}
-                                                    secondary={ite.student_id}
+                                    {student ?
+                                        <>
+                                            {student?.map((ite) => (
+                                                <List key={ite.user_id} dense sx={{ bgcolor: 'background.paper', padding: '4px' }} >
+                                                    <ListItemButton
+                                                        sx={{ border: 1, borderColor: 'primary.main', borderRadius: 1 }}
+                                                        onClick={() => navigate(`/profile/student/${ite.user_id}`)}
+                                                    >
+                                                        <ListItemAvatar>
+                                                            <Avatar>
+                                                                <AccountCircle />
+                                                            </Avatar>
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={ite.given_name + ' ' + ite.family_name}
+                                                            secondary={ite.student_id}
 
-                                                />
-                                            </ListItemButton>
-                                        </List>
-                                    ))}
+                                                        />
+                                                    </ListItemButton>
+                                                </List>
+                                            ))}
+                                        </>
+                                        :
+                                        <Typography variant="h6" align="center">No Students in course</Typography>
+                                    }
 
                                 </Grid>
 

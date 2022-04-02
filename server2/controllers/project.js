@@ -21,7 +21,7 @@ export const createproject = async (req, res) => {
     try {
         const teacherCourse = await pool.query("SELECT * FROM course WHERE instructor_id_fk = $1 AND course_id =$2", [user_id, course_code + "-1"]);
         const project = await pool.query("SELECT * FROM project WHERE course_code = $1 AND project_title =$2", [course_code, project_title]);
-        const courseRecord = await pool.query("SELECT course_id, course_count FROM course_record WHERE LEFT(course_id, -2) = $1", [course_code]);
+        const courseRecord = await pool.query("SELECT course_id, course_count FROM course_record WHERE LEFT(course_id, -2) = $1 ORDER BY course_id ASC", [course_code]);
 
         const GroupNum = [];
         let i = 0;
@@ -36,6 +36,14 @@ export const createproject = async (req, res) => {
         while (f <= group_max) {
             GroupNum1.push("empty");
             f++;
+        }
+
+        const GroupNum2 = [];
+        let e = 0;
+        while (e < GroupNum.length) {
+            const studentPerGroup = Math.ceil(courseRecord.rows[e].course_count / GroupNum[e]);
+            GroupNum2.push(studentPerGroup);
+            e++;
         }
 
 
@@ -98,7 +106,7 @@ export const createproject = async (req, res) => {
                 studetentsList = await pool.query("SELECT user_id FROM user_course WHERE user_course.course_id = $1", [course_code + "-" + z]);
                 studetentsList2 = studetentsList.rows.map(doc => Object.values(doc));
                 const merge3 = studetentsList2.flat(1);
-                randomizedList = randomizeAndSplit(merge3, Number(group_min));
+                randomizedList = randomizeAndSplit(merge3, GroupNum2[x]);
 
                 setting = courseRecord.rows[x].course_id
                 let a = 0;

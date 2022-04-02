@@ -104,13 +104,30 @@ export const getCourse = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const course = await pool.query("SELECT e.course_id, e.instructor_id_fk, array_agg(te.user_id) AS user_id FROM course e LEFT JOIN user_course te on e.course_id=te.course_id LEFT JOIN alluser t on te.user_id=t.user_id WHERE e.course_id = $1 GROUP BY e.course_id ORDER BY e.course_id ASC;", [id]);
+        const course = await pool.query("SELECT e.course_id, e.instructor_id_fk, e.course_title, array_agg(te.user_id) AS user_id FROM course e LEFT JOIN user_course te on e.course_id=te.course_id LEFT JOIN alluser t on te.user_id=t.user_id WHERE e.course_id = $1 GROUP BY e.course_id ORDER BY e.course_id ASC;", [id]);
 
         if (course.rows.length === 0) {
             return res.status(401).json({ message: "No course found!" });
         }
 
         return res.status(200).json(course.rows[0])
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+export const getCourseFull = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const course = await pool.query("SELECT e.course_id, e.instructor_id_fk, e.course_title FROM course e WHERE LEFT(e.course_id,-2) = $1;", [id]);
+
+        if (course.rows.length === 0) {
+            return res.status(401).json({ message: "No course found!" });
+        }
+
+        return res.status(200).json(course.rows)
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server error");

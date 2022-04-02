@@ -24,6 +24,8 @@ import { useGetStudentInviteQuery } from "../../services/project";
 import Invitations from "../../components/Invitations";
 import CoursesTable from "../../components/CoursesTable";
 import CoursesTableTeacher from "../../components/CoursesTableTeacher";
+import SentInvitations from "../../components/SentInvitations";
+import { useSnackbar } from 'notistack';
 
 
 const Home = () => {
@@ -34,12 +36,12 @@ const Home = () => {
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const { data: student } = useGetStudentsQuery();
     const { data: teacher } = useGetTeachersQuery();
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
-    const [createCourse, { error: sError, isSuccess: sSuccess }] = useCreateCourseMutation();
-    const [registerCourse, { error: tError, isSuccess: tSuccess }] = useRegisterCourseMutation();
+    const [createCourse, { error: sError, isSuccess: sSuccess, reset: sReset }] = useCreateCourseMutation();
     const { data: sData } = useGetStudentQuery(userId?.user_id, {
         skip: userId?.role === "Student" ? false : true
     });
@@ -47,29 +49,16 @@ const Home = () => {
         skip: userId?.role === "Teacher" ? false : true
     });
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await createCourse(newCourseData);
-    };
-
-    const handleSubmit2 = async (e) => {
-        e.preventDefault();
-        await registerCourse(regCourseData);
-    };
-
     useEffect(() => {
         if (sError) {
-            setIsErr(sError?.data.message);
-        } else if (tError) {
-            setIsErr(tError?.data.message);
+            enqueueSnackbar(sError?.data.message, { variant: "error" });
+            sReset();
         }
         if (sSuccess) {
-            setIsSucc(sSuccess);
-        } else if (tSuccess) {
-            setIsSucc(tSuccess);
+            enqueueSnackbar("Successfully created course", { variant: "success" });
+            sReset();
         }
-    }, [sError?.data, sSuccess, tError?.data, tSuccess]);
+    }, [sError?.data, sSuccess]);
 
 
     const renderError = () => {
@@ -99,19 +88,24 @@ const Home = () => {
             setIsSucc(false);
         }
     }
+    const hCNewCourse = (e) => setNewCourseData({ ...newCourseData, [e.target.name]: e.target.value, instructor_id: userId?.user_id, });
 
-    const hCNewCourse = (e) => setNewCourseData({ ...newCourseData, [e.target.name]: e.target.value });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await createCourse(newCourseData);
+    };
+
 
     const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
 
     return (
         <Container maxWidth="xl">
-            {renderError()}
+            {/* {renderError()} */}
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Home</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
 
             {userId?.role === "Student" &&
-                <Grid container spacing={4}>
+                <Grid container spacing={4} >
                     <Grid item xs={12} md={7} >
 
                         <Card elevation={5} style={{ height: '120px' }}>
@@ -123,59 +117,7 @@ const Home = () => {
                     </Grid>
                     <Grid item xs={12} md={5} >
                         <Invitations userId={userId?.user_id} />
-                        <Card elevation={5} style={{ marginTop: '30px', height: '310px' }}>
-                            <CardContent className={classes.infoContent}>
-                                <Typography variant="h5" textAlign={'center'}>Favorites</Typography>
-                                <Divider />
-                                <List
-                                    sx={{ width: '100%', bgcolor: 'background.paper' }}
-                                    aria-label="contacts"
-                                >
-                                    <ListItem secondaryAction={
-                                        <>
-                                            <IconButton edge="end" aria-label="add">
-                                                <Star />
-                                            </IconButton>
-                                        </>
-                                    }
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar>
-                                                    <AccountCircle />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary="Sarah Chan"
-                                                secondary="18403841"
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <Divider />
-                                    <ListItem secondaryAction={
-                                        <>
-                                            <IconButton edge="end" aria-label="add">
-                                                <Star />
-                                            </IconButton>
-                                        </>
-                                    }
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar>
-                                                    <AccountCircle />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary="Mathew Lau"
-                                                secondary="18358712"
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-
-                                </List>
-                            </CardContent>
-                        </Card>
+                        <SentInvitations userId={userId?.user_id} />
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Card elevation={5} sx={{ height: '390px', backgroundColor: '#fffff', padding: '2px' }}>
@@ -290,13 +232,10 @@ const Home = () => {
                                     onSubmit={handleSubmit}
                                     noValidate
                                 >
-                                    <Grid container spacing={3}>
-                                        <Input name="code" label="Course Code" value={newCourseData.course_code} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
-                                        <Input name="sections" label="Number of Sections" value={newCourseData.course_section} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
+                                    <Grid container spacing={6}>
+                                        <Input name="code" label="Course Code" value={newCourseData.code} handleChange={hCNewCourse} validators={['required', 'matchRegexp:^[A-Z]{1,4}[0-9]{4}$']} errorMessages={['This field is required', 'Match 1-4 letters + 4 digits eg: COMP1001']} />
+                                        <Input name="sections" label="Number of Sections" value={newCourseData.sections} handleChange={hCNewCourse} type={"number"} validators={['required', 'isNumber', 'matchRegexp:^[1-9]{1}$']} errorMessages={['This field is required', 'Must be a number', 'Numbers 1-9']} />
                                         <Input name="course_title" label="Course Title" value={newCourseData.course_title} handleChange={hCNewCourse} validators={['required']} errorMessages={['This field is required']} />
-                                        <Grid item xs={12} >
-                                            <ControlledSelect name="instructor_id" value={newCourseData.instructor_id} options={teacher} handleChange={hCNewCourse} minWidth={"100%"} teacher={true} validators={['required']} errorMessages={['This field is required']} />
-                                        </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create Course</Button>
                                         </Grid>

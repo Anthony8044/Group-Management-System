@@ -19,6 +19,14 @@ export const courseApi = api.injectEndpoints({
             },
             providesTags: ['Course'],
         }),
+        getCourseFull: build.query({
+            query: (id) => {
+                return {
+                    url: `/course/getCourseFull/${id}`,
+                }
+            },
+            providesTags: ['Course'],
+        }),
         createCourse: build.mutation({
             query: (body) => {
                 return {
@@ -42,4 +50,4 @@ export const courseApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllCoursesQuery, useCreateCourseMutation, useRegisterCourseMutation, useGetCourseQuery } = courseApi
+export const { useGetAllCoursesQuery, useCreateCourseMutation, useRegisterCourseMutation, useGetCourseQuery, useGetCourseFullQuery } = courseApi

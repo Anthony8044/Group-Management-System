@@ -271,8 +271,8 @@ export const rejectInvite = async (req, res) => {
             return res.status(401).json({ message: 'Invite does not exist' });
         }
 
-        const updateInvite = await pool.query(
-            "UPDATE invite SET invite_status = 'Closed'  WHERE invite_id =  $1 RETURNING *",
+        const deleteInvite = await pool.query(
+            "DELETE from invite WHERE invite_id =  $1 RETURNING *",
             [
                 invite_id
             ]
@@ -291,6 +291,20 @@ export const getStudentInvite = async (req, res) => {
 
     try {
         const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, a.given_name, a.family_name, i.recipient_id_fk, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at FROM invite i, alluser a, project p WHERE i.recipient_id_fk = $1 AND i.sender_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
+
+        res.status(200).json(invite.rows);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+export const getInviteSent = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, i.recipient_id_fk, a.given_name, a.family_name, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at FROM invite i, alluser a, project p WHERE i.sender_id_fk = $1 AND i.recipient_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
 
         res.status(200).json(invite.rows);
 

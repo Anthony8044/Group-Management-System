@@ -35,6 +35,14 @@ export const projectApi = api.injectEndpoints({
             },
             providesTags: ['Project'],
         }),
+        getInviteSent: build.query({
+            query: (id) => {
+                return {
+                    url: `/group/getInviteSent/${id}`,
+                }
+            },
+            providesTags: ['Project'],
+        }),
         getStudentTable: build.query({
             query: (id) => {
                 return {
@@ -75,7 +83,7 @@ export const projectApi = api.injectEndpoints({
             query: (body) => {
                 return {
                     url: "/group/rejectInvite",
-                    method: "POST",
+                    method: "DELETE",
                     body,
                 }
             },
@@ -114,4 +122,4 @@ export const projectApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation, useGetStudentTableQuery, useGetTeacherTableQuery } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation, useGetStudentTableQuery, useGetTeacherTableQuery, useGetInviteSentQuery } = projectApi
