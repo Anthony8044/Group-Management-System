@@ -7,14 +7,14 @@ import Input from "../../components/login&register/Input";
 import { UserContext } from '../UserContext';
 import { ValidatorForm } from "react-material-ui-form-validator";
 //// UI Imports ////
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, Box, IconButton, CardMedia, Chip } from '@mui/material';
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, Box, IconButton, CardMedia, Chip, TextField, Dialog, DialogTitle, DialogContent, ListItemButton, ListItemAvatar, DialogActions, List } from '@mui/material';
 import dom from "../../assets/dom.jpg"
 import pic1 from "../../assets/pic1.jpg"
 //// API Imports ////
 import { useGetStudentQuery, useUpdateStudentMutation } from "../../services/student";
 import { useGetTeacherQuery, useUpdateTeacherMutation } from "../../services/teacher";
 import { toast } from 'react-toastify';
-import { ConnectWithoutContact, RecordVoiceOver, Bolt } from "@mui/icons-material";
+import { ConnectWithoutContact, RecordVoiceOver, Bolt, AccountCircle } from "@mui/icons-material";
 
 
 const Profile = () => {
@@ -26,6 +26,9 @@ const Profile = () => {
     const [teacherLogin, setTeacherLogin] = useState(false);
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
+    const [baseImage, setBaseImage] = useState("");
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState("");
 
     const { data: student } = useGetStudentQuery(sid, { skip: sid ? false : true });
     const { data: teacher } = useGetTeacherQuery(tid, { skip: tid ? false : true });
@@ -130,7 +133,34 @@ const Profile = () => {
             setIsSucc(false);
         }
     }
+    const avatar = [
+        "/images/1.svg",
+        "/images/2.svg",
+        "/images/3.svg",
+        "/images/4.svg",
+        "/images/5.svg",
+        "/images/6.svg",
+        "/images/7.svg",
+        "/images/8.svg",
+        "/images/9.svg",
+        "/images/10.svg"
+    ];
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedValue("");
+    };
+    const handleListItemClick = (path) => {
+        setSelectedValue(path);
+    };
+    const handleSubmit3 = () => {
+        setStudentData({ ...studentData, profile_img: selectedValue });
+        setOpen(false);
+        setTimeout(() => { setSelectedValue(""); }, 1000);
+    };
 
 
     return (
@@ -149,7 +179,7 @@ const Profile = () => {
                             <Card elevation={5} style={{ height: '100%' }}>
                                 <Avatar
                                     className={classes.avatar}
-                                    src={''}
+                                    src={studentData?.profile_img}
                                 />
                                 <CardContent className={classes.profileTitle}>
                                     <Typography gutterBottom variant="h5" component="div">
@@ -162,7 +192,42 @@ const Profile = () => {
                                 <CardActions style={{ justifyContent: 'center' }}>
                                     {(userId?.user_id === student?.user_id) &&
                                         <>
-                                            <Button variant="outlined" color="primary" size="Small" >Upload Image</Button>
+                                            <Button variant="outlined" color="primary" size="Small" onClick={handleClickOpen} >Choose Avatar</Button>
+                                            <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">
+                                                    Choose Avatar
+                                                </DialogTitle>
+                                                <DialogContent>
+                                                    {avatar?.map((ite) => (
+                                                        <List key={ite} sx={{ bgcolor: 'background.paper', padding: '4px' }} >
+                                                            <ListItemButton
+                                                                sx={{ border: 1, borderColor: 'primary.main', borderRadius: 20, justifyContent: 'center' }}
+                                                                onClick={() => handleListItemClick(ite)}
+                                                                selected={selectedValue === ite ? true : false}
+                                                                classes={{ selected: classes.selected }}
+                                                            >
+                                                                <Avatar src={ite} sx={{ width: 60, height: 60 }}/>
+                                                            </ListItemButton>
+                                                        </List>
+                                                    ))}
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <Button disabled={selectedValue ? false : true} autoFocus onClick={handleSubmit3}>
+                                                        Choose
+                                                    </Button>
+                                                    <Button onClick={handleClose} autoFocus >Close</Button>
+                                                </DialogActions>
+                                            </Dialog>
+                                            {/* <FileBase
+                                                type='file'
+                                                multiple={false}
+                                                onDone={({ base64 }) => setStudentData({ ...studentData, profile_img: base64 })}
+                                            /> */}
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="Small" type="submit" >Update</Button>
                                         </>
                                     }
@@ -286,7 +351,7 @@ const Profile = () => {
                             <Card elevation={5} style={{ height: '100%' }}>
                                 <Avatar
                                     className={classes.avatar}
-                                    src={teacherData?.profile_img}
+                                    src={""}
                                 />
                                 <CardContent className={classes.profileTitle}>
                                     <Typography gutterBottom variant="h5" component="div">

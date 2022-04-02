@@ -79,7 +79,7 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                     }
                 >
                     <ListItemAvatar>
-                        <Avatar>
+                        <Avatar src={student?.profile_img}>
                             <AccountCircle />
                         </Avatar>
                     </ListItemAvatar>

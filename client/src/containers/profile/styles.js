@@ -14,4 +14,7 @@ export default makeStyles((theme) => ({
     infoContent: {
         margin: theme.spacing(2),
     },
+    selected: {
+        backgroundColor: "turquoise !important",
+    }
 }));

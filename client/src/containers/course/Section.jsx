@@ -16,7 +16,7 @@ import Input from "../../components/login&register/Input";
 import GroupData from "./GroupData";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import { ValidatorForm } from "react-material-ui-form-validator";
-
+import CsvDownload from 'react-json-to-csv';
 
 const Section = () => {
     const theme = useTheme()
@@ -167,7 +167,7 @@ const Section = () => {
                                         className={classes.menuItems}
                                     >
                                         <ListItemAvatar>
-                                            <Avatar>
+                                            <Avatar src={item?.profile_img}>
                                                 <AccountCircle />
                                             </Avatar>
                                         </ListItemAvatar>
@@ -193,7 +193,7 @@ const Section = () => {
                                                         onClick={() => navigate(`/profile/student/${ite.user_id}`)}
                                                     >
                                                         <ListItemAvatar>
-                                                            <Avatar>
+                                                            <Avatar src={ite?.profile_img}>
                                                                 <AccountCircle />
                                                             </Avatar>
                                                         </ListItemAvatar>
