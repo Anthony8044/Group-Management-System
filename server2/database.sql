@@ -109,10 +109,10 @@ LEFT JOIN(
    GROUP  BY 1 
    ) p USING (course_id)
 LEFT JOIN(
-   SELECT instructor_id_fk AS instructor_id_fk, count(*) AS project_count
+   SELECT course_code AS course_code, count(*) AS project_count
    FROM   project 
    GROUP  BY 1 
-   ) a USING (instructor_id_fk)
+   ) a USING (course_code)
 LEFT JOIN(
    SELECT course_id_fk AS course_id, sum(trues) AS students_joined
    FROM   group_record 
@@ -133,6 +133,9 @@ insert into course(course_id, course_code, course_title, course_section) VALUES 
 
 insert into course(course_id, course_code, course_title, course_section) VALUES ('ENG2055-1', 'ENG2055', 'English', '1');
 insert into user_course(user_id, course_id, course_role) VALUES ('34302cf6-a23f-428a-bce5-aa8c00d612c8', 'COMP3080-1', 'Student');
+
+ALTER TABLE course 
+ADD COLUMN course_code VARCHAR(255);
 
 INSERT INTO student (
     given_name,

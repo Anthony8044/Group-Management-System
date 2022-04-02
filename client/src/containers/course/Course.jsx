@@ -139,37 +139,8 @@ const Course = () => {
 
     const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
 
-    const renderError = () => {
-        if (isErr) {
-            toast.error(isErr, {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'error1',
-            });
-            setIsErr("");
-        } else if (isSucc) {
-            toast.success("Succesfully Created!", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'success1',
-            });
-            setIsSucc(false);
-        }
-    }
-
     return (
         <Container maxWidth="xl">
-            {/* {renderError()} */}
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >{courseid}</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={4}>
@@ -179,9 +150,9 @@ const Course = () => {
                         <CardContent className={classes.infoContent}>
                             <Typography textAlign={'center'} variant="h6">Go to Section</Typography>
                             <Divider style={{ margin: theme.spacing(2) }} />
-                            <Grid container spacing={4}>
+                            <Grid container spacing={4} justifyContent="space-evenly" alignItems="center">
                                 {Course && Course?.map((ite) => (
-                                    <Grid key={ite?.course_id} item xs={4} >
+                                    <Grid item key={ite?.course_id} >
                                         <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} onClick={() => navigate(`/course/${ite.course_id.slice(0, -2)}/${ite.course_id}`)} variant="contained" color="primary" size="large" type="submit" >{ite?.course_id}</Button>
                                     </Grid>
                                 ))}

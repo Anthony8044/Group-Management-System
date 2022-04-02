@@ -112,12 +112,13 @@ export const createproject = async (req, res) => {
                 let a = 0;
                 while (a < GroupNum[x]) {
                     const asdlfkj = await pool.query(
-                        "INSERT INTO allgroup (project_id_fk, course_id_fk, group_num, students_array) VALUES ($1, $2, $3, $4) RETURNING *",
+                        "INSERT INTO allgroup (project_id_fk, course_id_fk, group_num, students_array, group_status) VALUES ($1, $2, $3, $4, $5) RETURNING *",
                         [
                             insertProject.rows[0].project_id,
                             setting,
                             a + 1,
-                            randomizedList[a]
+                            randomizedList[a],
+                            "Full"
                         ]);
                     //console.log(asdlfkj.rows)
                     a++;
