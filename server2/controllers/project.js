@@ -1,7 +1,8 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { pool } from '../db.js'
+import { pool } from '../db.js';
+import nomdemailer from 'nodemailer'
 const router = express.Router();
 
 export const createproject = async (req, res) => {
