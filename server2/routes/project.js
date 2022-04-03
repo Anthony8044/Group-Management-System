@@ -9,5 +9,4 @@ router.get("/getProjectsByCourseId/:id", getProjectsByCourseId);
 router.get("/getProjectGroups/:id/:course_id", getProjectGroups);
 router.post("/createproject", createproject);
 
-
 export default router;

@@ -2,8 +2,12 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from '../db.js';
-import nomdemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
+import mailGun from 'nodemailer-mailgun-transport';
+import dotenv from 'dotenv';
+import schedule from 'node-schedule';
 const router = express.Router();
+dotenv.config();
 
 export const createproject = async (req, res) => {
     const {
@@ -16,7 +20,8 @@ export const createproject = async (req, res) => {
         formation_type,
         project_description,
         project_status,
-        user_id
+        user_id,
+        send_notification
     } = req.body;
 
     try {
@@ -59,7 +64,7 @@ export const createproject = async (req, res) => {
 
         ///Students Choice
 
-        const insertProject = await pool.query("INSERT INTO project (course_code, project_title, group_submission_date, project_submission_date, group_min, group_max, formation_type, project_description, project_status, instructor_id_fk) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+        const insertProject = await pool.query("INSERT INTO project (course_code, project_title, group_submission_date, project_submission_date, group_min, group_max, formation_type, project_description, project_status, instructor_id_fk, send_notification) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
             [
                 course_code,
                 project_title,
@@ -70,7 +75,8 @@ export const createproject = async (req, res) => {
                 formation_type,
                 project_description,
                 project_status,
-                user_id
+                user_id,
+                send_notification
             ]);
 
 
@@ -246,19 +252,77 @@ export const getProjectGroups = async (req, res) => {
 
 function randomizeAndSplit(data, chunkSize) {
     var arrayOfArrays = [];
-    var shuffled = [...data]; //make a copy so that we don't mutate the original array
+    var shuffled = [...data];
 
-    //shuffle the elements
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    //split the shuffled version by the chunk size
     for (var i = 0; i < shuffled.length; i += chunkSize) {
         arrayOfArrays.push(shuffled.slice(i, i + chunkSize));
     }
     return arrayOfArrays;
+}
+
+function automateEmails(groupDate, submisionDate) {
+    let stringDate1 = groupDate.slice(0, -5);
+    let stringDate2 = submisionDate.slice(0, -5);
+    let date1 = new Date(stringDate1);
+    let date2 = new Date(stringDate2);
+    date1.setDate(date1.getDate() - 3);
+    date2.setDate(date2.getDate() - 3);
+
+    schedule.scheduleJob(date1, () => {
+        const auth = {
+            auth: {
+                api_key: process.env.API_KEY,
+                domain: process.env.DOMAIN
+            }
+        };
+        const transporter = nodemailer.createTransport(mailGun(auth));
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: process.env.EMAIL,
+            subject: 'Nodemailer - Test',
+            text: 'Wooohooo it works!!'
+        };
+
+        transporter.sendMail(mailOptions, (err, data) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(data)
+            }
+        });
+    })
+
+    schedule.scheduleJob(date2, () => {
+        const auth = {
+            auth: {
+                api_key: process.env.API_KEY,
+                domain: process.env.DOMAIN
+            }
+        };
+        const transporter = nodemailer.createTransport(mailGun(auth));
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: process.env.EMAIL,
+            subject: 'Nodemailer - Test',
+            text: 'Wooohooo it works!!'
+        };
+
+        transporter.sendMail(mailOptions, (err, data) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(data)
+            }
+        });
+    })
+
 }
 
 export default router;

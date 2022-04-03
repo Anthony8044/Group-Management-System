@@ -10,7 +10,7 @@ import ControlledSelect from "../home/ControlledSelect";
 import { DateTimePicker, LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import { AccountCircle } from "@mui/icons-material";
-import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack } from '@mui/material';
+import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { useSnackbar } from 'notistack';
 //// API Imports ////
 import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services/project";
@@ -26,7 +26,7 @@ const Course = () => {
     const classes = useStyles();
     const { courseid } = useParams();
     const userId = useContext(UserContext);
-    const [newProjectData, setNewProjectData] = useState({ course_code: '', project_title: '', group_min: '', group_max: '', formation_type: 'default', project_description: '', user_id: '' });
+    const [newProjectData, setNewProjectData] = useState({ course_code: '', project_title: '', group_min: '', group_max: '', formation_type: 'default', project_description: '', user_id: '', send_notification: true });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
     const [dateGroup, setDateGroup] = useState(new Date());
     const [dateProject, setDateProject] = useState(new Date());
@@ -224,6 +224,11 @@ const Course = () => {
                                         <Input name="group_max" label="Group Max" value={newProjectData.group_max} handleChange={hCNewProject} type={"number"} validators={['required', 'isNumber', 'maxStringLength:1', 'isLarger']} errorMessages={['This field is required', 'Must be a number', 'Numbers 1-9', 'Value must be larger or equal to Group Min']} />
                                         <Grid item xs={12} >
                                             <ControlledSelect name="formation_type" value={newProjectData.formation_type} options={formationType} handleChange={hCNewProject} minWidth={"100%"} formation={true} validators={['required']} errorMessages={['This field is required']} />
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <FormGroup>
+                                                <FormControlLabel control={<Checkbox checked={newProjectData.send_notification} onChange={(e) => setNewProjectData({ ...newProjectData, [e.target.name]: e.target.checked })} name="send_notification" />} label="Send group formation and project submission email reminder to students 3 days before submission" />
+                                            </FormGroup>
                                         </Grid>
                                         <Grid item xs={12} >
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" type="submit" >Create New Project</Button>
