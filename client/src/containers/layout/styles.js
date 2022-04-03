@@ -44,6 +44,7 @@ export default makeStyles((theme) => ({
         margin: theme.spacing(2),
         height: '30px !important',
         width: '30px !important',
+        cursor: 'pointer'
     },
     menuItems: {
         //marginTop: "20px !important"

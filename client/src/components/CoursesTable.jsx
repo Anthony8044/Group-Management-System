@@ -12,7 +12,7 @@ export default function CoursesTable() {
     });
 
     return (
-        <Card elevation={5} style={{ marginTop: '30px', height: '636px' }}>
+        <Card elevation={5} style={{ marginTop: '30px', height: '572px' }}>
             <CardContent style={{ margin: theme.spacing(2) }}>
                 <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
                 <Divider style={{ margin: theme.spacing(2) }} />

@@ -154,7 +154,10 @@ export const updateStudent = async (req, res) => {
         profile_img,
         study_program,
         study_year,
-        student_id
+        student_id,
+        strenghts,
+        weeknesses,
+        personality_type
     } = req.body;
     const { id } = req.params;
 
@@ -180,11 +183,14 @@ export const updateStudent = async (req, res) => {
         );
 
         const updatedStudent = await pool.query(
-            "UPDATE student SET study_program = $1, study_year = $2, student_id = $3 WHERE user_id_fk = $4 RETURNING *",
+            "UPDATE student SET study_program = $1, study_year = $2, student_id = $3, strenghts = $4, weeknesses = $5, personality_type = $6 WHERE user_id_fk = $7 RETURNING *",
             [
                 study_program,
                 study_year,
                 student_id,
+                strenghts,
+                weeknesses,
+                personality_type,
                 id
             ]
         );
@@ -198,7 +204,10 @@ export const updateStudent = async (req, res) => {
             "profile_img": updatedUser.rows[0].profile_img,
             "study_program": updatedStudent.rows[0].study_program,
             "study_year": updatedStudent.rows[0].study_year,
-            "student_id": updatedStudent.rows[0].student_id
+            "student_id": updatedStudent.rows[0].student_id,
+            "strenghts": updatedStudent.rows[0].strenghts,
+            "weeknesses": updatedStudent.rows[0].weeknesses,
+            "personality_type": updatedStudent.rows[0].personality_type,
         }
         return res.status(200).json(sendUser)
     } catch (err) {

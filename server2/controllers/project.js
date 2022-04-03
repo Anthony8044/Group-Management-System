@@ -219,6 +219,30 @@ export const getProject = async (req, res) => {
     }
 };
 
+export const getProjectGroups = async (req, res) => {
+    const { id, course_id } = req.params;
+
+    try {
+        // const project = await pool.query("SELECT e.project_id, e.course_code, e.project_title, e.group_submission_date, e.project_submission_date, e.group_min, e.group_max, e.formation_type, e.project_description, ta.course_id, array_agg(te.group_id) AS group_id FROM project e LEFT JOIN allgroup te on e.project_id=te.project_id_fk LEFT JOIN (SELECT LEFT(course_id, -2) AS course_code, array_agg(course_id) AS course_id FROM course GROUP BY course_id) ta USING (course_code) GROUP BY e.project_id, ta.course_id ORDER BY e.course_code ASC;");
+        const project = await pool.query(
+            "SELECT a.group_num AS " + '"Group_Number"' + ", a.ordinality AS " + '"Postion"' + ", (case when ta.student_id IS NULL then 'Empty' else ta.student_id  end) AS " + '"Student_ID"' + ", (case when te.given_name IS NULL then 'Empty' else concat(te.family_name,', ',te.given_name) end) AS " + '"Full_Name"' + " " +
+            "FROM group_student_record a " +
+            "LEFT JOIN  (SELECT user_id::text AS student, given_name, family_name FROM alluser GROUP BY student, given_name, family_name) te USING (student) " +
+            "LEFT JOIN  (SELECT user_id_fk::text AS student, student_id FROM student GROUP BY student, student_id) ta USING (student) " +
+            "WHERE a.project_id_fk = $1 AND a.course_id_fk = $2 ORDER BY a.group_num, a.ordinality;", [id, course_id]
+        );
+
+        if (project.rows.length === 0) {
+            return res.status(401).json("No Project");
+        }
+
+        return res.status(200).json(project.rows)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 function randomizeAndSplit(data, chunkSize) {
     var arrayOfArrays = [];
     var shuffled = [...data]; //make a copy so that we don't mutate the original array

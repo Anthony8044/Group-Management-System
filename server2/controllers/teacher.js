@@ -93,7 +93,7 @@ export const updateTeacher = async (req, res) => {
             "profile_img": updatedUser.rows[0].profile_img,
             "study_program": updatedTeadcher.rows[0].department,
             "study_year": updatedTeadcher.rows[0].postition,
-            "student_id": updatedTeadcher.rows[0].teacher_id
+            "teacher_id": updatedTeadcher.rows[0].teacher_id
         }
 
         return res.status(200).json({ message: "Updated Teacher" })

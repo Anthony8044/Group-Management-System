@@ -43,10 +43,10 @@ export default function Invitations({ userId }) {
 
     return (
         <Card elevation={5} >
-            <CardContent style={{ margin: theme.spacing(2) }} >
+            <CardContent style={{ margin: theme.spacing(1) }} >
                 <AlertDialog alertTitle={'Error!'} alertMessage={aError?.data.message} isOpen={aIsError} />
                 <Typography variant="h5" textAlign={'center'}>Received Invitations</Typography>
-                <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
+                <Divider style={{ margin: theme.spacing(1) }} sx={{ bgcolor: "primary.main" }} />
                 <div style={{ height: '242px', overflow: 'auto' }}>
                     {studentInvites && studentInvites.length != 0 ?
                         <>

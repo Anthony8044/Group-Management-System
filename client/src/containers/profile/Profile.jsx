@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
-import FileBase from 'react-file-base64';
 import { useTheme } from "@emotion/react";
 import { useParams } from "react-router-dom";
 import Input from "../../components/login&register/Input";
@@ -8,13 +7,13 @@ import { UserContext } from '../UserContext';
 import { ValidatorForm } from "react-material-ui-form-validator";
 //// UI Imports ////
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, Box, IconButton, CardMedia, Chip, TextField, Dialog, DialogTitle, DialogContent, ListItemButton, ListItemAvatar, DialogActions, List } from '@mui/material';
-import dom from "../../assets/dom.jpg"
-import pic1 from "../../assets/pic1.jpg"
+import { useSnackbar } from 'notistack';
 //// API Imports ////
 import { useGetStudentQuery, useUpdateStudentMutation } from "../../services/student";
 import { useGetTeacherQuery, useUpdateTeacherMutation } from "../../services/teacher";
-import { toast } from 'react-toastify';
 import { ConnectWithoutContact, RecordVoiceOver, Bolt, AccountCircle } from "@mui/icons-material";
+import ProfilePersonalityBar from "../../components/ProfilePersonalityBar";
+import ControlledSelect from "../home/ControlledSelect";
 
 
 const Profile = () => {
@@ -29,13 +28,16 @@ const Profile = () => {
     const [baseImage, setBaseImage] = useState("");
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState("");
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const { data: student } = useGetStudentQuery(sid, { skip: sid ? false : true });
     const { data: teacher } = useGetTeacherQuery(tid, { skip: tid ? false : true });
-    const [updateStudent, { error: sError, isSuccess: sSuccess }] = useUpdateStudentMutation();
-    const [updateTeacher, { error: tError, isSuccess: tSuccess }] = useUpdateTeacherMutation();
+    const [updateStudent, { error: sError, isSuccess: sSuccess, reset: sReset }] = useUpdateStudentMutation();
+    const [updateTeacher, { error: tError, isSuccess: tSuccess, reset: tReset }] = useUpdateTeacherMutation();
 
-
+    const gender = ["Male", "Female"];
+    const year = ["2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021", "2021/2022", "2022/2023"];
+    const personalities = ["D-Dominate", "I-Influencing", "S-Steady", "C-Cautious"];
     const [studentData, setStudentData] = useState({
         given_name: '',
         family_name: '',
@@ -61,6 +63,28 @@ const Profile = () => {
     });
 
     useEffect(() => {
+        if (sError) {
+            enqueueSnackbar(sError?.data.message, { variant: "error" });
+            sReset();
+        }
+        if (sSuccess) {
+            enqueueSnackbar("Successfully Updated!", { variant: "success" });
+            sReset();
+        }
+    }, [sError?.data, sSuccess]);
+
+    useEffect(() => {
+        if (tError) {
+            enqueueSnackbar(tError?.data.message, { variant: "error" });
+            tReset();
+        }
+        if (tSuccess) {
+            enqueueSnackbar("Successfully Updated!", { variant: "success" });
+            tReset();
+        }
+    }, [tError?.data, tSuccess]);
+
+    useEffect(() => {
         if (student?.user_id) {
             setStudentData(student);
         } else if (teacher?.user_id) {
@@ -68,27 +92,6 @@ const Profile = () => {
         }
 
     }, [student?.user_id, teacher?.user_id]);
-
-    // useEffect(() => {
-    //     if (userId?.role === "Student") {
-    //         setStudentLogin(false);
-    //     } else if (userId?.role === "Teacher") {
-    //         setTeacherLogin(false);
-    //     }
-    // }, [userId?.role]);
-
-    useEffect(() => {
-        if (sError) {
-            setIsErr(sError?.data.message);
-        } else if (tError) {
-            setIsErr(tError?.data.message);
-        }
-        if (sSuccess) {
-            setIsSucc(sSuccess);
-        } else if (tSuccess) {
-            setIsSucc(tSuccess);
-        }
-    }, [sError?.data, sSuccess, tError?.data, tSuccess]);
 
     const handleChange = (e) => setStudentData({ ...studentData, [e.target.name]: e.target.value });
     const handleChange2 = (e) => setTeacherData({ ...teacherData, [e.target.name]: e.target.value });
@@ -105,34 +108,6 @@ const Profile = () => {
 
     }
 
-
-    const renderError = () => {
-        if (isErr) {
-            toast.error(isErr, {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'error1',
-            });
-            setIsErr("");
-        } else if (isSucc) {
-            toast.success("Succesfully Updated!", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'success1',
-            });
-            setIsSucc(false);
-        }
-    }
     const avatar = [
         "/images/1.svg",
         "/images/2.svg",
@@ -161,11 +136,15 @@ const Profile = () => {
         setOpen(false);
         setTimeout(() => { setSelectedValue(""); }, 1000);
     };
+    const handleSubmit4 = () => {
+        setTeacherData({ ...teacherData, profile_img: selectedValue });
+        setOpen(false);
+        setTimeout(() => { setSelectedValue(""); }, 1000);
+    };
 
 
     return (
         <Container maxWidth="xl" >
-            {renderError()}
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Profile</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
             {student &&
@@ -211,7 +190,7 @@ const Profile = () => {
                                                                 selected={selectedValue === ite ? true : false}
                                                                 classes={{ selected: classes.selected }}
                                                             >
-                                                                <Avatar src={ite} sx={{ width: 60, height: 60 }}/>
+                                                                <Avatar src={ite} sx={{ width: 60, height: 60 }} />
                                                             </ListItemButton>
                                                         </List>
                                                     ))}
@@ -223,15 +202,9 @@ const Profile = () => {
                                                     <Button onClick={handleClose} autoFocus >Close</Button>
                                                 </DialogActions>
                                             </Dialog>
-                                            {/* <FileBase
-                                                type='file'
-                                                multiple={false}
-                                                onDone={({ base64 }) => setStudentData({ ...studentData, profile_img: base64 })}
-                                            /> */}
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="Small" type="submit" >Update</Button>
                                         </>
                                     }
-
                                 </CardActions>
                             </Card>
                         </Grid>
@@ -247,7 +220,9 @@ const Profile = () => {
                                                 <Input name="given_name" label="Given Name" value={studentData?.given_name} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
                                                 <Input name="family_name" label="Family Name" value={studentData?.family_name} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
                                                 <Input name="email" label="Email" value={studentData?.email} handleChange={handleChange} validators={['required', 'isEmail']} errorMessages={['This field is required', 'Email is not valid']} />
-                                                <Input name="gender" label="Gender" value={studentData?.gender} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
+                                                <Grid item xs={12} >
+                                                    <ControlledSelect name="gender" value={studentData?.gender} options={gender} handleChange={handleChange} minWidth={"100%"} general={"Gender"} validators={['required']} errorMessages={['This field is required']} />
+                                                </Grid>
                                             </>
                                         ) :
                                             <>
@@ -271,7 +246,9 @@ const Profile = () => {
                                             <>
                                                 <Input name="student_id" label="Student ID" value={studentData?.student_id} handleChange={handleChange} validators={['required', 'isNumber', 'minNumber:11111111']} errorMessages={['This field is required', 'Must be a number', 'Must be 8 digits long']} />
                                                 <Input name="study_program" label="Study Program" value={studentData?.study_program} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
-                                                <Input name="study_year" label="Study Year" value={studentData?.study_year} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
+                                                <Grid item xs={12} >
+                                                    <ControlledSelect name="study_year" value={studentData?.study_year} options={year} handleChange={handleChange} minWidth={"100%"} general={"Study Year"} validators={['required']} errorMessages={['This field is required']} />
+                                                </Grid>
                                             </>
                                         ) :
                                             <>
@@ -294,13 +271,15 @@ const Profile = () => {
                                             <>
                                                 <Input name="strenghts" label="Strengths/Skills" value={studentData?.strenghts} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
                                                 <Input name="weeknesses" label="Weaknesses" value={studentData?.weeknesses} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
-                                                <Input name="personality_type" label="Personality Type" value={studentData?.personality_type} handleChange={handleChange} validators={['required']} errorMessages={['This field is required']} />
+                                                <Grid item xs={12} >
+                                                    <ControlledSelect name="personality_type" value={studentData.personality_type} options={personalities} handleChange={handleChange} minWidth={"100%"} general={"Personality Type"} validators={['required']} errorMessages={['This field is required']} />
+                                                </Grid>
                                             </>
                                         ) :
                                             <>
-                                                <Input name="strenghts" label="Strengths/Skills" value={studentData?.strenghts} handleChange={handleChange} />
-                                                <Input name="weeknesses" label="Weaknesses" value={studentData?.weeknesses} handleChange={handleChange} />
-                                                <Input name="personality_type" label="Study Year" value={studentData?.personality_type} handleChange={handleChange} />
+                                                <Input name="strenghts" label="Strengths/Skills" value={studentData?.strenghts} handleChange={handleChange} read="true" />
+                                                <Input name="weeknesses" label="Weaknesses" value={studentData?.weeknesses} handleChange={handleChange} read="true" />
+                                                <Input name="personality_type" label="Study Year" value={studentData?.personality_type} handleChange={handleChange} read="true" />
                                             </>
                                         }
                                     </Grid>
@@ -308,31 +287,7 @@ const Profile = () => {
                             </Card>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                            <Card sx={{ display: 'flex', height: '250px', alignItems: 'felx-start', backgroundColor: '#e4f0f7' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <CardContent sx={{ flex: '1 0 auto' }}>
-                                        <Typography component="div" variant="h5">
-                                            Dominant
-                                        </Typography>
-                                        <Typography variant="subtitle1" color="text.secondary" component="div">
-                                            The D Personality Style tends to be direct and decisive, sometimes described as dominant. They would prefer to lead than follow and tend towards leadership and management positions. They tend to have high self-confidence and are risk-takers and problem-solvers, enabling others to look to them for decisions and direction. They tend to be self-starters.
-                                        </Typography>
-                                    </CardContent>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '40px' }}>
-                                        <Chip icon={<RecordVoiceOver />} label="Loud" />
-                                        <Chip icon={<Bolt />} label="Energetic" />
-                                        <Chip icon={<ConnectWithoutContact />} label="Social" />
-                                    </Box>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'stretch' }}>
-                                    <CardMedia
-                                        component="img"
-                                        sx={{ width: 400, display: 'flex' }}
-                                        image={dom}
-                                        alt="Live from space album cover"
-                                    />
-                                </Box>
-                            </Card>
+                            <ProfilePersonalityBar personalityType={studentData?.personality_type} />
                         </Grid>
                     </Grid>
                 </ValidatorForm>
@@ -351,7 +306,7 @@ const Profile = () => {
                             <Card elevation={5} style={{ height: '100%' }}>
                                 <Avatar
                                     className={classes.avatar}
-                                    src={""}
+                                    src={teacherData?.profile_img}
                                 />
                                 <CardContent className={classes.profileTitle}>
                                     <Typography gutterBottom variant="h5" component="div">
@@ -364,11 +319,40 @@ const Profile = () => {
                                 <CardActions style={{ justifyContent: 'center' }}>
                                     {(userId?.user_id === teacher?.user_id) &&
                                         <>
-                                            <Button variant="outlined" color="primary" size="Small" >Upload Image</Button>
+                                            <Button variant="outlined" color="primary" size="Small" onClick={handleClickOpen} >Choose Avatar</Button>
+                                            <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">
+                                                    Choose Avatar
+                                                </DialogTitle>
+                                                <DialogContent>
+                                                    {avatar?.map((ite) => (
+                                                        <List key={ite} sx={{ bgcolor: 'background.paper', padding: '4px' }} >
+                                                            <ListItemButton
+                                                                sx={{ border: 1, borderColor: 'primary.main', borderRadius: 20, justifyContent: 'center' }}
+                                                                onClick={() => handleListItemClick(ite)}
+                                                                selected={selectedValue === ite ? true : false}
+                                                                classes={{ selected: classes.selected }}
+                                                            >
+                                                                <Avatar src={ite} sx={{ width: 60, height: 60 }} />
+                                                            </ListItemButton>
+                                                        </List>
+                                                    ))}
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <Button disabled={selectedValue ? false : true} autoFocus onClick={handleSubmit4}>
+                                                        Choose
+                                                    </Button>
+                                                    <Button onClick={handleClose} autoFocus >Close</Button>
+                                                </DialogActions>
+                                            </Dialog>
                                             <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="Small" type="submit" >Update</Button>
                                         </>
                                     }
-
                                 </CardActions>
                             </Card>
                         </Grid>
@@ -383,7 +367,9 @@ const Profile = () => {
                                                 <Input name="given_name" label="Given Name" value={teacherData?.given_name} handleChange={handleChange2} half validators={['required']} errorMessages={['This field is required']} />
                                                 <Input name="family_name" label="Family Name" value={teacherData?.family_name} handleChange={handleChange2} half validators={['required']} errorMessages={['This field is required']} />
                                                 <Input name="email" label="Email" value={teacherData?.email} handleChange={handleChange2} validators={['required', 'isEmail']} errorMessages={['This field is required', 'Email is not valid']} />
-                                                <Input name="gender" label="Gender" value={teacherData?.gender} handleChange={handleChange2} validators={['required']} errorMessages={['This field is required']} />
+                                                <Grid item xs={12} >
+                                                    <ControlledSelect name="gender" value={teacherData?.gender} options={gender} handleChange={handleChange2} minWidth={"100%"} general={"Gender"} validators={['required']} errorMessages={['This field is required']} />
+                                                </Grid>
                                             </>
                                         ) :
                                             <>

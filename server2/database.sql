@@ -119,11 +119,13 @@ LEFT JOIN(
    GROUP  BY 1 
    ) b USING (course_id);
 
-LEFT JOIN(
-   SELECT course_id AS course_id, count(*) AS course_count
-   FROM   user_course 
-   GROUP  BY 1 
-   ) p USING (course_id)
+CREATE VIEW group_student_record AS
+SELECT *, unnest(students_array)
+FROM allgroup;
+
+CREATE VIEW group_student_record AS
+SELECT *
+FROM allgroup, unnest(students_array) WITH ORDINALITY student;
 
 CREATE VIEW group_record AS
 SELECT *, (select sum(case b when 'empty' then 0 else 1 end) from unnest(students_array) as dt(b)) as trues from allgroup;

@@ -11,12 +11,12 @@ import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Av
 import { useGetCourseQuery } from "../../services/course";
 import { useGetSectionStudentsQuery, useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
-import { useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudentinProjectMutation } from "../../services/project";
+import { useGetProjectGroupsQuery, useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudentinProjectMutation } from "../../services/project";
 import Input from "../../components/login&register/Input";
 import GroupData from "./GroupData";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import { ValidatorForm } from "react-material-ui-form-validator";
-import CsvDownload from 'react-json-to-csv';
+import ExportGroups from "../../components/ExportGroups";
 
 const Section = () => {
     const theme = useTheme()
@@ -113,7 +113,7 @@ const Section = () => {
                                                         }
                                                         {userId && userId?.role === 'Teacher' &&
                                                             <Grid item xs={12} sm={12} >
-                                                                <Button style={{ display: 'flex !important', justifyContent: 'right !important' }} variant="contained" color="primary" size="large" >Export Groups</Button>
+                                                                <ExportGroups project_id={item.project_id} sectionid={sectionid} projectname={item.project_title} />
                                                             </Grid>
                                                         }
                                                         <Grid item xs={12} sm={12} >

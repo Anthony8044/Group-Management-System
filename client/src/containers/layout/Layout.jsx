@@ -103,8 +103,6 @@ const Layout = ({ children }) => {
                     {!userId &&
                         <Button className={classes.button} component={Link} to="/login" variant="contained" color="primary">Sign In</Button>
                     }
-
-                    <Notifications />
                 </Toolbar>
             </AppBar>
             <Drawer

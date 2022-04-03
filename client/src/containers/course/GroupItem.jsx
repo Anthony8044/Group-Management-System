@@ -1,5 +1,5 @@
 import { AccountCircle, Add, AddCircle, Delete, Minimize, Person, PersonAdd, RemoveCircle } from '@mui/icons-material';
-import { Avatar, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { Avatar, Chip, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInviteMutation, useJoinGroupMutation, useLeaveGroupMutation } from '../../services/project';
 import { useGetSectionStudentsQuery } from '../../services/student';
@@ -61,19 +61,13 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                     secondaryAction={
                         <>
                             {isEmpty && joined?.group_id === null &&
-                                <IconButton edge="end" aria-label="add" onClick={() => joinSubmit()}>
-                                    <AddCircle />
-                                </IconButton>
+                                <Chip label="Join" icon={<AddCircle />} onClick={() => joinSubmit()} />
                             }
                             {joined?.group_id != null && userId?.user_id === value &&
-                                <IconButton edge="end" aria-label="add" onClick={() => leaveSubmit()}>
-                                    <RemoveCircle />
-                                </IconButton>
+                                <Chip label="Leave" icon={<RemoveCircle />} onClick={() => leaveSubmit()} />
                             }
                             {isEmpty && joined?.group_id === group_id && joined?.array_position != itemNum &&
-                                <IconButton edge="end" aria-label="add" onClick={handleClickOpen}>
-                                    <PersonAdd />
-                                </IconButton>
+                                <Chip label="Invite" icon={<PersonAdd />} onClick={handleClickOpen} />
                             }
                         </>
                     }

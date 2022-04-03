@@ -29,9 +29,9 @@ export default function SentInvitations({ userId }) {
 
     return (
         <Card elevation={5} style={{ marginTop: '30px' }}>
-            <CardContent style={{ margin: theme.spacing(2) }} >
+            <CardContent style={{ margin: theme.spacing(1) }} >
                 <Typography variant="h5" textAlign={'center'}>Sent Invitations</Typography>
-                <Divider style={{ margin: theme.spacing(2) }} sx={{ bgcolor: "primary.main" }} />
+                <Divider style={{ margin: theme.spacing(1) }} sx={{ bgcolor: "primary.main" }} />
                 <div style={{ height: '242px', overflow: 'auto' }}>
                     {studentInvites && studentInvites.length != 0 ?
                         <>

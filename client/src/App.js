@@ -9,8 +9,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./components/login&register/Register";
 import Login from "./components/login&register/Login";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { UserContextProvider } from "./containers/UserContext";
 import { LocalizationProvider } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterDateFns';
@@ -48,7 +46,7 @@ const App = ({ children }) => {
 
    return (
       <ThemeProvider theme={theme}>
-         <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
+         <SnackbarProvider maxSnack={3} autoHideDuration={3000} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
             <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
             <BrowserRouter>
                <Routes>
@@ -64,18 +62,6 @@ const App = ({ children }) => {
                   </Route>
                </Routes>
             </BrowserRouter>
-            <ToastContainer
-               position="top-right"
-               autoClose={5000}
-               hideProgressBar={false}
-               newestOnTop={false}
-               closeOnClick
-               rtl={false}
-               pauseOnFocusLoss
-               draggable
-               pauseOnHover
-            />
-            <ToastContainer />
          </SnackbarProvider>
       </ThemeProvider >
    );

@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import useStyles from './styles'
 import FeaturedInfo from "../../components/featuredInfo/FeaturedInfo";
-import FileBase from 'react-file-base64';
 import Input from "../../components/login&register/Input";
 import ControlledSelect from "./ControlledSelect";
 import { UserContext } from "../UserContext";
 //// UI Imports ////
-import { toast } from 'react-toastify';
 import { TableBody, Paper, Table, Avatar, Button, Card, CardContent, CardMedia, Chip, Container, Divider, FormControl, Grid, IconButton, InputLabel, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, MenuItem, Select, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme, CardActionArea } from "@mui/material";
 import dom from "../../assets/dom.jpg"
 import D from "../../assets/D.jpg"
@@ -60,34 +58,6 @@ const Home = () => {
         }
     }, [sError?.data, sSuccess]);
 
-
-    const renderError = () => {
-        if (isErr) {
-            toast.error(isErr, {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'error1',
-            });
-            setIsErr("");
-        } else if (isSucc) {
-            toast.success("Registered Succesfully!", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: true,
-                progress: undefined,
-                toastId: 'success1',
-            });
-            setIsSucc(false);
-        }
-    }
     const hCNewCourse = (e) => setNewCourseData({ ...newCourseData, [e.target.name]: e.target.value, instructor_id: userId?.user_id, });
 
     const handleSubmit = async (e) => {
@@ -100,7 +70,6 @@ const Home = () => {
 
     return (
         <Container maxWidth="xl">
-            {/* {renderError()} */}
             <Typography variant="h4" color="primary" style={{ margin: theme.spacing(2) }}  >Home</Typography>
             <Divider style={{ margin: theme.spacing(2) }} />
 
@@ -120,12 +89,12 @@ const Home = () => {
                         <SentInvitations userId={userId?.user_id} />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Card elevation={5} sx={{ height: '390px', backgroundColor: '#fffff', padding: '2px' }}>
-                            <Typography variant="h4" textAlign={'center'}>D.I.S.C Personality Types</Typography>
+                        <Card elevation={5} sx={{ height: '410px', backgroundColor: '#fffff', padding: '12px' }}>
+                            <Typography variant="h5" textAlign={'center'}>D.I.S.C Personality Types</Typography>
                             <Divider style={{ margin: theme.spacing(1) }} />
                             <Grid container spacing={2}>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#57ffe3' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#57ffe3' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -134,10 +103,10 @@ const Home = () => {
                                                 alt="green iguana"
                                             />
                                             <CardContent>
-                                                <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
+                                                <Typography gutterBottom textAlign={'center'} variant="h6" component="div">
                                                     DOMINANT
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography textAlign={'center'} variant="subtitle1" color="text.secondary">
                                                     Team members are great bottom-line organizers, place high value on time, can handle multiple tasks at once.
                                                 </Typography>
                                             </CardContent>
@@ -145,7 +114,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#f7baba' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#f7baba' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -154,10 +123,10 @@ const Home = () => {
                                                 alt="green iguana"
                                             />
                                             <CardContent>
-                                                <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
+                                                <Typography gutterBottom textAlign={'center'} variant="h6" component="div">
                                                     INFLUENTIAL
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography textAlign={'center'} variant="subtitle1" color="text.secondary">
                                                     Team members are great communicators and motivate others to thrive, have a positive sense of humor and negotiate well.
                                                 </Typography>
                                             </CardContent>
@@ -165,7 +134,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#e6ffde' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#e6ffde' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -174,10 +143,10 @@ const Home = () => {
                                                 alt="green iguana"
                                             />
                                             <CardContent>
-                                                <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
+                                                <Typography gutterBottom textAlign={'center'} variant="h6" component="div">
                                                     STEADY
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography textAlign={'center'} variant="subtitle1" color="text.secondary">
                                                     Team members are reliable and dependable, maintain harmony, loyal, patient and trustworthy.
                                                 </Typography>
                                             </CardContent>
@@ -185,7 +154,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#d6edff' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#d6edff' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -194,10 +163,10 @@ const Home = () => {
                                                 alt="green iguana"
                                             />
                                             <CardContent>
-                                                <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
+                                                <Typography gutterBottom textAlign={'center'} variant="h6" component="div">
                                                     COMPLIANT
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography textAlign={'center'} variant="subtitle1" color="text.secondary">
                                                     Team members are great with facts and information, incredible analyzers and developers, and focused on maintaining quality.
                                                 </Typography>
                                             </CardContent>
@@ -245,12 +214,12 @@ const Home = () => {
                         </Card>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                        <Card elevation={5} sx={{ height: '390px', backgroundColor: '#fffff', padding: '2px' }}>
+                        <Card elevation={5} sx={{ height: '420px', backgroundColor: '#fffff', padding: '12px' }}>
                             <Typography variant="h4" textAlign={'center'}>D.I.S.C Personality Types</Typography>
                             <Divider style={{ margin: theme.spacing(1) }} />
                             <Grid container spacing={2}>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#57ffe3' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#57ffe3' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -262,7 +231,7 @@ const Home = () => {
                                                 <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
                                                     DOMINANT
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography variant="subtitle1" color="text.secondary">
                                                     Team members are great bottom-line organizers, place high value on time, can handle multiple tasks at once.
                                                 </Typography>
                                             </CardContent>
@@ -270,7 +239,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#f7baba' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#f7baba' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -282,7 +251,7 @@ const Home = () => {
                                                 <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
                                                     INFLUENTIAL
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography variant="subtitle1" color="text.secondary">
                                                     Team members are great communicators and motivate others to thrive, have a positive sense of humor and negotiate well.
                                                 </Typography>
                                             </CardContent>
@@ -290,7 +259,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#e6ffde' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#e6ffde' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -302,7 +271,7 @@ const Home = () => {
                                                 <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
                                                     STEADY
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography variant="subtitle1" color="text.secondary">
                                                     Team members are reliable and dependable, maintain harmony, loyal, patient and trustworthy.
                                                 </Typography>
                                             </CardContent>
@@ -310,7 +279,7 @@ const Home = () => {
                                     </Card>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Card sx={{ height: '325px', backgroundColor: '#d6edff' }} >
+                                    <Card sx={{ height: '335px', backgroundColor: '#d6edff' }} >
                                         <CardActionArea>
                                             <CardMedia
                                                 component="img"
@@ -322,7 +291,7 @@ const Home = () => {
                                                 <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
                                                     COMPLIANT
                                                 </Typography>
-                                                <Typography variant="h6" color="text.secondary">
+                                                <Typography variant="subtitle1" color="text.secondary">
                                                     Team members are great with facts and information, incredible analyzers and developers, and focused on maintaining quality.
                                                 </Typography>
                                             </CardContent>
