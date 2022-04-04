@@ -39,6 +39,7 @@ CREATE TABLE course(
     course_id VARCHAR(255) PRIMARY KEY,
     course_title VARCHAR(255) NOT NULL,
     instructor_id_fk uuid NOT NULL,
+    coourse_code VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
@@ -61,6 +62,7 @@ CREATE TABLE project(
     formation_type VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
     instructor_id_fk uuid NOT NULL,
+    send_notification BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
@@ -95,11 +97,6 @@ CREATE TABLE invite(
     CONSTRAINT fk_group_id FOREIGN KEY(group_id_fk) REFERENCES allgroup(group_id) ON DELETE CASCADE
 );
 
-create view student_course as
-select alluser.user_id, user_course.course_id, student.student_id, alluser.given_name, alluser.family_name, alluser.email, student.study_program, student.study_year
-from alluser, student, user_course
-where alluser.user_id=user_course.user_id AND alluser.user_id=student.user_id_fk;
-
 CREATE VIEW course_record AS
 SELECT *
 FROM course 
@@ -120,125 +117,8 @@ LEFT JOIN(
    ) b USING (course_id);
 
 CREATE VIEW group_student_record AS
-SELECT *, unnest(students_array)
-FROM allgroup;
-
-CREATE VIEW group_student_record AS
 SELECT *
 FROM allgroup, unnest(students_array) WITH ORDINALITY student;
 
 CREATE VIEW group_record AS
 SELECT *, (select sum(case b when 'empty' then 0 else 1 end) from unnest(students_array) as dt(b)) as trues from allgroup;
-
-insert into course(course_id, course_code, course_title, course_section) VALUES ( 'COMP4035-1', 'COMP4035',
-'Math', '1');
-
-insert into course(course_id, course_code, course_title, course_section) VALUES ('ENG2055-1', 'ENG2055', 'English', '1');
-insert into user_course(user_id, course_id, course_role) VALUES ('34302cf6-a23f-428a-bce5-aa8c00d612c8', 'COMP3080-1', 'Student');
-
-ALTER TABLE course 
-ADD COLUMN course_code VARCHAR(255);
-
-INSERT INTO student (
-    given_name,
-    family_name,
-    gender,
-    role,
-    email,
-    password,
-    student_number,
-    study_program,
-    study_year
-  ) VALUES (
-    'Anthony',
-    'Stoltzfus',
-    'Male',
-    'Student',
-    'anthonystoltzfus@gmail.com',
-    '123123',
-    '18208568',
-    'Computer Science',
-    'Year 3'
-);
-
-INSERT INTO student (
-    student_id,
-    user_id_fk,
-    study_program,
-    study_year
-  ) VALUES (
-    '18208562',
-    '34302cf6-a23f-428a-bce5-aa8c00d612c8',
-    'Computer Science',
-    'Year 4'
-);
-
-INSERT INTO teacher (
-    teacher_number,
-    user_id_fk,
-    department,
-    postition
-  ) VALUES (
-    '12345678',
-    'b374a60e-cc37-4fc4-984b-dae70d29ce45',
-    'Computer Science',
-    'Head Teacher'
-);
-
-INSERT INTO alluser (
-    given_name,
-    family_name,
-    gender,
-    role,
-    email,
-    password
-  ) VALUES (
-    'Samantha',
-    'Chan',
-    'Female',
-    'Teacher',
-    'anthonystoltzfus3@gmail.com',
-    '123123'
-);
-
-INSERT INTO alluser (
-    given_name,
-    family_name,
-    gender,
-    role,
-    email,
-    password
-  ) VALUES (
-    'Sarah',
-    'Lee',
-    'Female',
-    'Student',
-    'anthonystoltzfus2@gmail.com',
-    '123123'
-);
-
-INSERT INTO alluser (
-    given_name,
-    family_name,
-    gender,
-    role,
-    email,
-    password
-  ) VALUES (
-    'Admin',
-    'ADMIN',
-    'Male',
-    'Admin',
-    'anthonystoltzfus7@gmail.com',
-    '123123'
-);
-
-SELECT *
-    FROM alluser u, teacher t
-    WHERE u.user_id = 'b374a60e-cc37-4fc4-984b-dae70d29ce45' AND t.user_id_fk = 'b374a60e-cc37-4fc4-984b-dae70d29ce45';
-
-SELECT e.course_id, array_agg(te.user_id ) AS student_user_id
-  FROM course e 
-  LEFT JOIN user_course te on e.course_id=te.course_id 
-  LEFT JOIN alluser t on te.user_id=t.user_id 
-  GROUP BY e.course_id;

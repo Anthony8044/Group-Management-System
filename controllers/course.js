@@ -32,8 +32,8 @@ export const createCourse = async (req, res) => {
         let a = 0;
         while (a < sections) {
             await pool.query(
-                "INSERT INTO course (course_id, course_title, instructor_id_fk) VALUES ($1, $2, $3) RETURNING *",
-                [course_id[a], course_title, instructor_id]
+                "INSERT INTO course (course_id, course_title, instructor_id_fk, course_code) VALUES ($1, $2, $3, $4) RETURNING *",
+                [course_id[a], course_title, instructor_id, code]
             );
             a++;
         }
