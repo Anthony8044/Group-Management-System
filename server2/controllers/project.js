@@ -6,6 +6,10 @@ import nodemailer from 'nodemailer';
 import mailGun from 'nodemailer-mailgun-transport';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
+import handlebars from 'handlebars';
+import moment from "moment";
+import path from 'path';
+import fs from 'fs';
 const router = express.Router();
 dotenv.config();
 
@@ -135,6 +139,9 @@ export const createproject = async (req, res) => {
 
         }
 
+        if (send_notification === true) {
+            automateEmails(group_submission_date, project_submission_date, course_code, project_title, project_description);
+        }
 
 
         ////Randomize Choice
@@ -265,28 +272,64 @@ function randomizeAndSplit(data, chunkSize) {
     return arrayOfArrays;
 }
 
-function automateEmails(groupDate, submisionDate) {
-    let stringDate1 = groupDate.slice(0, -5);
-    let stringDate2 = submisionDate.slice(0, -5);
-    let date1 = new Date(stringDate1);
-    let date2 = new Date(stringDate2);
-    date1.setDate(date1.getDate() - 3);
-    date2.setDate(date2.getDate() - 3);
+function automateEmails(groupDate, submisionDate, course_id, project_title, project_description) {
+    let stringDate1 = moment(groupDate);
+    let stringDate2 = moment(submisionDate);
+    let sendDate1 = stringDate1.subtract(3, "days");
+    let sendDate2 = stringDate2.subtract(3, "days");
 
-    schedule.scheduleJob(date1, () => {
-        const auth = {
-            auth: {
-                api_key: process.env.API_KEY,
-                domain: process.env.DOMAIN
-            }
-        };
-        const transporter = nodemailer.createTransport(mailGun(auth));
+    const temp = fs.readFileSync("./email_templates/projectStarted.html", "utf8")
+    const auth = {
+        auth: {
+            api_key: process.env.API_KEY,
+            domain: process.env.DOMAIN
+        }
+    };
+    const transporter = nodemailer.createTransport(mailGun(auth));
+
+    const template = handlebars.compile(temp);
+
+    const htmlToSend1 = template({
+        course_id: course_id,
+        project_title: project_title,
+        project_description: project_description,
+        formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
+        submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+    });
+
+    const mailOptions1 = {
+        from: process.env.EMAIL,
+        to: process.env.EMAIL,
+        subject: 'New Project Created',
+        html: htmlToSend1
+    };
+
+    transporter.sendMail(mailOptions1, (err, data) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(data)
+        }
+    });
+
+    schedule.scheduleJob(sendDate1.format(), () => {
+        const emailTemplateSource = fs.readFileSync("./email_templates/formationDeadline.html", "utf8")
+
+        const template = handlebars.compile(emailTemplateSource);
+
+        const htmlToSend = template({
+            course_id: course_id,
+            project_title: project_title,
+            project_description: project_description,
+            formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
+            submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+        });
 
         const mailOptions = {
             from: process.env.EMAIL,
             to: process.env.EMAIL,
-            subject: 'Nodemailer - Test',
-            text: 'Wooohooo it works!!'
+            subject: 'Project Group Formation Reminder',
+            html: htmlToSend
         };
 
         transporter.sendMail(mailOptions, (err, data) => {
@@ -298,20 +341,24 @@ function automateEmails(groupDate, submisionDate) {
         });
     })
 
-    schedule.scheduleJob(date2, () => {
-        const auth = {
-            auth: {
-                api_key: process.env.API_KEY,
-                domain: process.env.DOMAIN
-            }
-        };
-        const transporter = nodemailer.createTransport(mailGun(auth));
+    schedule.scheduleJob(sendDate2.format(), () => {
+        const emailTemplateSource = fs.readFileSync("./email_templates/submissionDeadline.html", "utf8")
+
+        const template = handlebars.compile(emailTemplateSource);
+
+        const htmlToSend = template({
+            course_id: course_id,
+            project_title: project_title,
+            project_description: project_description,
+            formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
+            submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+        });
 
         const mailOptions = {
             from: process.env.EMAIL,
             to: process.env.EMAIL,
-            subject: 'Nodemailer - Test',
-            text: 'Wooohooo it works!!'
+            subject: 'Project Submission Reminder',
+            html: htmlToSend
         };
 
         transporter.sendMail(mailOptions, (err, data) => {

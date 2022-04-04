@@ -11,11 +11,9 @@ import Register from "./components/login&register/Register";
 import Login from "./components/login&register/Login";
 import { UserContextProvider } from "./containers/UserContext";
 import { LocalizationProvider } from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDateFns';
+import MomentAdapter from '@mui/lab/AdapterMoment';
 import { CssBaseline, ScopedCssBaseline } from "@mui/material";
 import { SnackbarProvider } from 'notistack';
-
-
 
 
 const theme = createTheme({
@@ -47,7 +45,7 @@ const App = ({ children }) => {
    return (
       <ThemeProvider theme={theme}>
          <SnackbarProvider maxSnack={3} autoHideDuration={3000} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
-            <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
+            <LocalizationProvider dateAdapter={MomentAdapter}>{children}</LocalizationProvider>
             <BrowserRouter>
                <Routes>
                   <Route path="/register" element={<Register />} />

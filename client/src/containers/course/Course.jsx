@@ -8,7 +8,7 @@ import Input from "../../components/login&register/Input";
 import ControlledSelect from "../home/ControlledSelect";
 //// UI Imports ////
 import { DateTimePicker, LocalizationProvider } from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterDateFns';
+import MomentAdapter from '@mui/lab/AdapterMoment';
 import { AccountCircle } from "@mui/icons-material";
 import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, TextField, Stack, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -17,6 +17,7 @@ import { useCreateprojectMutation, useGetAllProjectsQuery } from "../../services
 import { useGetAllCoursesQuery, useGetCourseFullQuery, useRegisterCourseMutation } from "../../services/course";
 import { useGetStudentsQuery } from "../../services/student";
 import { ValidatorForm } from "react-material-ui-form-validator";
+import moment from "moment";
 
 
 const Course = () => {
@@ -28,8 +29,9 @@ const Course = () => {
     const userId = useContext(UserContext);
     const [newProjectData, setNewProjectData] = useState({ course_code: '', project_title: '', group_min: '', group_max: '', formation_type: 'default', project_description: '', user_id: '', send_notification: true });
     const [regCourseData, setRegCourseData] = useState({ course_id: '', user_id: '' });
-    const [dateGroup, setDateGroup] = useState(new Date());
-    const [dateProject, setDateProject] = useState(new Date());
+    const [dateGroup, setDateGroup] = useState(moment().format());
+    const [dateProject, setDateProject] = useState(moment().format());
+
     const [isFormInvalid, setIsFormInvalid] = useState({ project_title: false, group_min: false, group_max: false, project_description: false });
     const [isErr, setIsErr] = useState("");
     const [isSucc, setIsSucc] = useState(false);
@@ -45,7 +47,6 @@ const Course = () => {
     const [registerCourse, { error: tError, isSuccess: tSuccess, reset: tReset }] = useRegisterCourseMutation();
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
     const { data: student } = useGetStudentsQuery();
-
 
 
 
@@ -119,17 +120,11 @@ const Course = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         //validate(newProjectData);
-        await createproject({ ...newProjectData, group_submission_date: dateGroup, project_submission_date: dateProject });
+        await createproject({ ...newProjectData, course_code: courseid, user_id: userId?.user_id, project_status: "Find Groups", group_submission_date: dateGroup.format(), project_submission_date: dateProject.format() });
     };
 
     const formationType = [{ id: 1, type: "random" }, { id: 2, type: "default" }];
-    const hCNewProject = (e) => setNewProjectData({ ...newProjectData, [e.target.name]: e.target.value, course_code: courseid, user_id: userId?.user_id, project_status: "Find Groups" });
-    const handledateGroup = (newValue) => {
-        setDateGroup(newValue);
-    };
-    const handledateProject = (newValue) => {
-        setDateProject(newValue);
-    };
+    const hCNewProject = (e) => setNewProjectData({ ...newProjectData, [e.target.name]: e.target.value });
 
     const handleSubmit2 = async (e) => {
         e.preventDefault();
@@ -196,7 +191,7 @@ const Course = () => {
                             >
                                 <Typography textAlign={'center'} variant="h6">Create New Project</Typography>
                                 <Divider style={{ margin: theme.spacing(2) }} />
-                                <LocalizationProvider dateAdapter={DateAdapter}>
+                                <LocalizationProvider dateAdapter={MomentAdapter}>
 
                                     <Grid container spacing={3}>
                                         <Input name="project_title" label="Title" value={newProjectData.project_title} handleChange={hCNewProject} validators={['required']} errorMessages={['This field is required']} />
@@ -206,7 +201,7 @@ const Course = () => {
                                                 label="Group Submission Date"
                                                 name="group_submission_date"
                                                 value={dateGroup}
-                                                onChange={handledateGroup}
+                                                onChange={(newValue) => { setDateGroup(newValue); }}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
                                         </Grid>
@@ -216,7 +211,7 @@ const Course = () => {
                                                 label="Project Submission Date"
                                                 name="project_submission_date"
                                                 value={dateProject}
-                                                onChange={handledateProject}
+                                                onChange={(newValue) => { setDateProject(newValue); }}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
                                         </Grid>
