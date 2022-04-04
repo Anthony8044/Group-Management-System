@@ -1,13 +1,21 @@
 import pkg from 'pg';
 const { Pool } = pkg;
-//const Pool = require("pg").Pool;
+import dotenv from 'dotenv';
 
-export const pool = new Pool({
-    host: "localhost",
-    user: "postgres",
-    password: "123123",
-    port: 5432,
-    database: "gms"
-});
+const devConfig = {
+    host: process.env.PG_HOST,
+    user: process.env.PG_USER,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
+    database: process.env.PG_DATABASE
+}
+
+const proConfig = {
+    connectionString: process.env.DATABASE_URL
+}
+
+export const pool = new Pool(
+    process.env.NODE_ENV == "production" ? proConfig : devConfig
+);
 
 //module.exports = pool;
