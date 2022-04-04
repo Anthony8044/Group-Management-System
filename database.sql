@@ -39,7 +39,7 @@ CREATE TABLE course(
     course_id VARCHAR(255) PRIMARY KEY,
     course_title VARCHAR(255) NOT NULL,
     instructor_id_fk uuid NOT NULL,
-    coourse_code VARCHAR(255) NOT NULL,
+    course_code VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
@@ -97,6 +97,9 @@ CREATE TABLE invite(
     CONSTRAINT fk_group_id FOREIGN KEY(group_id_fk) REFERENCES allgroup(group_id) ON DELETE CASCADE
 );
 
+CREATE VIEW group_record AS
+SELECT *, (select sum(case b when 'empty' then 0 else 1 end) from unnest(students_array) as dt(b)) as trues from allgroup;
+
 CREATE VIEW course_record AS
 SELECT *
 FROM course 
@@ -120,5 +123,3 @@ CREATE VIEW group_student_record AS
 SELECT *
 FROM allgroup, unnest(students_array) WITH ORDINALITY student;
 
-CREATE VIEW group_record AS
-SELECT *, (select sum(case b when 'empty' then 0 else 1 end) from unnest(students_array) as dt(b)) as trues from allgroup;
