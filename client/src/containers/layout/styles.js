@@ -41,9 +41,9 @@ export default makeStyles((theme) => ({
         flexGrow: 1
     },
     avatar: {
-        margin: theme.spacing(2),
-        height: '30px !important',
-        width: '30px !important',
+        margin: theme.spacing(1),
+        height: '40px !important',
+        width: '40px !important',
         cursor: 'pointer'
     },
     menuItems: {
@@ -59,8 +59,5 @@ export default makeStyles((theme) => ({
     },
     button: {
         margin: theme.spacing(2) + "!important"
-    },
-    name: {
-
-    },
+    }
 }));

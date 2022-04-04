@@ -3,7 +3,7 @@ import Input from "./Input";
 import useStyles from './styles'
 import { useNavigate } from "react-router-dom";
 //// UI Imports ////
-import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, ToggleButtonGroup, ToggleButton, Snackbar, Alert } from '@mui/material';
+import { Button, Typography, Container, Grid, Card, CardContent, Divider, useTheme, ToggleButtonGroup, ToggleButton, Snackbar, Alert, CardMedia } from '@mui/material';
 import { ValidatorForm } from "react-material-ui-form-validator";
 //// API Imports ////
 import { useRegisterStudentMutation, useRegisterTeacherMutation } from "../../services/auth";
@@ -117,11 +117,6 @@ const Register = () => {
                 justifyContent='center'
                 style={{ minHeight: "100vh" }}
             >
-                <Grid item >
-                    <Typography variant="h2" color={'#001531'} style={{ marginBottom: '50px', fontWeight: 800 }} >
-                        Group Management System
-                    </Typography>
-                </Grid>
                 <Grid item>
                     <Card elevation={16} style={{ height: '100%', maxWidth: '50vh', backgroundColor: '#edf3f7', borderRadius: 15 }}>
                         <CardContent className={classes.infoContent}>

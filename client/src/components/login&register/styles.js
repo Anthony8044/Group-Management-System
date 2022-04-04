@@ -9,5 +9,9 @@ export default makeStyles((theme) => ({
     paperContainer: {
         height: '100vh',
         width: '100vh'
+    },
+    mainLogo: {
+        marginBottom: '80px',
+        marginTop: '140px'
     }
 }));

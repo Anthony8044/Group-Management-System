@@ -4,7 +4,7 @@ import { useTheme } from '@mui/styles';
 import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
 import { UserContext } from '../UserContext';
 //// UI Imports ////
-import { List, useMediaQuery, CssBaseline, Avatar, Button, ListItem, Divider } from '@mui/material'
+import { List, useMediaQuery, CssBaseline, Avatar, Button, ListItem, Divider, Box } from '@mui/material'
 import { ListItemButton, ListItemIcon, ListItemText, Drawer, Typography, AppBar, Toolbar, IconButton } from "@mui/material";
 import { Home, AccountBox, Class, Groups, Menu, Notifications, Satellite, KeyboardArrowDown } from "@mui/icons-material";
 //// API Imports ////
@@ -115,6 +115,7 @@ const Layout = ({ children }) => {
                 PaperProps={{ elevation: 6 }}
             >
                 <div className={classes.toolbar} />
+                <Box component="img" src="/images/logo.png" alignSelf={'center'} sx={{ height: { xs: 80, md: 180 }, width: { xs: 80, md: 180 }, marginTop: { xs: 10, md: 5 }, }} />
                 <div>
                     <Typography variant="h4" style={{ textAlign: "center", margin: theme.spacing(2) }}>
                         Dashboard
