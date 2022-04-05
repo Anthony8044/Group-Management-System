@@ -39,6 +39,7 @@ CREATE TABLE course(
     course_id VARCHAR(255) PRIMARY KEY,
     course_title VARCHAR(255) NOT NULL,
     instructor_id_fk uuid NOT NULL,
+    coourse_code VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );
@@ -61,6 +62,7 @@ CREATE TABLE project(
     formation_type VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
     instructor_id_fk uuid NOT NULL,
+    send_notification BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_id FOREIGN KEY(instructor_id_fk) REFERENCES alluser(user_id) ON DELETE CASCADE
 );

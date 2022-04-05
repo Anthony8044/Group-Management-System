@@ -2,8 +2,6 @@
 /server/node_modules/
 /server2/node_modules/
 /server2/.env
-/server/.env
 cert.pem
 key.pem
 keytmp.pem
-client/package.json
