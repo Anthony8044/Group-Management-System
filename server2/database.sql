@@ -244,3 +244,12 @@ SELECT e.course_id, array_agg(te.user_id ) AS student_user_id
   LEFT JOIN user_course te on e.course_id=te.course_id 
   LEFT JOIN alluser t on te.user_id=t.user_id 
   GROUP BY e.course_id;
+
+
+
+
+
+
+//////////////////////////////////
+/////////////////////////////////
+

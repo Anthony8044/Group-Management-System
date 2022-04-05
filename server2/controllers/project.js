@@ -164,6 +164,74 @@ export const createproject = async (req, res) => {
     }
 };
 
+export const updateProject = async (req, res) => {
+    const {
+        project_title,
+        project_description,
+        course_code
+    } = req.body;
+    const { id } = req.params;
+
+    try {
+        const project = await pool.query(
+            "SELECT * " +
+            "FROM project e WHERE project_id = $1;", [id]
+        );
+
+        const project1 = await pool.query(
+            "SELECT * " +
+            "FROM project e WHERE course_code = $1 AND project_title = $2 AND project_id != $3;", [course_code, project_title, id]
+        );
+
+        if (project.rows.length === 0) {
+            return res.status(401).json({ message: 'Project does not exisit' });
+        } else if (project1.rows.length > 0) {
+            return res.status(401).json({ message: 'Project title already used' });
+        } else {
+            const updatedProject = await pool.query(
+                "UPDATE project SET project_title = $1, project_description = $2 WHERE project_id = $3 RETURNING *",
+                [
+                    project_title,
+                    project_description,
+                    id
+                ]
+            );
+        }
+
+
+        return res.status(200).json({ message: 'Project updated successfully!' })
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
+export const deleteProject = async (req, res) => {
+    const {
+        project_id
+    } = req.body;
+
+    try {
+        const project = await pool.query("SELECT * FROM project WHERE project_id = $1; ", [project_id]);
+
+        if (project.rows.length === 0) {
+            return res.status(401).json({ message: 'Project does not exist' });
+        } else {
+            const deleteInvite = await pool.query(
+                "DELETE from project WHERE project_id =  $1 RETURNING *",
+                [
+                    project_id
+                ]
+            );
+        }
+
+        res.status(200).json({ message: 'Sucessfully deleted project' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 export const getAllProjects = async (req, res) => {
 
     try {

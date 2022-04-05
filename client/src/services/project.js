@@ -57,7 +57,7 @@ export const projectApi = api.injectEndpoints({
                     url: `/teacher/getTeacherTable/${id}`,
                 }
             },
-            providesTags: ['Project'],
+            providesTags: ['Project', 'Course'],
         }),
         getProjectGroups: build.query({
             query: (id) => {
@@ -97,6 +97,26 @@ export const projectApi = api.injectEndpoints({
             },
             invalidatesTags: ['Project'],
         }),
+        deleteProject: build.mutation({
+            query: (body) => {
+                return {
+                    url: "/project/deleteProject",
+                    method: "DELETE",
+                    body,
+                }
+            },
+            invalidatesTags: ['Project'],
+        }),
+        updateProject: build.mutation({
+            query: (projectData) => {
+                return {
+                    url: `/project/updateProject/${projectData.project_id}`,
+                    method: "PATCH",
+                    body: projectData,
+                }
+            },
+            invalidatesTags: ['Project'],
+        }),
         createproject: build.mutation({
             query: (body) => {
                 return {
@@ -130,4 +150,4 @@ export const projectApi = api.injectEndpoints({
     }),
 })
 
-export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation, useGetStudentTableQuery, useGetTeacherTableQuery, useGetInviteSentQuery, useGetProjectGroupsQuery } = projectApi
+export const { useGetAllProjectsQuery, useCreateprojectMutation, useGetProjectsByCourseIdQuery, useJoinGroupMutation, useLeaveGroupMutation, useGetStudentGroupsQuery, useGetStudentInviteQuery, useInviteMutation, useAcceptInviteMutation, useRejectInviteMutation, useGetStudentTableQuery, useGetTeacherTableQuery, useGetInviteSentQuery, useGetProjectGroupsQuery, useDeleteProjectMutation, useUpdateProjectMutation } = projectApi

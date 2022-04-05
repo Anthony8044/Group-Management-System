@@ -16,35 +16,40 @@ export default function CoursesTable() {
             <CardContent style={{ margin: theme.spacing(2) }}>
                 <Typography variant="h5" textAlign={'center'}>Your Courses</Typography>
                 <Divider style={{ margin: theme.spacing(2) }} />
-                <TableContainer component={Paper} sx={{ maxHeight: '350px' }}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Course Name</TableCell>
-                                <TableCell align="center">Course Code</TableCell>
-                                <TableCell align="center">Students</TableCell>
-                                <TableCell align="center">Projects</TableCell>
-                                <TableCell align="center">Joined</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {StableData?.map((row) => (
-                                <TableRow
-                                    key={row.course_id}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row?.course_title}
-                                    </TableCell>
-                                    <TableCell align="center">{row?.course_id}</TableCell>
-                                    <TableCell align="center">{row?.course_count ? row?.course_count : 0}</TableCell>
-                                    <TableCell align="center">{row?.project_count ? row?.project_count : 0}</TableCell>
-                                    <TableCell align="center">{row?.students_joined ? row?.students_joined + "/" + (row?.course_count * row?.project_count) : 0}</TableCell>
+                {StableData ?
+
+                    <TableContainer component={Paper} sx={{ maxHeight: '350px' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Course Name</TableCell>
+                                    <TableCell align="center">Course Code</TableCell>
+                                    <TableCell align="center">Students</TableCell>
+                                    <TableCell align="center">Projects</TableCell>
+                                    <TableCell align="center">Joined</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {StableData?.map((row) => (
+                                    <TableRow
+                                        key={row.course_id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {row?.course_title}
+                                        </TableCell>
+                                        <TableCell align="center">{row?.course_id}</TableCell>
+                                        <TableCell align="center">{row?.course_count ? row?.course_count : 0}</TableCell>
+                                        <TableCell align="center">{row?.project_count ? row?.project_count : 0}</TableCell>
+                                        <TableCell align="center">{row?.students_joined ? row?.students_joined + "/" + (row?.course_count * row?.project_count) : 0}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    :
+                    <Typography variant="h6" textAlign={'center'}>You have not been added to any courses. Please wait for the teacher or administator to add you to a course.</Typography>
+                }
             </CardContent>
         </Card>
     );

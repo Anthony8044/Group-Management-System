@@ -35,7 +35,7 @@ export default function AlertInvite({ isOpen, section, project_id, group_id, gro
             setOpen2(true);
             setTimeout(() => { setOpen2(false); }, 1000);
         } else if (iSuccess) {
-            enqueueSnackbar('Successfully sent an invitation', {  variant: "success" });
+            enqueueSnackbar('Successfully sent an invitation', { variant: "success" });
         }
     }, [isOpen, isError, iSuccess]);
 
@@ -87,7 +87,7 @@ export default function AlertInvite({ isOpen, section, project_id, group_id, gro
                             classes={{ selected: classes.selected }}
                         >
                             <ListItemAvatar>
-                                <Avatar>
+                                <Avatar src={ite?.profile_img}>
                                     <AccountCircle />
                                 </Avatar>
                             </ListItemAvatar>

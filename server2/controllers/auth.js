@@ -6,26 +6,30 @@ const router = express.Router();
 
 
 export const registerStudent = async (req, res) => {
-    const { given_name, family_name, gender, email, password, student_id, study_program, study_year } = req.body;
+    const { given_name, family_name, gender, email, password, student_id, study_program, study_year, strenghts, weeknesses, personality_type } = req.body;
 
     try {
         const user = await pool.query("SELECT * FROM alluser WHERE email = $1", [email]);
+        const student = await pool.query("SELECT * FROM student WHERE student_id = $1", [student_id]);
 
         if (user.rows.length > 0) {
             return res.status(401).json({ message: "Email registered to another user!" });
+        } else if (student.rows.length > 0) {
+            return res.status(401).json({ message: "Student ID registered to another user!" });
+        } else {
+            const bcryptPassword = await bcrypt.hash(password, 12);
+
+            const newUser = await pool.query(
+                "INSERT INTO alluser (given_name, family_name, gender, role, email, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+                [given_name, family_name, gender, 'Student', email, bcryptPassword]
+            );
+
+            const newStudent = await pool.query(
+                "INSERT INTO student (student_id, user_id_fk, study_program, study_year, strenghts, weeknesses, personality_type) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+                [student_id, newUser.rows[0].user_id, study_program, study_year, strenghts, weeknesses, personality_type]
+            );
+
         }
-
-        const bcryptPassword = await bcrypt.hash(password, 12);
-
-        const newUser = await pool.query(
-            "INSERT INTO alluser (given_name, family_name, gender, role, email, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-            [given_name, family_name, gender, 'Student', email, bcryptPassword]
-        );
-
-        const newStudent = await pool.query(
-            "INSERT INTO student (student_id, user_id_fk, study_program, study_year) VALUES ($1, $2, $3, $4) RETURNING *",
-            [student_id, newUser.rows[0].user_id, study_program, study_year]
-        );
 
         res.status(200).json({ message: 'Created student successfully!' });
     } catch (err) {

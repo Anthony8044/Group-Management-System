@@ -18,6 +18,7 @@ export const ExportGroups = ({ project_id, sectionid, projectname }) => {
                     filename={sectionid + "_" + projectname + '.csv'}
                     style={{
                         backgroundColor: "#0a3b5b",
+                        height: '35px',
                         borderRadius: "6px",
                         border: "1px solid #a511c0",
                         display: "inline-block",

@@ -11,12 +11,13 @@ import { Button, Typography, Container, Grid, CardContent, Card, CardActions, Av
 import { useGetCourseQuery } from "../../services/course";
 import { useGetSectionStudentsQuery, useGetStudentsQuery } from "../../services/student";
 import { useGetTeachersQuery } from "../../services/teacher";
-import { useGetProjectGroupsQuery, useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudentinProjectMutation } from "../../services/project";
+import { useDeleteProjectMutation, useGetProjectGroupsQuery, useGetProjectsByCourseIdQuery, useGetStudentGroupsQuery, useGetStudentinProjectMutation, useUpdateProjectMutation } from "../../services/project";
 import Input from "../../components/login&register/Input";
 import GroupData from "./GroupData";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import { ValidatorForm } from "react-material-ui-form-validator";
 import ExportGroups from "../../components/ExportGroups";
+import UpdateProject from "../../components/UpdateProject";
 
 const Section = () => {
     const theme = useTheme()
@@ -42,6 +43,7 @@ const Section = () => {
     const { data: isIn } = useGetStudentGroupsQuery({ "id": userId?.user_id }, {
         skip: userIn,
     });
+    const [deleteProject, { isError: rIsError, error: rError, isSuccess: rSuccess, reset: rReset }] = useDeleteProjectMutation();
 
     useEffect(() => {
         if (Course?.user_id) {
@@ -55,6 +57,7 @@ const Section = () => {
         }
     }, [Course?.user_id, userId?.user_id]);
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
     }
@@ -66,56 +69,107 @@ const Section = () => {
             <Divider style={{ margin: theme.spacing(2) }} />
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={7} md={8} >
-                    {project && project.length != 0 ?
+                    {userId?.role === "Student" &&
                         <>
-                            {project && project?.map((item) => (
-                                <div key={item.project_id}>
+                            {project && project.length != 0 ?
+                                <>
+                                    {project && project?.map((item) => (
+                                        <div key={item.project_id}>
+                                            <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
+                                                <CardContent className={classes.infoContent}>
+                                                    <ValidatorForm
+                                                        useref='form'
+                                                        onSubmit={handleSubmit}
+                                                        noValidate
+                                                    >
+                                                        <Typography variant="h6">{item.project_title}</Typography>
+                                                        <Divider style={{ margin: theme.spacing(2) }} />
+                                                        <LocalizationProvider dateAdapter={DateAdapter}>
+                                                            <Grid container spacing={3}>
+                                                                <Input name="project_description" label="Project Description" value={item.project_description} read="true" />
+                                                                <Grid item xs={6} >
+                                                                    <DateTimePicker
+                                                                        label="Group Members Submission Date"
+                                                                        name="group_submission_date"
+                                                                        value={item.group_submission_date}
+                                                                        onChange={() => { }}
+                                                                        renderInput={(params) => <TextField {...params} />}
+                                                                        readOnly
+                                                                    />
+                                                                </Grid>
+                                                                <Grid item xs={6} >
+                                                                    <DateTimePicker
+                                                                        label="Project Submission Date"
+                                                                        name="project_submission_date"
+                                                                        value={item.project_submission_date}
+                                                                        onChange={() => { }}
+                                                                        renderInput={(params) => <TextField {...params} />}
+                                                                        readOnly
+                                                                    />
+                                                                </Grid>
+                                                                {userId && userId?.role === 'Student' &&
+                                                                    <Grid item xs={12} sm={12} >
+                                                                        {isIn && isIn?.find((u) => u.project_id === item.project_id && u.group_id != null) ?
+                                                                            <Typography> </Typography>
+                                                                            :
+                                                                            <Typography> You have not joined a group yet! </Typography>
+                                                                        }
+                                                                    </Grid>
+                                                                }
+                                                                {userId && userId?.role === 'Teacher' &&
+                                                                    <Grid item xs={12} sm={12} >
+                                                                        <ExportGroups project_id={item.project_id} sectionid={sectionid} projectname={item.project_title} />
+                                                                    </Grid>
+                                                                }
+                                                                <Grid item xs={12} sm={12} >
+                                                                    {item.groups?.map((it, index) => (
+                                                                        <Accordion key={it.group_num} elevation={2} >
+                                                                            <AccordionSummary
+                                                                                expandIcon={<ExpandMore />}
+                                                                                id={it.group_id}
+                                                                            >
+                                                                                <Typography>Group {it.group_num} | {it.group_status} </Typography>
+                                                                                {isIn && isIn?.find((u) => u.group_id === it.group_id) ?
+                                                                                    <Typography> | Your Group </Typography>
+                                                                                    :
+                                                                                    <Typography> </Typography>
+                                                                                }
+                                                                            </AccordionSummary>
+                                                                            <AccordionDetails>
+                                                                                <GroupData group_id={it.group_id} value={it.students_array} section={sectionid} project_id={item.project_id} joined={isIn?.find((u) => u.project_id === item.project_id)} />
+                                                                            </AccordionDetails>
+                                                                        </Accordion>
+                                                                    ))}
+                                                                </Grid>
+                                                            </Grid>
+                                                        </LocalizationProvider>
+                                                    </ValidatorForm>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))}
+                                </>
+                                :
+                                <>
                                     <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
                                         <CardContent className={classes.infoContent}>
-                                            <ValidatorForm
-                                                useref='form'
-                                                onSubmit={handleSubmit}
-                                                noValidate
-                                            >
-                                                <Typography variant="h6">{item.project_title}</Typography>
-                                                <Divider style={{ margin: theme.spacing(2) }} />
-                                                <LocalizationProvider dateAdapter={DateAdapter}>
+                                            <Typography variant="h6">No projects added yet. Please wait for the teacher to add projects to this course.</Typography>
+                                        </CardContent>
+                                    </Card>
+                                </>
+                            }
+                        </>
+                    }
+                    {userId?.role === "Teacher" &&
+                        <>
+                            {project && project.length != 0 ?
+                                <>
+                                    {project && project?.map((item) => (
+                                        <div key={item.project_id}>
+                                            <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
+                                                <CardContent className={classes.infoContent}>
+                                                    <UpdateProject project_title={item.project_title} project_description={item.project_description} group_submission_date={item.group_submission_date} project_submission_date={item.project_submission_date} project_id={item.project_id} sectionid={sectionid} course_code={item.course_code} />
                                                     <Grid container spacing={3}>
-                                                        <Input name="project_description" label="Project Description" value={item.project_description} read="true" />
-                                                        <Grid item xs={6} >
-                                                            <DateTimePicker
-                                                                label="Project Submission Date"
-                                                                name="group_submission_date"
-                                                                value={item.group_submission_date}
-                                                                onChange={() => { }}
-                                                                renderInput={(params) => <TextField {...params} />}
-                                                                readOnly
-                                                            />
-                                                        </Grid>
-                                                        <Grid item xs={6} >
-                                                            <DateTimePicker
-                                                                label="Project Submission Date"
-                                                                name="project_submission_date"
-                                                                value={item.project_submission_date}
-                                                                onChange={() => { }}
-                                                                renderInput={(params) => <TextField {...params} />}
-                                                                readOnly
-                                                            />
-                                                        </Grid>
-                                                        {userId && userId?.role === 'Student' &&
-                                                            <Grid item xs={12} sm={12} >
-                                                                {isIn && isIn?.find((u) => u.project_id === item.project_id && u.group_id != null) ?
-                                                                    <Typography> </Typography>
-                                                                    :
-                                                                    <Typography> You have not joined a group yet! </Typography>
-                                                                }
-                                                            </Grid>
-                                                        }
-                                                        {userId && userId?.role === 'Teacher' &&
-                                                            <Grid item xs={12} sm={12} >
-                                                                <ExportGroups project_id={item.project_id} sectionid={sectionid} projectname={item.project_title} />
-                                                            </Grid>
-                                                        }
                                                         <Grid item xs={12} sm={12} >
                                                             {item.groups?.map((it, index) => (
                                                                 <Accordion key={it.group_num} elevation={2} >
@@ -137,20 +191,20 @@ const Section = () => {
                                                             ))}
                                                         </Grid>
                                                     </Grid>
-                                                </LocalizationProvider>
-                                            </ValidatorForm>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    ))}
+                                </>
+                                :
+                                <>
+                                    <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
+                                        <CardContent className={classes.infoContent}>
+                                            <Typography variant="h6">No projects added yet. Please wait for the teacher to add projects to this course.</Typography>
                                         </CardContent>
                                     </Card>
-                                </div>
-                            ))}
-                        </>
-                        :
-                        <>
-                            <Card elevation={5} style={{ marginBottom: theme.spacing(3) }} >
-                                <CardContent className={classes.infoContent}>
-                                    <Typography variant="h6">No projects added yet. Please wait for the teacher to add projects to this course.</Typography>
-                                </CardContent>
-                            </Card>
+                                </>
+                            }
                         </>
                     }
                 </Grid>

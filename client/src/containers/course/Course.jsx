@@ -38,11 +38,6 @@ const Course = () => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const { data: Course } = useGetCourseFullQuery(courseid);
-    const { data: allProjects, isError: tErr, error: tErrMsg } = useGetAllProjectsQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-            data: data?.filter(item => item.course_code === courseid),
-        }),
-    });
     const [createproject, { error: sError, isSuccess: sSuccess, reset: sReset }] = useCreateprojectMutation();
     const [registerCourse, { error: tError, isSuccess: tSuccess, reset: tReset }] = useRegisterCourseMutation();
     const { data: allCourses, isError: cErr, error: cErrMsg } = useGetAllCoursesQuery();
@@ -120,7 +115,7 @@ const Course = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         //validate(newProjectData);
-        await createproject({ ...newProjectData, course_code: courseid, user_id: userId?.user_id, project_status: "Find Groups", group_submission_date: dateGroup.format(), project_submission_date: dateProject.format() });
+        await createproject({ ...newProjectData, course_code: courseid, user_id: userId?.user_id, project_status: "Find Groups", group_submission_date: dateGroup, project_submission_date: dateProject });
     };
 
     const formationType = [{ id: 1, type: "random" }, { id: 2, type: "default" }];
@@ -132,6 +127,8 @@ const Course = () => {
     };
 
     const hCCourseCode = (e) => setRegCourseData({ ...regCourseData, [e.target.name]: e.target.value });
+    const hgroupDate = (value) => setDateGroup(value.format());
+    const hsubmitionDate = (value) => setDateProject(value.format());
 
     return (
         <Container maxWidth="xl">
@@ -201,7 +198,7 @@ const Course = () => {
                                                 label="Group Submission Date"
                                                 name="group_submission_date"
                                                 value={dateGroup}
-                                                onChange={(newValue) => { setDateGroup(newValue); }}
+                                                onChange={(newValue) => hgroupDate(newValue)}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
                                         </Grid>
@@ -211,7 +208,7 @@ const Course = () => {
                                                 label="Project Submission Date"
                                                 name="project_submission_date"
                                                 value={dateProject}
-                                                onChange={(newValue) => { setDateProject(newValue); }}
+                                                onChange={(newValue) => hsubmitionDate(newValue)}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
                                         </Grid>
