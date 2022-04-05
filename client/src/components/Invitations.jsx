@@ -67,7 +67,7 @@ export default function Invitations({ userId }) {
                                         >
                                             <ListItemButton onClick={() => clickInvite(item.invite_id, item.section_id_fk, item.project_id_fk, item.group_id_fk)}>
                                                 <ListItemAvatar>
-                                                    <Avatar alt={item.given_name} src="/static/images/avatar/1.jpg" />
+                                                    <Avatar alt={item.given_name} src={item?.profile_img} />
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={item.given_name + ' ' + item.family_name + ' has invited you to join'}

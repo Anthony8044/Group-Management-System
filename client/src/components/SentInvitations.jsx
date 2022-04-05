@@ -52,7 +52,7 @@ export default function SentInvitations({ userId }) {
                                         >
                                             <ListItemButton >
                                                 <ListItemAvatar>
-                                                    <Avatar alt={item.given_name} src="/static/images/avatar/1.jpg" />
+                                                    <Avatar alt={item.given_name} src={item?.profile_img} />
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={' You invited ' + item.given_name + ' ' + item.family_name + ' to join'}

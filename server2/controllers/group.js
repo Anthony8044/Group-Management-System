@@ -290,7 +290,7 @@ export const getStudentInvite = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, a.given_name, a.family_name, i.recipient_id_fk, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at FROM invite i, alluser a, project p WHERE i.recipient_id_fk = $1 AND i.sender_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
+        const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, a.given_name, a.family_name, i.recipient_id_fk, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at, a.profile_img FROM invite i, alluser a, project p WHERE i.recipient_id_fk = $1 AND i.sender_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
 
         res.status(200).json(invite.rows);
 
@@ -304,7 +304,7 @@ export const getInviteSent = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, i.recipient_id_fk, a.given_name, a.family_name, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at FROM invite i, alluser a, project p WHERE i.sender_id_fk = $1 AND i.recipient_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
+        const invite = await pool.query("SELECT i.invite_id, i.sender_id_fk, i.recipient_id_fk, a.given_name, a.family_name, i.invite_status, i.section_id_fk, i.project_id_fk, p.project_title, i.group_id_fk, i.group_num, i.group_position, i.created_at, a.profile_img FROM invite i, alluser a, project p WHERE i.sender_id_fk = $1 AND i.recipient_id_fk = a.user_id AND i.project_id_fk = p.project_id; ", [id]);
 
         res.status(200).json(invite.rows);
 

@@ -1,15 +1,17 @@
 import { AccountCircle, Add, AddCircle, Delete, Minimize, Person, PersonAdd, RemoveCircle } from '@mui/icons-material';
-import { Avatar, Chip, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { Avatar, Chip, Dialog, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInviteMutation, useJoinGroupMutation, useLeaveGroupMutation } from '../../services/project';
 import { useGetSectionStudentsQuery } from '../../services/student';
 import { UserContext } from '../UserContext';
 import PropTypes from 'prop-types';
 import AlertInvite from '../../components/AlertInvite';
+import { useNavigate } from 'react-router-dom';
 
 
 export const GroupItem = ({ value, itemNum, section, group_id, project_id, joined }) => {
     const userId = useContext(UserContext);
+    const navigate = useNavigate();
     const [isEmpty, setIsEmpty] = useState(true);
 
     const { data: student } = useGetSectionStudentsQuery(section, {
@@ -58,6 +60,7 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                 <Divider />
                 <ListItem
                     sx={{ border: 2, borderColor: 'primary.main', borderRadius: 1 }}
+                    disablePadding
                     secondaryAction={
                         <>
                             {isEmpty && joined?.group_id === null &&
@@ -72,15 +75,17 @@ export const GroupItem = ({ value, itemNum, section, group_id, project_id, joine
                         </>
                     }
                 >
-                    <ListItemAvatar>
-                        <Avatar src={student?.profile_img}>
-                            <AccountCircle />
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={isEmpty ? "Empty Slot " + itemNum : student?.given_name + " " + student?.family_name}
-                        secondary={isEmpty ? "Empty Slot " + itemNum : student?.student_id}
-                    />
+                    <ListItemButton onClick={!isEmpty ? () => navigate(`/profile/student/${student?.user_id}`) : () => { }}>
+                        <ListItemAvatar>
+                            <Avatar src={student?.profile_img}>
+                                <AccountCircle />
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={isEmpty ? "Empty Slot " + itemNum : student?.given_name + " " + student?.family_name}
+                            secondary={isEmpty ? "Empty Slot " + itemNum : student?.student_id}
+                        />
+                    </ListItemButton>
                 </ListItem>
                 <Divider />
                 <AlertInvite isOpen={open} section={section} project_id={project_id} group_id={group_id} group_num={joined?.group_num} group_position={itemNum} />
