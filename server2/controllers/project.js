@@ -341,7 +341,9 @@ function randomizeAndSplit(data, chunkSize) {
 }
 
 function automateEmails(groupDate, submisionDate, course_id, project_title, project_description) {
+    console.log(groupDate);
     let stringDate1 = moment(groupDate);
+    console.log(stringDate1);
     let stringDate2 = moment(submisionDate);
     let sendDate1 = stringDate1.subtract(3, "days");
     let sendDate2 = stringDate2.subtract(3, "days");
@@ -361,8 +363,8 @@ function automateEmails(groupDate, submisionDate, course_id, project_title, proj
         course_id: course_id,
         project_title: project_title,
         project_description: project_description,
-        formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
-        submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+        formation_date: new Date(groupDate).toString(),
+        submission_date: new Date(submisionDate).toString()
     });
 
     const mailOptions1 = {
@@ -389,8 +391,8 @@ function automateEmails(groupDate, submisionDate, course_id, project_title, proj
             course_id: course_id,
             project_title: project_title,
             project_description: project_description,
-            formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
-            submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+            formation_date: new Date(groupDate).toString(),
+            submission_date: new Date(submisionDate).toString()
         });
 
         const mailOptions = {
@@ -418,8 +420,8 @@ function automateEmails(groupDate, submisionDate, course_id, project_title, proj
             course_id: course_id,
             project_title: project_title,
             project_description: project_description,
-            formation_date: stringDate1.format('MMMM Do YYYY, h:mm a'),
-            submission_date: stringDate2.format('MMMM Do YYYY, h:mm a')
+            formation_date: new Date(groupDate).toString(),
+            submission_date: new Date(submisionDate).toString()
         });
 
         const mailOptions = {
