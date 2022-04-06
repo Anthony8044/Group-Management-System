@@ -61,7 +61,7 @@ const Register = () => {
     useEffect(() => {
         if (sisSuccess || tisSuccess) {
             setOpenSuccess(true);
-            //setTimeout(() => { navigate('/login') }, 3000);
+            setTimeout(() => { navigate('/login') }, 3000);
         }
         if (sIsError) {
             setErrorMsg(sError.data.message);

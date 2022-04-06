@@ -95,7 +95,7 @@ const Home = () => {
                             <Grid container spacing={2}>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#57ffe3' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/d-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -115,7 +115,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#f7baba' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/i-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -135,7 +135,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#e6ffde' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/s-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -155,7 +155,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#d6edff' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/c-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -164,7 +164,7 @@ const Home = () => {
                                             />
                                             <CardContent>
                                                 <Typography gutterBottom textAlign={'center'} variant="h6" component="div">
-                                                    COMPLIANT
+                                                    CAUTIOUS
                                                 </Typography>
                                                 <Typography textAlign={'center'} variant="subtitle1" color="text.secondary">
                                                     Team members are great with facts and information, incredible analyzers and developers, and focused on maintaining quality.
@@ -220,7 +220,7 @@ const Home = () => {
                             <Grid container spacing={2}>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#57ffe3' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/d-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -240,7 +240,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#f7baba' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/i-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -260,7 +260,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#e6ffde' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/s-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -280,7 +280,7 @@ const Home = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Card sx={{ height: '335px', backgroundColor: '#d6edff' }} >
-                                        <CardActionArea>
+                                        <CardActionArea onClick={() => window.open("https://www.crystalknows.com/disc/c-personality-type/", "_blank")}>
                                             <CardMedia
                                                 component="img"
                                                 height="140"
@@ -289,7 +289,7 @@ const Home = () => {
                                             />
                                             <CardContent>
                                                 <Typography gutterBottom textAlign={'center'} variant="h5" component="div">
-                                                    COMPLIANT
+                                                    CAUTIOUS
                                                 </Typography>
                                                 <Typography variant="subtitle1" color="text.secondary">
                                                     Team members are great with facts and information, incredible analyzers and developers, and focused on maintaining quality.
