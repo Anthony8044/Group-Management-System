@@ -13,6 +13,7 @@
   - 1.3) Create the database with command: CREATE DATABASE gms;
   - 1.4) Quit postgres terminal: \q
   - 1.5) Load database with: psql -h localhost -U postgres gms < "Location of gms_database.sql" eg. psql -h localhost -U postgres gms < gms_database.sql
+    -  Use default password: 123123
 - 2.) Start Server
   - 2.1) Open terminal in root /Group-Managemnet-System folder: cd /server2
   - 2.2) install node modules: npm install
