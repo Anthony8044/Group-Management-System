@@ -13,11 +13,11 @@
   - 1.3) Create the database with command: CREATE DATABASE gms;
   - 1.4) Quit postgres terminal: \q
   - 1.5) Load database with: psql -h localhost -U postgres gms < "Location of gms_database.sql" eg. psql -h localhost -U postgres gms < gms_database.sql
-- 2) Start Server
+- 1) Start Server
   - 2.1) Open terminal in root /Group-Managemnet-System folder: cd /server2
   - 2.2) install node modules: npm install
   - 2.3) Start server: npm start
--3) Start Client
+- 3) Start Client
   - 3.1) Open terminal in root /Group-Managemnet-System folder: cd /client
   - 3.2) Install node modules: yarn install
   - 3.3) Start client: yarn start
